@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Meerabapp</string>
+    <string name="app_name">SortingApp</string>
+
+    <string-array name="algorithms">
+        <item>Bubble Sort</item>
+        <item>Insertion Sort</item>
+        <item>Selection Sort</item>
+        <item>Merge Sort</item>
+        <item>Quick Sort</item>
+        <item>Heap Sort</item>
+        <item>Shell Sort</item>
+    </string-array>
 </resources>

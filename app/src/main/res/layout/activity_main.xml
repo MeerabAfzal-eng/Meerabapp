@@ -1,111 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootMain"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+    android:background="#001F3F"
+    android:padding="20dp">
 
-    <!-- Title (black) -->
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Data Structure Algorithm"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:gravity="center_vertical|start"
-        android:padding="12dp" />
-
-    <!-- Spinner (Select Algorithm) -->
-    <Spinner
-        android:id="@+id/algorithmSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/spinner_background"
-        android:spinnerMode="dropdown" />
-
-    <!-- Add space -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
-
-    <!-- Card-like Add Values area -->
     <LinearLayout
-        android:id="@+id/cardAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="14dp"
-        android:background="#00BFA5"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp"
-        android:clipToPadding="false">
+        android:orientation="vertical">
 
+        <!-- Title -->
         <TextView
-            android:id="@+id/addTitle"
-            android:layout_width="wrap_content"
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Values For Sorting"
+            android:text="Data Structure Algorithm"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
+        <!-- Algorithm Spinner Label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Algorithm"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_marginBottom="5dp" />
+
+        <!-- Spinner -->
+        <Spinner
+            android:id="@+id/algorithmSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp" />
+
+        <!-- Add Values Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Values for Sorting"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Input Field + + Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/valueInput"
+                android:id="@+id/firstInput"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Add"
+                android:hint="Enter number"
                 android:inputType="number"
                 android:padding="10dp"
-                android:background="@drawable/edittext_background"
-                android:textColor="#000000" />
+                android:background="@android:drawable/edit_text" />
 
             <Button
                 android:id="@+id/addButton"
-                android:layout_width="52dp"
-                android:layout_height="48dp"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
                 android:text="+"
-                android:textStyle="bold"
-                android:textColor="#00BFA5"
-                android:layout_marginStart="8dp"
-                android:background="@android:color/white" />
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#001F3F"
+                android:layout_marginStart="10dp" />
         </LinearLayout>
+
+        <!-- Container for Extra Inputs -->
+        <LinearLayout
+            android:id="@+id/inputContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp" />
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#001F3F"
+            android:layout_marginTop="20dp" />
     </LinearLayout>
-
-    <!-- Submit button -->
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="SUBMIT"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:background="#00BFA5" />
-
-    <!-- small spacer -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
-
-    <!-- Optional: show added values -->
-    <TextView
-        android:id="@+id/valuesLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Values: []"
-        android:textColor="#444444"
-        android:paddingTop="8dp" />
-</LinearLayout>
+</ScrollView>

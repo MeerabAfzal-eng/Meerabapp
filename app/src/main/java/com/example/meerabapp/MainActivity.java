@@ -1,101 +1,81 @@
 package com.example.meerabapp;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Spinner algorithmSpinner;
-    private EditText valueInput;
+    private LinearLayout inputContainer;
     private Button addButton, submitButton;
-    private TextView valuesLabel;
-
-    private final ArrayList<Integer> valuesList = new ArrayList<>();
-    private String selectedAlgorithm = "";
+    private Spinner algorithmSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        algorithmSpinner = findViewById(R.id.algorithmSpinner);
-        valueInput = findViewById(R.id.valueInput);
+        inputContainer = findViewById(R.id.inputContainer);
         addButton = findViewById(R.id.addButton);
         submitButton = findViewById(R.id.submitButton);
-        valuesLabel = findViewById(R.id.valuesLabel);
+        algorithmSpinner = findViewById(R.id.algorithmSpinner);
 
-        // Setup spinner
+        // Spinner ke liye sorting algorithms
         String[] algorithms = {
-                "Select Algorithm",
+                "Bubble Sort",
                 "Insertion Sort",
                 "Selection Sort",
-                "Bubble Sort",
                 "Merge Sort",
                 "Quick Sort",
                 "Heap Sort",
                 "Shell Sort"
         };
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, algorithms);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         algorithmSpinner.setAdapter(adapter);
 
-        algorithmSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                selectedAlgorithm = algorithms[position];
-            }
+        // Pehla input field add automatically
+        addInputField();
 
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-                selectedAlgorithm = "";
-            }
-        });
+        // + button click → new input field add
+        addButton.setOnClickListener(v -> addInputField());
 
-        addButton.setOnClickListener(v -> {
-            String s = valueInput.getText().toString().trim();
-            if (s.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Enter a value first", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            try {
-                int val = Integer.parseInt(s);
-                valuesList.add(val);
-                valueInput.setText("");
-                updateValuesLabel();
-                Toast.makeText(MainActivity.this, "Added: " + val, Toast.LENGTH_SHORT).show();
-            } catch (NumberFormatException e) {
-                Toast.makeText(MainActivity.this, "Enter a valid integer", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        submitButton.setOnClickListener(v -> {
-            if (selectedAlgorithm.equals("Select Algorithm") || selectedAlgorithm.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Please select an algorithm", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (valuesList.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Please add values for sorting", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // For now just show a Toast — later you can start visualization Activity for selectedAlgorithm
-            Toast.makeText(MainActivity.this,
-                    "Algorithm: " + selectedAlgorithm + "\nValues: " + valuesList.toString(),
-                    Toast.LENGTH_LONG).show();
-        });
+        // Submit button click
+        submitButton.setOnClickListener(v -> handleSubmit());
     }
 
-    private void updateValuesLabel() {
-        valuesLabel.setText("Values: " + valuesList.toString());
+    private void addInputField() {
+        EditText newInput = new EditText(this);
+        newInput.setHint("Enter value");
+        newInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        newInput.setPadding(20, 20, 20, 20);
+        inputContainer.addView(newInput);
+    }
+
+    private void handleSubmit() {
+        int count = inputContainer.getChildCount();
+        if (count == 0) {
+            Toast.makeText(this, "Please add some values first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder values = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            EditText editText = (EditText) inputContainer.getChildAt(i);
+            String value = editText.getText().toString().trim();
+            if (!value.isEmpty()) {
+                values.append(value).append(" ");
+            }
+        }
+
+        String selectedAlgorithm = algorithmSpinner.getSelectedItem().toString();
+        Toast.makeText(this, "Algorithm: " + selectedAlgorithm + "\nValues: " + values, Toast.LENGTH_LONG).show();
     }
 }
