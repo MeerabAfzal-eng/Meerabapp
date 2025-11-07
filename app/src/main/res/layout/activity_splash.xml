@@ -20,7 +20,7 @@
         android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Data Structure Sorting Algorithm Simulation App"
+        android:text="Sorting Scope"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
