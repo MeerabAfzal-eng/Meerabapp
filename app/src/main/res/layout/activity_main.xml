@@ -1,97 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#001F3F"
-    android:padding="20dp">
+    android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <!-- Title -->
         <TextView
-            android:id="@+id/titleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Data Structure Algorithm"
-            android:textColor="#FFFFFF"
+            android:text="Sorting Scope"
+            android:textColor="#001F54"
             android:textStyle="bold"
-            android:textSize="22sp"
+            android:textSize="26sp"
             android:gravity="center"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="24dp" />
 
-        <!-- Algorithm Spinner Label -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select Algorithm"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginBottom="5dp" />
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Spinner -->
-        <Spinner
-            android:id="@+id/algorithmSpinner"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_dropdown"
-            android:padding="10dp"
-            android:layout_marginBottom="15dp" />
+            android:layout_height="55dp"
+            android:background="@android:drawable/editbox_background"
+            android:layout_marginBottom="20dp">
+            <Spinner
+                android:id="@+id/algorithmSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
-        <!-- Add Values Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Values for Sorting"
-            android:textColor="#FFFFFF"
+            android:text="Add Values for Sorting (Max 30)"
+            android:textColor="#333333"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginBottom="10dp" />
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
 
-        <!-- Input Field + + Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/firstInput"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="55dp"
                 android:layout_weight="1"
                 android:hint="Enter number"
                 android:inputType="number"
-                android:padding="10dp"
+                android:imeOptions="actionNext"
+                android:padding="12dp"
                 android:background="@android:drawable/edit_text" />
 
             <Button
                 android:id="@+id/addButton"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:text="+"
+                android:textSize="24sp"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#001F3F"
-                android:layout_marginStart="10dp" />
+                android:backgroundTint="#001F54"
+                android:layout_marginStart="10dp"
+                app:cornerRadius="8dp" />
         </LinearLayout>
 
-        <!-- Container for Extra Inputs -->
         <LinearLayout
             android:id="@+id/inputContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp" />
+            android:orientation="vertical" />
 
-        <!-- Submit Button -->
         <Button
             android:id="@+id/submitButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Submit"
+            android:layout_height="60dp"
+            android:text="SUBMIT"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#001F3F"
-            android:layout_marginTop="20dp" />
+            android:backgroundTint="#001F54"
+            android:layout_marginTop="30dp"
+            app:cornerRadius="10dp" />
+
     </LinearLayout>
 </ScrollView>
