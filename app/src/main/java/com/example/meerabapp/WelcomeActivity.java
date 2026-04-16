@@ -14,9 +14,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
         // 3 seconds ka delay taaki user welcome message parh sakay
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Taaki user back dabaye to dubara welcome screen na aaye
-        }, 3000);
+                // Yahan MainActivity ki jagah ProfileActivity likhna hai
+                Intent intent = new Intent(WelcomeActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                finish();
+            }, 3000);
     }
 }
