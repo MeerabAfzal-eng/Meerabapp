@@ -10,9 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MeerabApp">
         <activity
-            android:name=".ProfileActivity"
+            android:name=".spinner_item"
             android:exported="false" />
-        <!-- Splash Screen (First Screen) -->
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" /> <!-- Splash Screen (First Screen) -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
