@@ -27,14 +27,13 @@
         android:textColor="#333333"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
-
     <Spinner
         android:id="@+id/algorithmSpinner"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:padding="5dp"
         android:background="@android:drawable/btn_dropdown"
         android:layout_marginBottom="20dp" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,10 +54,12 @@
             android:layout_height="55dp"
             android:layout_weight="1"
             android:hint="Enter number"
-            android:inputType="number"
+            android:textColor="#000000"
+            android:textColorHint="#555555"
+            android:textSize="18sp"
+            android:inputType="numberSigned|numberDecimal"
             android:padding="12dp"
             android:background="@android:drawable/edit_text" />
-
         <Button
             android:id="@+id/addButton"
             android:layout_width="55dp"
