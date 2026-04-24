@@ -6,26 +6,23 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
         android:theme="@style/Theme.MeerabApp">
-        <activity
-            android:name=".spinner_item"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" /> <!-- Splash Screen (First Screen) -->
+
         <activity
             android:name=".SplashActivity"
+            android:theme="@style/Theme.AppSplash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Welcome Screen -->
-        <activity android:name=".WelcomeActivity" /> <!-- Main Screen -->
-        <activity android:name=".MainActivity" />
-    </application>
+        </activity>
 
+        <activity android:name=".WelcomeActivity" android:exported="false" />
+
+        <activity android:name=".ProfileActivity" android:exported="false" />
+
+        <activity android:name=".MainActivity" android:exported="false" />
+
+    </application>
 </manifest>

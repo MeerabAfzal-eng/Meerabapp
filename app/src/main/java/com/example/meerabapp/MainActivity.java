@@ -1,10 +1,10 @@
 package com.example.meerabapp;
 
-import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.InputType;
-import android.text.method.DigitsKeyListener;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -14,123 +14,100 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    private LinearLayout inputContainer;
-    private Button addButton, submitButton;
+    private EditText numberInput;
+    private Button addButton, removeLastButton, submitButton;
+    private LinearLayout visualContainer;
     private Spinner algorithmSpinner;
-    private EditText firstInput;
-    private final int MAX_INPUTS = 30;
+    private ArrayList<Double> numberList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ID setup
-        inputContainer = findViewById(R.id.inputContainer);
+        numberInput = findViewById(R.id.numberInput);
         addButton = findViewById(R.id.addButton);
+        removeLastButton = findViewById(R.id.removeLastButton);
         submitButton = findViewById(R.id.submitButton);
+        visualContainer = findViewById(R.id.visualContainer);
         algorithmSpinner = findViewById(R.id.algorithmSpinner);
-        firstInput = findViewById(R.id.firstInput);
 
-        // First Input field ko fix karna (Plus/Minus ke liye)
-        setupEditText(firstInput);
-
-        // Algorithms List
+        // Spinner with Light Gray List
         String[] algorithms = {"Bubble Sort", "Insertion Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"};
-
-        // Simple Adapter jo colors ko sahi rakhega
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, algorithms) {
-            @NonNull
             @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 TextView tv = (TextView) super.getView(position, convertView, parent);
-                tv.setTextColor(Color.BLACK); // Selected text ka color
+                tv.setTextColor(Color.BLACK);
                 tv.setTextSize(18);
                 return tv;
             }
-
             @Override
-            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 TextView tv = (TextView) super.getDropDownView(position, convertView, parent);
-                tv.setTextColor(Color.BLACK); // List items ka color
-                tv.setPadding(20, 20, 20, 20);
+                tv.setBackgroundColor(Color.parseColor("#EEEEEE"));
+                tv.setTextColor(Color.BLACK);
+                tv.setPadding(35, 35, 35, 35);
+                tv.setTextSize(18);
                 return tv;
             }
         };
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         algorithmSpinner.setAdapter(adapter);
 
-        addButton.setOnClickListener(v -> addInputField());
-        submitButton.setOnClickListener(v -> handleSubmit());
-    }
-
-    // Is method se keyboard par minus aur decimal nazar aayega
-    private void setupEditText(EditText et) {
-        et.setTextColor(Color.BLACK);
-        et.setHintTextColor(Color.GRAY);
-        et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        et.setKeyListener(DigitsKeyListener.getInstance("0123456789.-"));
-    }
-
-    private void addInputField() {
-        int currentCount = inputContainer.getChildCount() + 1;
-        if (currentCount < MAX_INPUTS) {
-            EditText newInput = new EditText(this);
-            newInput.setHint("Enter value");
-            setupEditText(newInput); // Naye field par bhi keyboard aur color fix
-            newInput.setBackgroundResource(android.R.drawable.edit_text);
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 150);
-            params.setMargins(0, 15, 0, 0);
-            newInput.setLayoutParams(params);
-            newInput.setPadding(35, 0, 35, 0);
-
-            inputContainer.addView(newInput);
-            newInput.requestFocus();
-        } else {
-            Toast.makeText(this, "Limit Reached: Max 30", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void handleSubmit() {
-        ArrayList<Double> numbers = new ArrayList<>(); // Double use kiya taake decimal values bhi aa saken
-        boolean hasError = false;
-
-        ArrayList<EditText> allFields = new ArrayList<>();
-        allFields.add(firstInput);
-        for (int i = 0; i < inputContainer.getChildCount(); i++) {
-            allFields.add((EditText) inputContainer.getChildAt(i));
-        }
-
-        for (EditText et : allFields) {
-            String val = et.getText().toString().trim();
-            if (!val.isEmpty()) {
-                try {
-                    numbers.add(Double.parseDouble(val));
-                } catch (NumberFormatException e) {
-                    et.setError("Invalid number!");
-                    hasError = true;
-                }
+        // Add Logic
+        addButton.setOnClickListener(v -> {
+            String val = numberInput.getText().toString().trim();
+            if (!val.isEmpty() && !val.equals("-") && !val.equals("+") && !val.equals(".")) {
+                addNumberToDisplay(val);
+                numberInput.setText("");
+            } else {
+                Toast.makeText(this, "Type a number first! ✨", Toast.LENGTH_SHORT).show();
             }
-        }
+        });
 
-        if (hasError) return;
+        // Remove Last Logic
+        removeLastButton.setOnClickListener(v -> {
+            int childCount = visualContainer.getChildCount();
+            if (childCount > 0) {
+                visualContainer.removeViewAt(childCount - 1);
+                numberList.remove(numberList.size() - 1);
+            } else {
+                Toast.makeText(this, "Nothing left to remove! 🌸", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        if (numbers.isEmpty()) {
-            Toast.makeText(this, "Please enter some numbers!", Toast.LENGTH_SHORT).show();
-        } else {
-            String algo = algorithmSpinner.getSelectedItem().toString();
-            Toast.makeText(this, "Ready to sort " + numbers.size() + " values using " + algo, Toast.LENGTH_LONG).show();
-            // Yahan hum next activity par jayenge
-        }
+        // Sort Button (Popup removed)
+        submitButton.setOnClickListener(v -> {
+            if (numberList.size() > 0) {
+                // Yahan aap apni sorting ka logic likh sakti hain
+                Toast.makeText(this, "Starting " + algorithmSpinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Add numbers to start! 🪄", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addNumberToDisplay(String displayVal) {
+        numberList.add(Double.parseDouble(displayVal));
+        TextView tv = new TextView(this);
+        tv.setText(displayVal);
+        tv.setTextColor(Color.WHITE);
+        tv.setTypeface(null, Typeface.BOLD);
+        tv.setGravity(Gravity.CENTER);
+        tv.setTextSize(18);
+
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(12f);
+        shape.setColor(Color.parseColor("#42A5F5")); // Boxes Light Blue
+        tv.setBackground(shape);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
+        params.setMargins(10, 0, 10, 0);
+        tv.setLayoutParams(params);
+        visualContainer.addView(tv);
     }
 }

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#001F3F"
     android:gravity="center"
-    android:orientation="vertical"
-    android:background="#001F54"> <!-- Deep navy blue color -->
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Learn Sorting Visually!"
+        android:text="Welcome to Learn     \nSorting Visually"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:padding="16dp" />
+        android:textAlignment="center"
+        android:lineSpacingExtra="8dp"/>
 
-</LinearLayout>
-
+</RelativeLayout>

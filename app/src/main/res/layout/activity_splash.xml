@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#001F54"
+    android:background="#001F3F"
     tools:context=".SplashActivity">
 
     <!-- Centered Logo -->
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="Sorting Scope"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
