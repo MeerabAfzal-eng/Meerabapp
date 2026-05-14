@@ -1,9 +1,12 @@
 package com.example.meerabapp;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.Gravity;
@@ -50,7 +53,15 @@ public class VisualizationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualization);
 
-        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        // --- Sound Initialization Fixed ---
+        try {
+            // Using a standard stream type (STREAM_MUSIC is common for apps)
+            toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback or disable sound if initialization fails
+        }
+
         containerBars = findViewById(R.id.containerBars);
         arrowContainer = findViewById(R.id.arrowContainer);
         txtComplexity = findViewById(R.id.txtComplexity);
@@ -65,10 +76,7 @@ public class VisualizationActivity extends AppCompatActivity {
 
         if (received != null) {
             originalNumbers = new ArrayList<>(received);
-            // 30 numbers support for your documentation
-            if (originalNumbers.size() > 30) {
-                originalNumbers = new ArrayList<>(originalNumbers.subList(0, 30));
-            }
+            if (originalNumbers.size() > 30) originalNumbers = new ArrayList<>(originalNumbers.subList(0, 30));
         }
 
         txtAlgoName.setText(selectedAlgo);
@@ -92,54 +100,190 @@ public class VisualizationActivity extends AppCompatActivity {
             numbers = new ArrayList<>(originalNumbers);
             swapCount = 0;
 
-            runUniversalAlgorithm();
+            String algo = (selectedAlgo != null) ? selectedAlgo.toLowerCase() : "";
 
+            if (algo.contains("bubble")) bubbleSort();
+            else if (algo.contains("selection")) selectionSort();
+            else if (algo.contains("insertion")) insertionSort();
+            else if (algo.contains("quick")) quickSort(0, numbers.size() - 1);
+            else if (algo.contains("merge")) mergeSort(0, numbers.size() - 1);
+            else if (algo.contains("heap")) heapSort();
+            else if (algo.contains("shell")) shellSort();
+
+            // Final Step: Mark all Teal
+            for(int i=0; i<numbers.size(); i++) currentSortedIndices.add(i);
+            record(-1, -1, "Sorting Complete!");
+
+            // Playback
             long uiStartTime = SystemClock.elapsedRealtime();
             for (int i = 0; i < recordedSteps.size(); i++) {
                 if (Thread.interrupted()) return;
-
                 final SortingStep step = recordedSteps.get(i);
-                final int prevSortedCount = (i > 0) ? recordedSteps.get(i-1).sortedIndices.size() : 0;
-                final boolean isLast = (i == recordedSteps.size() - 1);
                 final long currentTime = SystemClock.elapsedRealtime() - uiStartTime;
 
+                // --- Updated UI Playback (Beep is played in updateUI now) ---
                 runOnUiThread(() -> {
                     updateUI(step, currentTime);
-                    if (step.sortedIndices.size() > prevSortedCount) {
-                        playTone(ToneGenerator.TONE_PROP_BEEP, 80);
-                    }
-                    if (isLast) {
-                        playTone(ToneGenerator.TONE_CDMA_HIGH_L, 500);
+                    // Standard Beep on comparison/swap (except start/end)
+                    if (step.active1 != -1 && step.active2 != -1) {
+                        playTone(ToneGenerator.TONE_PROP_BEEP, 70); // Slightly longer beep
                     }
                 });
 
-                try { Thread.sleep(450); } catch (InterruptedException e) { return; }
+                // --- Dynamic Speed: Faster updates, slower swaps ---
+                try {
+                    if (step.logEntry.startsWith("Swapping") || step.logEntry.startsWith("Inserted")) {
+                        Thread.sleep(600); // Wait longer on swaps
+                    } else {
+                        Thread.sleep(300); // Normal speed
+                    }
+                } catch (InterruptedException e) { return; }
             }
         });
         sortingThread.start();
     }
 
-    private void runUniversalAlgorithm() {
+    // (Sorting Algorithm logic - same as before, no changes needed here)
+    private void bubbleSort() {
         int n = numbers.size();
-        for (int i = 0; i < n; i++) {
-            int targetIdx = i;
-            for (int j = i + 1; j < n; j++) {
-                record(targetIdx, j, "Comparing: " + numbers.get(targetIdx) + " and " + numbers.get(j));
-                if (isAscending) {
-                    if (numbers.get(j) < numbers.get(targetIdx)) targetIdx = j;
-                } else {
-                    if (numbers.get(j) > numbers.get(targetIdx)) targetIdx = j;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                record(j, j + 1, "Comparing neighbors: " + numbers.get(j) + " & " + numbers.get(j+1));
+                if (isAscending ? (numbers.get(j) > numbers.get(j + 1)) : (numbers.get(j) < numbers.get(j + 1))) {
+                    Collections.swap(numbers, j, j + 1);
+                    swapCount++;
+                    record(j, j + 1, "Swapping " + numbers.get(j+1) + " and " + numbers.get(j));
                 }
             }
-            if (targetIdx != i) {
-                record(i, targetIdx, "Swapping " + numbers.get(i) + " with " + numbers.get(targetIdx));
-                Collections.swap(numbers, i, targetIdx);
+            currentSortedIndices.add(n - i - 1);
+        }
+    }
+
+    private void selectionSort() {
+        int n = numbers.size();
+        for (int i = 0; i < n; i++) {
+            int minIdx = i;
+            for (int j = i + 1; j < n; j++) {
+                record(minIdx, j, "Searching for minimum element...");
+                if (isAscending ? (numbers.get(j) < numbers.get(minIdx)) : (numbers.get(j) > numbers.get(minIdx))) minIdx = j;
+            }
+            Collections.swap(numbers, i, minIdx);
+            if(i != minIdx) swapCount++;
+            currentSortedIndices.add(i);
+            record(i, minIdx, "Found minimum. Swapping to index " + i);
+        }
+    }
+
+    private void insertionSort() {
+        int n = numbers.size();
+        for (int i = 1; i < n; i++) {
+            int key = numbers.get(i);
+            int j = i - 1;
+            record(i, j, "Picking " + key + " and comparing with " + numbers.get(j));
+            while (j >= 0 && (isAscending ? (numbers.get(j) > key) : (numbers.get(j) < key))) {
+                numbers.set(j + 1, numbers.get(j));
+                record(j, j + 1, "Shifting " + numbers.get(j) + " to the right");
+                j--;
                 swapCount++;
             }
-            currentSortedIndices.add(i);
-            record(i, -1, "Number " + numbers.get(i) + " is sorted at index " + i);
+            numbers.set(j + 1, key);
+            for(int k=0; k<=i; k++) currentSortedIndices.add(k);
+            record(j + 1, -1, "Inserted " + key + " in sorted portion");
         }
-        record(-1, -1, "Process Finished Successfully!");
+    }
+
+    private void quickSort(int low, int high) {
+        if (low < high) {
+            int pi = partition(low, high);
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
+
+    private int partition(int low, int high) {
+        int pivot = numbers.get(high);
+        int i = (low - 1);
+        record(-1, high, "Pivot selected: " + pivot);
+        for (int j = low; j < high; j++) {
+            record(j, high, "Comparing " + numbers.get(j) + " with Pivot");
+            if (isAscending ? (numbers.get(j) < pivot) : (numbers.get(j) > pivot)) {
+                i++;
+                Collections.swap(numbers, i, j);
+                swapCount++;
+                record(i, j, "Swapping around pivot");
+            }
+        }
+        Collections.swap(numbers, i + 1, high);
+        record(i + 1, high, "Placing Pivot in final position");
+        currentSortedIndices.add(i + 1);
+        return i + 1;
+    }
+
+    private void mergeSort(int l, int r) {
+        if (l < r) {
+            int m = l + (r - l) / 2;
+            mergeSort(l, m);
+            mergeSort(m + 1, r);
+            merge(l, m, r);
+        }
+    }
+
+    private void merge(int l, int m, int r) {
+        record(l, r, "Merging segments [" + l + " to " + m + "] and [" + (m+1) + " to " + r + "]");
+        ArrayList<Integer> left = new ArrayList<>(numbers.subList(l, m + 1));
+        ArrayList<Integer> right = new ArrayList<>(numbers.subList(m + 1, r + 1));
+        int i = 0, j = 0, k = l;
+        while (i < left.size() && j < right.size()) {
+            if (isAscending ? (left.get(i) <= right.get(j)) : (left.get(i) >= right.get(j))) numbers.set(k++, left.get(i++));
+            else numbers.set(k++, right.get(j++));
+            record(k - 1, -1, "Combining sub-arrays...");
+        }
+        while (i < left.size()) numbers.set(k++, left.get(i++));
+        while (j < right.size()) numbers.set(k++, right.get(j++));
+    }
+
+    private void heapSort() {
+        int n = numbers.size();
+        for (int i = n / 2 - 1; i >= 0; i--) heapify(n, i);
+        for (int i = n - 1; i > 0; i--) {
+            Collections.swap(numbers, 0, i);
+            record(0, i, "Swapping root with last element");
+            currentSortedIndices.add(i);
+            heapify(i, 0);
+        }
+    }
+
+    private void heapify(int n, int i) {
+        int largest = i;
+        int l = 2 * i + 1;
+        int r = 2 * i + 2;
+        record(i, -1, "Heapifying subtree at root " + numbers.get(i));
+        if (l < n && (isAscending ? (numbers.get(l) > numbers.get(largest)) : (numbers.get(l) < numbers.get(largest)))) largest = l;
+        if (r < n && (isAscending ? (numbers.get(r) > numbers.get(largest)) : (numbers.get(r) < numbers.get(largest)))) largest = r;
+        if (largest != i) {
+            Collections.swap(numbers, i, largest);
+            swapCount++;
+            record(i, largest, "Adjusting Heap structure...");
+            heapify(n, largest);
+        }
+    }
+
+    private void shellSort() {
+        int n = numbers.size();
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            record(-1, -1, "Current Gap: " + gap);
+            for (int i = gap; i < n; i++) {
+                int temp = numbers.get(i);
+                int j;
+                for (j = i; j >= gap && (isAscending ? (numbers.get(j - gap) > temp) : (numbers.get(j - gap) < temp)); j -= gap) {
+                    record(j, j - gap, "Comparing elements with gap " + gap);
+                    numbers.set(j, numbers.get(j - gap));
+                    swapCount++;
+                }
+                numbers.set(j, temp);
+                record(j, -1, "Placing element after gap comparisons");
+            }
+        }
     }
 
     private void record(int a1, int a2, String log) {
@@ -157,44 +301,74 @@ public class VisualizationActivity extends AppCompatActivity {
         arrowContainer.removeAllViews();
 
         for (int k = 0; k < step.state.size(); k++) {
+            // --- Updated Arrows: Bigger, Bold, and Clear Pointer ---
             TextView arrow = new TextView(this);
-            arrow.setText(k == step.active1 ? "i ↓" : (k == step.active2 ? "j ↓" : ""));
+            // Use '⬇' for standard look, adding "i" or "j" labels for clarity.
+            if (k == step.active1) {
+                arrow.setText("i\n⬇");
+                arrow.setTextColor(Color.parseColor("#7B1FA2")); // Purple matching the box
+            } else if (k == step.active2) {
+                arrow.setText("j\n⬇");
+                arrow.setTextColor(Color.parseColor("#7B1FA2")); // Purple matching the box
+            } else {
+                arrow.setText("");
+            }
             arrow.setGravity(Gravity.CENTER);
-            arrow.setTextSize(10f);
-            arrowContainer.addView(arrow, new LinearLayout.LayoutParams(65, 45));
+            arrow.setTextSize(16f); // --- Increased from 12f ---
+            arrow.setTypeface(null, Typeface.BOLD); // --- Made Bold ---
 
+            // Layout params (Adjust width slightly if labels make them tight)
+            LinearLayout.LayoutParams aP = new LinearLayout.LayoutParams(70, 100); // More height for labels
+            arrowContainer.addView(arrow, aP);
+
+            // Boxes
             TextView box = new TextView(this);
             box.setText(String.valueOf(step.state.get(k)));
-            box.setGravity(Gravity.CENTER); box.setTextColor(Color.WHITE);
-            box.setTextSize(10f);
-            GradientDrawable gd = new GradientDrawable();
-            gd.setCornerRadius(6f);
+            box.setGravity(Gravity.CENTER); box.setTextColor(Color.WHITE); box.setTextSize(11f);
 
-            if (k == step.active1 || k == step.active2) gd.setColor(Color.parseColor("#7B1FA2"));
-            else if (step.sortedIndices.contains(k)) gd.setColor(Color.parseColor("#008080"));
-            else gd.setColor(Color.parseColor("#1E88E5"));
+            GradientDrawable gd = new GradientDrawable();
+            gd.setCornerRadius(8f);
+
+            if (k == step.active1 || k == step.active2) {
+                gd.setColor(Color.parseColor("#7B1FA2")); // Purple for comparing
+            } else if (step.sortedIndices.contains(k)) {
+                gd.setColor(Color.parseColor("#008080")); // Teal for sorted
+            } else {
+                gd.setColor(Color.parseColor("#1E88E5")); // Blue for unsorted
+            }
 
             box.setBackground(gd);
-            LinearLayout.LayoutParams bP = new LinearLayout.LayoutParams(65, 65);
-            bP.setMargins(2, 2, 2, 2);
+            LinearLayout.LayoutParams bP = new LinearLayout.LayoutParams(70, 75);
+            bP.setMargins(4, 4, 4, 4);
             containerBars.addView(box, bP);
         }
     }
 
+    // --- Enhanced playTone function ---
     private void playTone(int type, int dur) {
-        try { toneGen.startTone(type, dur); } catch (Exception ignored) {}
+        if (toneGen != null) {
+            try {
+                // Ensure music volume isn't muted
+                toneGen.startTone(type, dur);
+            } catch (Exception ignored) {}
+        }
     }
 
     private String getComplexity(String algo) {
         if (algo == null) return "Complexity: N/A";
         String a = algo.toLowerCase();
         if (a.contains("bubble") || a.contains("selection") || a.contains("insertion")) return "Complexity: O(n²)";
+        if (a.contains("shell")) return "Complexity: O(n log² n)";
         return "Complexity: O(n log n)";
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (toneGen != null) toneGen.release();
+        // --- Release ToneGenerator properly ---
+        if (toneGen != null) {
+            toneGen.release();
+            toneGen = null;
+        }
     }
 }

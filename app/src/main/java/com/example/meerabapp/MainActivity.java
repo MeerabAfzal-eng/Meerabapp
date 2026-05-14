@@ -46,12 +46,12 @@ public class MainActivity extends AppCompatActivity {
             if (!valStr.isEmpty()) {
                 try {
                     int num = Integer.parseInt(valStr);
-                    if (numbersList.size() < 20) { // Limit taake screen se bahar na jaye
+                    if (numbersList.size() < 30) { // Limit taake screen se bahar na jaye
                         numbersList.add(num);
                         updatePreview();
                         numberInput.setText("");
                     } else {
-                        Toast.makeText(this, "Maximum 20 numbers allowed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Maximum 30 numbers allowed", Toast.LENGTH_SHORT).show();
                     }
                 } catch (NumberFormatException e) {
                     Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
