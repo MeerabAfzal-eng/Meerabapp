@@ -4,9 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.meerabapp"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36 // Standard stable version use karein
 
     defaultConfig {
         applicationId = "com.example.meerabapp"

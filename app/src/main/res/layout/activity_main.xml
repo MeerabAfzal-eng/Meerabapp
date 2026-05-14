@@ -1,119 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:background="#F8F9FA">
+    android:padding="16dp"
+    android:background="#F5F5F5">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sorting Scope"
+        android:text="Sorting Algorithm\nVisualizer"
         android:textAlignment="center"
-        android:gravity="center"
-        android:textColor="#001F3F"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="25dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Algorithm:"
         android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="20dp" />
 
     <Spinner
         android:id="@+id/algorithmSpinner"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="50dp"
         android:background="@android:drawable/btn_dropdown"
-        android:backgroundTint="#CCCCCC"
-        android:layout_marginBottom="20dp"
-        android:spinnerMode="dropdown" />
+        android:layout_marginBottom="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/numberInput"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add values for sorting (Max 30)"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:hint="Enter a number"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:padding="12dp"
+        android:background="@android:drawable/edit_text"
+        android:layout_marginBottom="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/numberInput"
-            android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:layout_weight="1"
-            android:hint="Enter number\"
-            android:textColorHint="#666666"
-            android:textColor="#000000"
-            android:paddingLeft="12dp"
-            android:inputType="phone"
-            android:digits="0123456789.+- "
-            android:background="@android:drawable/edit_text"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/addButton"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:text="Add"
-            android:layout_marginLeft="10dp"
-            android:backgroundTint="#001F3F"
-            android:textColor="#FFFFFF" />
-    </LinearLayout>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="125dp"
-        android:layout_marginTop="20dp"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:padding="10dp">
-        <LinearLayout
-            android:id="@+id/visualContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical" />
-    </HorizontalScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         android:weightSum="2">
 
         <Button
-            android:id="@+id/removeLastButton"
+            android:id="@+id/addButton"
             android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Remove Last"
-            android:layout_marginRight="5dp"
-            android:backgroundTint="#001F3F"
-            android:textColor="#FFFFFF" />
+            android:text="Add Value"
+            android:layout_marginEnd="5dp" />
 
         <Button
-            android:id="@+id/submitButton"
+            android:id="@+id/removeLastButton"
             android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sort"
-            android:layout_marginLeft="5dp"
-            android:backgroundTint="#001F3F"
-            android:textColor="#FFFFFF" />
+            android:text="Remove Last" />
     </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:id="@+id/visualContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Sort Now"
+        android:backgroundTint="#1E88E5"
+        android:textColor="#FFFFFF" />
+
 </LinearLayout>
