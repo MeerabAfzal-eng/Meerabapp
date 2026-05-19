@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F4F7F9"
+    android:padding="12dp"
+    android:baselineAligned="false"
+    tools:context=".ComparisonScreen">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Algorithm Comparison"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:gravity="center"
+        android:layout_marginVertical="6dp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginBottom="10dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Algorithm A:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                tools:ignore="HardcodedText" />
+            <Spinner
+                android:id="@+id/spinnerAlgoA"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:contentDescription="Select First Algorithm" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Algorithm B:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E50"
+                tools:ignore="HardcodedText" />
+            <Spinner
+                android:id="@+id/spinnerAlgoB"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:contentDescription="Select Second Algorithm" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="false">
+            <TextView
+                android:id="@+id/lblAlgoA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="Algorithm A"
+                android:textStyle="bold"
+                android:textColor="#1F618D"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/txtSwapsA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="Swaps: 0"
+                android:gravity="center"
+                android:textColor="#2C3E50"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/txtTimerA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="0.00s"
+                android:gravity="end"
+                android:textColor="#C0392B"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:contentDescription="Algorithm A Bars Container">
+            <LinearLayout
+                android:id="@+id/containerBarsA"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"/>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="false">
+            <TextView
+                android:id="@+id/lblAlgoB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:text="Algorithm B"
+                android:textStyle="bold"
+                android:textColor="#1E8449"
+                android:textSize="15sp"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/txtSwapsB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="Swaps: 0"
+                android:gravity="center"
+                android:textColor="#2C3E50"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/txtTimerB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="0.00s"
+                android:gravity="end"
+                android:textColor="#C0392B"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:contentDescription="Algorithm B Bars Container">
+            <LinearLayout
+                android:id="@+id/containerBarsB"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"/>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:baselineAligned="false">
+        <Button
+            android:id="@+id/btnStartCompare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Start Compare"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:backgroundTint="#8E44AD"
+            tools:ignore="HardcodedText" />
+        <Button
+            android:id="@+id/btnResetCompare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reset"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:backgroundTint="#C0392B"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -79,7 +79,20 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("algorithm", algorithmSpinner.getSelectedItem().toString());
             startActivity(intent);
         });
-    }
+
+        // ✅ AB YEH BILKUL SAHI JAGAH PAR HAI (onCreate ke andar)
+        Button btnGoToCompare = findViewById(R.id.btnGoToCompare);
+        btnGoToCompare.setOnClickListener(v -> {
+            if (numbersList.size() < 2) {
+                Toast.makeText(this, "Please add at least 2 numbers to compare", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(MainActivity.this, ComparisonScreen.class);
+            intent.putIntegerArrayListExtra("numbers", numbersList);
+            startActivity(intent);
+        });
+
+    } // Ye onCreate ka main bracket yahan band ho raha hai
 
     private void updatePreview() {
         visualContainer.removeAllViews();
