@@ -10,11 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfileActivity extends AppCompatActivity {
     private EditText etName, etID;
     private Button btnSubmit;
+    private DatabaseHelper dbHelper; // Database instance helper decleration
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        dbHelper = new DatabaseHelper(this); // Initialization
 
         etName = findViewById(R.id.etName);
         etID = findViewById(R.id.etID);
@@ -27,9 +30,17 @@ public class ProfileActivity extends AppCompatActivity {
             if (name.isEmpty() || id.isEmpty()) {
                 Toast.makeText(this, "Please enter Name and ID", Toast.LENGTH_SHORT).show();
             } else {
-                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                // ✅ SAVING DATA TO SQLITE DATABASE
+                boolean isSaved = dbHelper.saveProfile(id, name);
+
+                if (isSaved) {
+                    Toast.makeText(this, "Profile Saved Successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Database Error! Try Again.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
