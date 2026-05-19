@@ -91,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
             intent.putIntegerArrayListExtra("numbers", numbersList);
             startActivity(intent);
         });
+        Button btnGoToQuiz = findViewById(R.id.btnGoToQuiz);
+        btnGoToQuiz.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, activity_quiz.class);
+            startActivity(intent);
+        });
 
     } // Ye onCreate ka main bracket yahan band ho raha hai
 
