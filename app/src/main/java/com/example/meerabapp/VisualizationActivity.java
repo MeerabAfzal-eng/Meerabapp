@@ -347,6 +347,7 @@ public class VisualizationActivity extends AppCompatActivity {
     // --- Enhanced playTone function ---
     private void playTone(int type, int dur) {
         if (toneGen != null) {
+
             try {
                 // Ensure music volume isn't muted
                 toneGen.startTone(type, dur);
