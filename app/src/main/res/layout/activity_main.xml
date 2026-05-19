@@ -87,5 +87,15 @@
         android:text="Compare Two Algorithms"
         android:layout_marginTop="10dp"
         android:backgroundTint="#8E44AD"/>
+    <Button
+        android:id="@+id/btnGoToQuiz"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="Take Algorithm Quiz"
+        android:backgroundTint="#001F3F"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_marginTop="15dp" />
 
 </LinearLayout>
