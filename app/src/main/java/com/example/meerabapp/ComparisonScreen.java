@@ -53,7 +53,10 @@ public class ComparisonScreen extends AppCompatActivity {
     private Thread raceThread;
     private ToneGenerator toneGenerator;
 
-    private int currentSwapsA, currentSwapsB;
+    // ✅ FIXED: Separate independent final holders
+    private int finalTotalSwapsA = 0;
+    private int finalTotalSwapsB = 0;
+
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
@@ -118,6 +121,8 @@ public class ComparisonScreen extends AppCompatActivity {
 
         finalDurationA = 0;
         finalDurationB = 0;
+        finalTotalSwapsA = 0;
+        finalTotalSwapsB = 0;
 
         renderBaseState(containerBarsA, initialNumbers);
         renderBaseState(containerBarsB, initialNumbers);
@@ -134,7 +139,7 @@ public class ComparisonScreen extends AppCompatActivity {
 
             GradientDrawable design = new GradientDrawable();
             design.setCornerRadius(10f);
-            design.setColor(Color.parseColor("#1F618D")); // Shuru me sab Blue hoga
+            design.setColor(Color.parseColor("#1F618D"));
             bar.setBackground(design);
 
             LinearLayout.LayoutParams space = new LinearLayout.LayoutParams(75, 80);
@@ -157,13 +162,20 @@ public class ComparisonScreen extends AppCompatActivity {
 
         raceThread = new Thread(() -> {
             timelineSteps.clear();
-            currentSwapsA = 0; currentSwapsB = 0;
 
             ArrayList<Integer> workingA = new ArrayList<>(initialNumbers);
             ArrayList<Integer> workingB = new ArrayList<>(initialNumbers);
 
-            ArrayList<CompareStep> algorithmASteps = generateStepsForAlgo(workingA, selectedA, true);
-            ArrayList<CompareStep> algorithmBSteps = generateStepsForAlgo(workingB, selectedB, false);
+            // Local tracking discrete objects pass karenge taake data isolate rahe
+            int[] swapCounterA = new int[]{0};
+            int[] swapCounterB = new int[]{0};
+
+            ArrayList<CompareStep> algorithmASteps = generateStepsForAlgo(workingA, selectedA, true, swapCounterA);
+            ArrayList<CompareStep> algorithmBSteps = generateStepsForAlgo(workingB, selectedB, false, swapCounterB);
+
+            // ✅ PURE SECURITY LOCK: Submited static values are preserved immediately
+            finalTotalSwapsA = swapCounterA[0];
+            finalTotalSwapsB = swapCounterB[0];
 
             int totalFrames = Math.max(algorithmASteps.size(), algorithmBSteps.size());
 
@@ -179,7 +191,8 @@ public class ComparisonScreen extends AppCompatActivity {
                         isOverA ? -1 : stepDataA.activeA1, isOverA ? -1 : stepDataA.activeA2,
                         isOverB ? -1 : stepDataB.activeB1, isOverB ? -1 : stepDataB.activeB2,
                         stepDataA.sortedA, stepDataB.sortedB,
-                        stepDataA.swapsA, stepDataB.swapsB,
+                        isOverA ? finalTotalSwapsA : stepDataA.swapsA,
+                        isOverB ? finalTotalSwapsB : stepDataB.swapsB,
                         isOverA, isOverB
                 ));
             }
@@ -212,12 +225,13 @@ public class ComparisonScreen extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 String finalResult;
-                if (currentSwapsA < currentSwapsB) {
-                    finalResult = "🏆 " + selectedA + " is more efficient (Fewer Operations)!";
-                } else if (currentSwapsB < currentSwapsA) {
-                    finalResult = "🏆 " + selectedB + " is more efficient (Fewer Operations)!";
+                // ✅ COMPARISON VALIDATION: Koi tie issue nahi aayega ab completely genuine values compare hongi
+                if (finalTotalSwapsA < finalTotalSwapsB) {
+                    finalResult = "🏆 " + selectedA + " is more efficient! \n(Swaps: " + finalTotalSwapsA + " vs " + finalTotalSwapsB + ")";
+                } else if (finalTotalSwapsB < finalTotalSwapsA) {
+                    finalResult = "🏆 " + selectedB + " is more efficient! \n(Swaps: " + finalTotalSwapsB + " vs " + finalTotalSwapsA + ")";
                 } else {
-                    finalResult = "🤝 It's a Tie in structural swaps!";
+                    finalResult = "🤝 It's a structural tie! Both took " + finalTotalSwapsA + " operations.";
                 }
                 Toast.makeText(this, finalResult, Toast.LENGTH_LONG).show();
             });
@@ -226,10 +240,9 @@ public class ComparisonScreen extends AppCompatActivity {
         raceThread.start();
     }
 
-    private ArrayList<CompareStep> generateStepsForAlgo(ArrayList<Integer> array, String name, boolean isPanelA) {
+    private ArrayList<CompareStep> generateStepsForAlgo(ArrayList<Integer> array, String name, boolean isPanelA, int[] counter) {
         ArrayList<CompareStep> steps = new ArrayList<>();
         HashSet<Integer> sorted = new HashSet<>();
-        int operations = 0;
         int n = array.size();
 
         if (name.equalsIgnoreCase("Bubble Sort")) {
@@ -237,28 +250,28 @@ public class ComparisonScreen extends AppCompatActivity {
                 for (int j = 0; j < n - i - 1; j++) {
                     if (array.get(j) > array.get(j + 1)) {
                         Collections.swap(array, j, j + 1);
-                        operations++;
+                        counter[0]++;
                     }
-                    steps.add(createFrame(array, j, j + 1, sorted, operations, isPanelA));
+                    steps.add(createFrame(array, j, j + 1, sorted, counter[0], isPanelA));
                 }
-                sorted.add(n - i - 1); // Har pass ke baad aakhri element teal hota jayega
+                sorted.add(n - i - 1);
             }
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Selection Sort")) {
             for (int i = 0; i < n; i++) {
                 int minIdx = i;
                 for (int j = i + 1; j < n; j++) {
-                    steps.add(createFrame(array, minIdx, j, sorted, operations, isPanelA));
+                    steps.add(createFrame(array, minIdx, j, sorted, counter[0], isPanelA));
                     if (array.get(j) < array.get(minIdx)) minIdx = j;
                 }
                 if (minIdx != i) {
                     Collections.swap(array, i, minIdx);
-                    operations++;
+                    counter[0]++;
                 }
-                sorted.add(i); // Har iteration me sahi element teal hota jayega
-                steps.add(createFrame(array, i, minIdx, sorted, operations, isPanelA));
+                sorted.add(i);
+                steps.add(createFrame(array, i, minIdx, sorted, counter[0], isPanelA));
             }
         }
         else if (name.equalsIgnoreCase("Insertion Sort")) {
@@ -268,16 +281,16 @@ public class ComparisonScreen extends AppCompatActivity {
                 int j = i - 1;
                 while (j >= 0 && array.get(j) > key) {
                     array.set(j + 1, array.get(j));
-                    operations++;
-                    steps.add(createFrame(array, j, j + 1, sorted, operations, isPanelA));
+                    counter[0]++;
+                    steps.add(createFrame(array, j, j + 1, sorted, counter[0], isPanelA));
                     j--;
                 }
                 array.set(j + 1, key);
-                for(int k = 0; k <= i; k++) sorted.add(k); // Sorted sub-array teal hoti jayegi
-                steps.add(createFrame(array, j + 1, i, sorted, operations, isPanelA));
+                for(int k = 0; k <= i; k++) sorted.add(k);
+                steps.add(createFrame(array, j + 1, i, sorted, counter[0], isPanelA));
             }
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Shell Sort")) {
             for (int gap = n / 2; gap > 0; gap /= 2) {
@@ -286,52 +299,48 @@ public class ComparisonScreen extends AppCompatActivity {
                     int j;
                     for (j = i; j >= gap && array.get(j - gap) > temp; j -= gap) {
                         array.set(j, array.get(j - gap));
-                        operations++;
-                        steps.add(createFrame(array, j, j - gap, sorted, operations, isPanelA));
+                        counter[0]++;
+                        steps.add(createFrame(array, j, j - gap, sorted, counter[0], isPanelA));
                     }
                     array.set(j, temp);
-                    if (gap == 1) { // Jab final gap 1 chal raha ho to elements sort hote hain
+                    if (gap == 1) {
                         for(int k = 0; k <= i; k++) sorted.add(k);
                     }
-                    steps.add(createFrame(array, j, -1, sorted, operations, isPanelA));
+                    steps.add(createFrame(array, j, -1, sorted, counter[0], isPanelA));
                 }
             }
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Heap Sort")) {
             for (int i = n / 2 - 1; i >= 0; i--) {
-                operations = runHeapifySimulation(array, n, i, steps, sorted, operations, isPanelA);
+                runHeapifySimulation(array, n, i, steps, sorted, counter, isPanelA);
             }
             for (int i = n - 1; i > 0; i--) {
                 Collections.swap(array, 0, i);
-                operations++;
-                sorted.add(i); // Largest element heap se nikal kar final position par teal ho gaya
-                steps.add(createFrame(array, 0, i, sorted, operations, isPanelA));
-                operations = runHeapifySimulation(array, i, 0, steps, sorted, operations, isPanelA);
+                counter[0]++;
+                sorted.add(i);
+                steps.add(createFrame(array, 0, i, sorted, counter[0], isPanelA));
+                runHeapifySimulation(array, i, 0, steps, sorted, counter, isPanelA);
             }
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Quick Sort")) {
-            if (isPanelA) currentSwapsA = 0; else currentSwapsB = 0;
-            runQuickSortSimulation(array, 0, n - 1, steps, sorted, isPanelA);
-            operations = isPanelA ? currentSwapsA : currentSwapsB;
+            runQuickSortSimulation(array, 0, n - 1, steps, sorted, counter, isPanelA);
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Merge Sort")) {
-            if (isPanelA) currentSwapsA = 0; else currentSwapsB = 0;
-            runMergeSortSimulation(array, 0, n - 1, steps, sorted, isPanelA);
-            operations = isPanelA ? currentSwapsA : currentSwapsB;
+            runMergeSortSimulation(array, 0, n - 1, steps, sorted, counter, isPanelA);
             for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, operations, isPanelA));
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
         }
 
         return steps;
     }
 
-    private int runHeapifySimulation(ArrayList<Integer> arr, int size, int root, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int ops, boolean isPanelA) {
+    private void runHeapifySimulation(ArrayList<Integer> arr, int size, int root, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
         int largest = root;
         int l = 2 * root + 1;
         int r = 2 * root + 2;
@@ -341,43 +350,42 @@ public class ComparisonScreen extends AppCompatActivity {
 
         if (largest != root) {
             Collections.swap(arr, root, largest);
-            ops++;
-            steps.add(createFrame(arr, root, largest, sorted, ops, isPanelA));
-            ops = runHeapifySimulation(arr, size, largest, steps, sorted, ops, isPanelA);
+            counter[0]++;
+            steps.add(createFrame(arr, root, largest, sorted, counter[0], isPanelA));
+            runHeapifySimulation(arr, size, largest, steps, sorted, counter, isPanelA);
         }
-        return ops;
     }
 
-    private void runQuickSortSimulation(ArrayList<Integer> arr, int low, int high, ArrayList<CompareStep> steps, HashSet<Integer> sorted, boolean isPanelA) {
+    private void runQuickSortSimulation(ArrayList<Integer> arr, int low, int high, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
         if (low < high) {
             int pivot = arr.get(high);
             int i = (low - 1);
             for (int j = low; j < high; j++) {
-                steps.add(createFrame(arr, j, high, sorted, isPanelA ? currentSwapsA : currentSwapsB, isPanelA));
+                steps.add(createFrame(arr, j, high, sorted, counter[0], isPanelA));
                 if (arr.get(j) < pivot) {
                     i++;
                     Collections.swap(arr, i, j);
-                    if (isPanelA) currentSwapsA++; else currentSwapsB++;
-                    steps.add(createFrame(arr, i, j, sorted, isPanelA ? currentSwapsA : currentSwapsB, isPanelA));
+                    counter[0]++;
+                    steps.add(createFrame(arr, i, j, sorted, counter[0], isPanelA));
                 }
             }
             Collections.swap(arr, i + 1, high);
-            if (isPanelA) currentSwapsA++; else currentSwapsB++;
-            sorted.add(i + 1); // Pivot element apni sahi jagah par teal ho gaya
-            steps.add(createFrame(arr, i + 1, high, sorted, isPanelA ? currentSwapsA : currentSwapsB, isPanelA));
+            counter[0]++;
+            sorted.add(i + 1);
+            steps.add(createFrame(arr, i + 1, high, sorted, counter[0], isPanelA));
 
-            runQuickSortSimulation(arr, low, i - 1, steps, sorted, isPanelA);
-            runQuickSortSimulation(arr, i + 1, high, steps, sorted, isPanelA);
+            runQuickSortSimulation(arr, low, i - 1, steps, sorted, counter, isPanelA);
+            runQuickSortSimulation(arr, i + 1, high, steps, sorted, counter, isPanelA);
         } else if (low == high) {
             sorted.add(low);
         }
     }
 
-    private void runMergeSortSimulation(ArrayList<Integer> arr, int l, int r, ArrayList<CompareStep> steps, HashSet<Integer> sorted, boolean isPanelA) {
+    private void runMergeSortSimulation(ArrayList<Integer> arr, int l, int r, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
         if (l < r) {
             int m = l + (r - l) / 2;
-            runMergeSortSimulation(arr, l, m, steps, sorted, isPanelA);
-            runMergeSortSimulation(arr, m + 1, r, steps, sorted, isPanelA);
+            runMergeSortSimulation(arr, l, m, steps, sorted, counter, isPanelA);
+            runMergeSortSimulation(arr, m + 1, r, steps, sorted, counter, isPanelA);
 
             ArrayList<Integer> leftList = new ArrayList<>(arr.subList(l, m + 1));
             ArrayList<Integer> rightList = new ArrayList<>(arr.subList(m + 1, r + 1));
@@ -388,9 +396,9 @@ public class ComparisonScreen extends AppCompatActivity {
                 } else {
                     arr.set(k++, rightList.get(j++));
                 }
-                if (isPanelA) currentSwapsA++; else currentSwapsB++;
-                sorted.add(k - 1); // Merge hotay sath hi element position confirm teal
-                steps.add(createFrame(arr, k - 1, -1, sorted, isPanelA ? currentSwapsA : currentSwapsB, isPanelA));
+                counter[0]++;
+                sorted.add(k - 1);
+                steps.add(createFrame(arr, k - 1, -1, sorted, counter[0], isPanelA));
             }
             while (i < leftList.size()) {
                 arr.set(k, leftList.get(i++));
@@ -450,11 +458,11 @@ public class ComparisonScreen extends AppCompatActivity {
             drawable.setCornerRadius(10f);
 
             if (m == a1 || m == a2) {
-                drawable.setColor(Color.parseColor("#E74C3C")); // Comparing / Swap (Red)
+                drawable.setColor(Color.parseColor("#E74C3C"));
             } else if (sorted.contains(m)) {
-                drawable.setColor(Color.parseColor("#008080")); // Individually Sorted (Teal Green)
+                drawable.setColor(Color.parseColor("#008080"));
             } else {
-                drawable.setColor(Color.parseColor("#1F618D")); // Unsorted (Hamesha Blue)
+                drawable.setColor(Color.parseColor("#1F618D"));
             }
 
             cell.setBackground(drawable);
