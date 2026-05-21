@@ -1,90 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FFFFFF"
-    android:focusableInTouchMode="true">
+    android:padding="12dp"
+    android:background="#FFFFFF">
 
     <TextView
+        android:id="@+id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sorting Scope"
-        android:textAlignment="center"
-        android:textColor="#002366"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Algorithm"
-        android:textColor="#555555"
-        android:textSize="14sp" />
-
-    <Spinner
-        android:id="@+id/algorithmSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginTop="5dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:overlapAnchor="false"
-        android:popupBackground="#FFFFFF"
-        android:spinnerMode="dropdown" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="15dp">
-
-        <LinearLayout
-            android:id="@+id/inputContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/firstInput"
-                android:layout_width="match_parent"
-                android:layout_height="120px"
-                android:hint="Enter value"
-                android:textSize="16sp"
-                android:paddingLeft="12dp"
-                android:background="@android:drawable/edit_text"
-                android:textColor="#000000" />
-
-        </LinearLayout>
-    </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:weightSum="2">
-
-        <Button
-            android:id="@+id/addButton"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="Add Field"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="#4CAF50"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="Submit"
-            android:layout_marginStart="4dp"
-            android:backgroundTint="#002366"
-            android:textSize="12sp" />
-    </LinearLayout>
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:padding="8dp" />
 
 </LinearLayout>
