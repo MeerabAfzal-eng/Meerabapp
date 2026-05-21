@@ -368,7 +368,7 @@ public class VisualizationActivity extends AppCompatActivity {
         super.onDestroy();
         // --- Release ToneGenerator properly ---
         if (toneGen != null) {
-            toneGen.release();// Testing Git changes
+            toneGen.release();
             toneGen = null;
         }
     }
