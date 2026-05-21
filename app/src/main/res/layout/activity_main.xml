@@ -55,7 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="55dp"
             android:layout_weight="1"
-            android:hint="Enter number\"
+            android:hint="Enter number"
             android:textColorHint="#666666"
             android:textColor="#000000"
             android:paddingLeft="12dp"
