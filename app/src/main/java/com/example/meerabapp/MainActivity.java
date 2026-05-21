@@ -108,6 +108,6 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
         params.setMargins(10, 0, 10, 0);
         tv.setLayoutParams(params);
-        visualContainer.addView(tv):
+        visualContainer.addView(tv);
     }
 }
