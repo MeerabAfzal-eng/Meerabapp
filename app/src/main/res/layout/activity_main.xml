@@ -72,6 +72,19 @@
             android:layout_marginLeft="10dp"
             android:backgroundTint="#001F3F"
             android:textColor="#FFFFFF" />
+        <Button
+            android:id="@+id/btnGoToCompare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Go to Comparison" />
+
+        <Button
+            android:id="@+id/btnGoToQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Take Quiz" />
     </LinearLayout>
 
     <HorizontalScrollView
