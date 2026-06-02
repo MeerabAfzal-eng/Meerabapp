@@ -171,6 +171,13 @@
                 android:layout_marginBottom="4dp"
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
+            <Button
+                android:id="@+id/btnGoToProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View Progress Record"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="#27AE60" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

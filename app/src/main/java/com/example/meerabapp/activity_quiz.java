@@ -153,27 +153,28 @@ public class activity_quiz extends AppCompatActivity {
         optionC.setText(options[currentQuestionIndex][2]);
         optionD.setText(options[currentQuestionIndex][3]);
     }
+private void finalizeQuizSession() {
+    boolean isSaved = dbHelper.saveQuizResult(userScore, questions.length);
 
-    private void finalizeQuizSession() {
-        boolean isSaved = dbHelper.saveQuizResult(userScore, questions.length);
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Quiz Completed! 🎉");
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Quiz Completed! 🎉");
+    String feedbackMessage = isSaved ?
+            "Score recorded! Let's see your progress.\n\n" :
+            "Score recorded (Offline mode).\n\n";
 
-        String feedbackMessage = isSaved ?
-                "Your score was successfully recorded to performance logs.\n\n" :
-                "Error processing metrics log routing storage.\n\n";
+    builder.setMessage(feedbackMessage + "Total Score: " + userScore + "/" + questions.length);
+    builder.setCancelable(false);
 
-        builder.setMessage(feedbackMessage + "Total Score Secured: " + userScore + " out of " + questions.length);
-        builder.setCancelable(false);
-        builder.setPositiveButton("Return to Workspace Dashboard", (dialog, which) -> {
-            // Updated directly to context instance lowercase mapping reference
-            Intent intent = new Intent(activity_quiz.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        });
+    // Yahan wo purana button remove ho gaya aur naya performance button lag gaya
+    builder.setPositiveButton("View Performance Chart", (dialog, which) -> {
+        Intent intent = new Intent(activity_quiz.this, activity_progress.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    });
 
-        builder.show();
-    }
+    builder.show();
+}
+
 }
