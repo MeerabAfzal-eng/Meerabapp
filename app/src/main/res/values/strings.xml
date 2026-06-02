@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SortingApp</string>
+    <string name="app_name">Sorting Scope</string>
 
     <string-array name="algorithms">
         <item>Bubble Sort</item>
