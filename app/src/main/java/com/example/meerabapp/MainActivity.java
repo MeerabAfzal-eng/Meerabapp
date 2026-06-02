@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private LinearLayout visualContainer;
-    private Button addButton, submitButton, removeLastButton;
+    private Button addButton, submitButton, removeLastButton, btnGoToCompare, btnGoToQuiz, btnGoToProgress;
     private Spinner algorithmSpinner;
     private EditText numberInput;
     private ArrayList<Integer> numbersList = new ArrayList<>();
@@ -26,95 +26,54 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Views ko initialize karna
         visualContainer = findViewById(R.id.visualContainer);
         addButton = findViewById(R.id.addButton);
         submitButton = findViewById(R.id.submitButton);
         removeLastButton = findViewById(R.id.removeLastButton);
         algorithmSpinner = findViewById(R.id.algorithmSpinner);
         numberInput = findViewById(R.id.numberInput);
+        btnGoToCompare = findViewById(R.id.btnGoToCompare);
+        btnGoToQuiz = findViewById(R.id.btnGoToQuiz);
+        btnGoToProgress = findViewById(R.id.btnGoToProgress); // XML mein ye ID zaroor ho
 
-        // Spinner Setup
         String[] algorithms = {"Bubble Sort", "Insertion Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, algorithms);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         algorithmSpinner.setAdapter(adapter);
 
-        // Add Button Logic
         addButton.setOnClickListener(v -> {
             String valStr = numberInput.getText().toString().trim();
             if (!valStr.isEmpty()) {
                 try {
-                    int num = Integer.parseInt(valStr);
-                    if (numbersList.size() < 30) { // Limit taake screen se bahar na jaye
-                        numbersList.add(num);
-                        updatePreview();
-                        numberInput.setText("");
-                    } else {
-                        Toast.makeText(this, "Maximum 30 numbers allowed", Toast.LENGTH_SHORT).show();
-                    }
+                    numbersList.add(Integer.parseInt(valStr));
+                    updatePreview();
+                    numberInput.setText("");
                 } catch (NumberFormatException e) {
-                    Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Valid number likhein", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Remove Last Logic
-        removeLastButton.setOnClickListener(v -> {
-            if (!numbersList.isEmpty()) {
-                numbersList.remove(numbersList.size() - 1);
-                updatePreview();
-            }
-        });
-
-        // Submit to Visualization Logic
         submitButton.setOnClickListener(v -> {
-            if (numbersList.size() < 2) {
-                Toast.makeText(this, "Please add at least 2 numbers to sort", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // Intent for VisualizationActivity
             Intent intent = new Intent(MainActivity.this, VisualizationActivity.class);
             intent.putIntegerArrayListExtra("numbers", numbersList);
             intent.putExtra("algorithm", algorithmSpinner.getSelectedItem().toString());
             startActivity(intent);
         });
 
-        // ✅ AB YEH BILKUL SAHI JAGAH PAR HAI (onCreate ke andar)
-        Button btnGoToCompare = findViewById(R.id.btnGoToCompare);
-        btnGoToCompare.setOnClickListener(v -> {
-            if (numbersList.size() < 2) {
-                Toast.makeText(this, "Please add at least 2 numbers to compare", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Intent intent = new Intent(MainActivity.this, ComparisonScreen.class);
-            intent.putIntegerArrayListExtra("numbers", numbersList);
-            startActivity(intent);
-        });
-        Button btnGoToQuiz = findViewById(R.id.btnGoToQuiz);
-        btnGoToQuiz.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, activity_quiz.class);
-            startActivity(intent);
-        });
+        btnGoToQuiz.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_quiz.class)));
 
-    } // Ye onCreate ka main bracket yahan band ho raha hai
+        btnGoToProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
+    }
 
     private void updatePreview() {
         visualContainer.removeAllViews();
         for (int n : numbersList) {
             TextView tv = new TextView(this);
             tv.setText(String.valueOf(n));
-            tv.setTextSize(18);
-            tv.setTextColor(Color.BLACK);
-            tv.setGravity(Gravity.CENTER);
-
-            // Box styling
             tv.setBackgroundResource(android.R.drawable.editbox_background);
-
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
             params.setMargins(10, 0, 10, 0);
             tv.setLayoutParams(params);
-
             visualContainer.addView(tv);
         }
     }

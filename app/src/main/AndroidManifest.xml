@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MeerabApp">
         <activity
+            android:name=".activity_progress"
+            android:exported="false" />
+        <activity
             android:name=".activity_quiz"
             android:exported="false" />
         <activity
