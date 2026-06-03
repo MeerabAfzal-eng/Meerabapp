@@ -51,7 +51,10 @@ public class ComparisonScreen extends AppCompatActivity {
     private LinearLayout containerBarsA, containerBarsB;
     private TextView lblAlgoA, lblAlgoB, txtSwapsA, txtSwapsB, txtTimerA, txtTimerB;
     private Thread raceThread;
-    private ToneGenerator toneGenerator;
+
+    // 🎵 Audio components ko redefine kiya gya hai
+    private ToneGenerator processToneGenerator;
+    private ToneGenerator successToneGenerator;
 
     private int finalTotalSwapsA = 0;
     private int finalTotalSwapsB = 0;
@@ -64,7 +67,9 @@ public class ComparisonScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comparison_screen);
 
-        toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        // 🔊 Do alag tone generators bnae hain taky sorting aur success dono ki awaz bilkul alag ho!
+        processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85); // Pehle se tez aur clear sound
+        successToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100); // Full volume for victory!
 
         spinnerAlgoA = findViewById(R.id.spinnerAlgoA);
         spinnerAlgoB = findViewById(R.id.spinnerAlgoB);
@@ -127,7 +132,6 @@ public class ComparisonScreen extends AppCompatActivity {
         renderBaseState(containerBarsB, initialNumbers);
     }
 
-    // ✅ FIXED: Initial Base State with uniform sizes and Bright Blue color
     private void renderBaseState(LinearLayout container, ArrayList<Integer> list) {
         container.removeAllViews();
         for (int item : list) {
@@ -202,11 +206,13 @@ public class ComparisonScreen extends AppCompatActivity {
                 CompareStep activeFrame = timelineSteps.get(t);
                 long currentDuration = SystemClock.elapsedRealtime() - tickerStart;
 
+                // 🎵 ✅ AWESOME CHANGE 1: Jab sorting chal rhi ho to pyari si crisp click/tinkle sound aye gi
                 if ((!activeFrame.isFinishedA && (activeFrame.activeA1 != -1)) ||
                         (!activeFrame.isFinishedB && (activeFrame.activeB1 != -1))) {
                     try {
-                        toneGenerator.stopTone();
-                        toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 40);
+                        processToneGenerator.stopTone();
+                        // TONE_DTMF_1 se ek short aur pyari high-pitch game sound baje gi
+                        processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
                     } catch (Exception ignored) {}
                 }
 
@@ -217,9 +223,12 @@ public class ComparisonScreen extends AppCompatActivity {
                 } catch (InterruptedException e) { return; }
             }
 
+            // 🎵 ✅ AWESOME CHANGE 2: Jab puri sorting aur algorithm complete ho jaye to dual-tone victory chime bajy gi!
             try {
-                toneGenerator.stopTone();
-                toneGenerator.startTone(ToneGenerator.TONE_CDMA_PIP, 250);
+                successToneGenerator.stopTone();
+                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150); // Ek classy bell/success chime
+                SystemClock.sleep(100);
+                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 200); // Musical finish
             } catch (Exception ignored) {}
 
             runOnUiThread(() -> {
@@ -443,7 +452,6 @@ public class ComparisonScreen extends AppCompatActivity {
         drawActiveTimelineBars(containerBarsB, frame.stateB, frame.activeB1, frame.activeB2, frame.sortedB);
     }
 
-    // soccer-strict fixed sizing & styling matching your visualization specs
     private void drawActiveTimelineBars(LinearLayout container, ArrayList<Integer> items, int a1, int a2, HashSet<Integer> sorted) {
         container.removeAllViews();
         for (int m = 0; m < items.size(); m++) {
@@ -452,25 +460,21 @@ public class ComparisonScreen extends AppCompatActivity {
             cell.setGravity(Gravity.CENTER);
             cell.setTextColor(Color.WHITE);
             cell.setTextSize(11f);
-            cell.setSingleLine(true); // Forces huge numbers inside the frame bound bounds
+            cell.setSingleLine(true);
 
             GradientDrawable drawable = new GradientDrawable();
             drawable.setCornerRadius(10f);
 
             if (m == a1 || m == a2) {
-                // 1. Processed / Comparing Items (Purple color)
                 drawable.setColor(Color.parseColor("#9B59B6"));
             } else if (sorted.contains(m)) {
-                // 2. Sorted Items (Teal color)
                 drawable.setColor(Color.parseColor("#008080"));
             } else {
-                // 3. Unsorted Items (Bright Blue color)
                 drawable.setColor(Color.parseColor("#0040FF"));
             }
 
             cell.setBackground(drawable);
 
-            // 📐 100% FIXED UNIFORM BOXES
             LinearLayout.LayoutParams rule = new LinearLayout.LayoutParams(110, 100);
             rule.setMargins(6, 6, 6, 6);
             container.addView(cell, rule);
@@ -480,8 +484,12 @@ public class ComparisonScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (toneGenerator != null) {
-            toneGenerator.release();
+        // 🧼 Safe cleanup taake app crash na ho background memory leak se
+        if (processToneGenerator != null) {
+            processToneGenerator.release();
+        }
+        if (successToneGenerator != null) {
+            successToneGenerator.release();
         }
     }
 }

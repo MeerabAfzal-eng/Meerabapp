@@ -2,6 +2,7 @@ package com.example.meerabapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.ArrayAdapter;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 2. Remove Last Number Button (Jo missing tha)
+        // 2. Remove Last Number Button
         removeLastButton.setOnClickListener(v -> {
             if (!numbersList.isEmpty()) {
                 numbersList.remove(numbersList.size() - 1);
@@ -76,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // ✅ FIXED: Comparison Screen par jaane ka code lagaya (Jo missing tha)
+        // 4. Go to Comparison Screen
         btnGoToCompare.setOnClickListener(v -> {
             if (numbersList.size() < 2) {
                 Toast.makeText(this, "Comparison ke liye kam se kam 2 numbers add karein!", Toast.LENGTH_SHORT).show();
                 return;
             }
             Intent intent = new Intent(MainActivity.this, ComparisonScreen.class);
-            intent.putIntegerArrayListExtra("numbers", new ArrayList<>(numbersList)); // Exact "numbers" key ke sath data bheja
+            intent.putIntegerArrayListExtra("numbers", new ArrayList<>(numbersList));
             startActivity(intent);
         });
 
@@ -94,17 +95,28 @@ public class MainActivity extends AppCompatActivity {
         btnGoToProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
     }
 
+    // ✅ FIXED: Preview blocks uniform style matching comparison screen guidelines
     private void updatePreview() {
         visualContainer.removeAllViews();
         for (int n : numbersList) {
             TextView tv = new TextView(this);
             tv.setText(String.valueOf(n));
             tv.setGravity(Gravity.CENTER);
-            tv.setTextColor(Color.BLACK);
-            tv.setBackgroundResource(android.R.drawable.editbox_background);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
-            params.setMargins(10, 0, 10, 0);
+            tv.setTextColor(Color.WHITE); // Text color clear reading ke liye white kiya
+            tv.setTextSize(11f);
+            tv.setSingleLine(true); // 🚫 Text ko next line par tootne se strict roka
+
+            // 🎨 Beautiful Rounded Corners and Bright Blue background color code (#0040FF)
+            GradientDrawable shape = new GradientDrawable();
+            shape.setCornerRadius(10f);
+            shape.setColor(Color.parseColor("#0040FF"));
+            tv.setBackground(shape);
+
+            // 📐 FIXED SIZE: Width ko 110 aur Height ko 100 kiya taake bare numbers adjust ho sakein
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 100);
+            params.setMargins(6, 6, 6, 6);
             tv.setLayoutParams(params);
+
             visualContainer.addView(tv);
         }
     }

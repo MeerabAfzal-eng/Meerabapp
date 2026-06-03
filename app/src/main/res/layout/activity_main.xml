@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F8F9FA"
+    android:background="#F8FAFC"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -14,15 +14,19 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <!-- ✅ FIXED: Title ko chota kiya (22sp) aur single line strict lock kiya taake ek hi line m aaye -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/mainTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Sorting Algorithm\nVisualizer"
-            android:textColor="#000000"
-            android:textSize="28sp"
+            android:text="Sorting Algorithm Visualizer"
+            android:textColor="#001F3F"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
             tools:ignore="HardcodedText" />
@@ -35,7 +39,6 @@
             android:background="@android:drawable/btn_dropdown"
             android:paddingEnd="12dp"
             android:paddingStart="0dp">
-
 
             <Spinner
                 android:id="@+id/algorithmSpinner"
@@ -130,12 +133,13 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="10dp">
 
+            <!-- 🎨 FIXED: Sort Now Button ko Navy Blue color de diya -->
             <Button
                 android:id="@+id/submitButton"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:text="Sort Now"
-                android:backgroundTint="#1E88E5"
+                android:backgroundTint="#001F3F"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -144,12 +148,13 @@
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
 
+            <!-- 🎨 FIXED: Compare Two Algorithms Button ko Navy Blue color de diya -->
             <Button
                 android:id="@+id/btnGoToCompare"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:text="Compare Two Algorithms"
-                android:backgroundTint="#8E44AD"
+                android:backgroundTint="#001F3F"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -158,6 +163,7 @@
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
 
+            <!-- Take Algorithm Quiz Button (Pehle se Navy Blue tha) -->
             <Button
                 android:id="@+id/btnGoToQuiz"
                 android:layout_width="match_parent"
@@ -168,16 +174,24 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="12dp"
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
+
+            <!-- 🎨 FIXED: View Progress Record Button ko Navy Blue kiya aur styling baqi buttons jaisi set ki -->
             <Button
                 android:id="@+id/btnGoToProgress"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="54dp"
                 android:text="View Progress Record"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="#27AE60" />
+                android:backgroundTint="#001F3F"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:layout_marginBottom="4dp"
+                app:cornerRadius="26dp"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
