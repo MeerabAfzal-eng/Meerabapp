@@ -4,43 +4,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F4F7F9"
-    android:padding="12dp"
+    android:background="#F8FAFC"
+    android:padding="14dp"
     android:baselineAligned="false"
     tools:context=".ComparisonScreen">
 
+    <!-- Screen Main Title (Premium Navy Blue Dark Text) -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Algorithm Comparison"
+        android:text="Algorithm Comparison "
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="#2C3E50"
+        android:textColor="#001F3F"
         android:gravity="center"
-        android:layout_marginVertical="6dp"
+        android:layout_marginVertical="10dp"
         tools:ignore="HardcodedText" />
 
+    <!-- Spinners Row for Selecting Algorithms -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="14dp"
         android:baselineAligned="false">
 
+        <!-- Algorithm A Selector -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginEnd="4dp">
+            android:layout_marginEnd="6dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select Algorithm A:"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#2C3E50"
+                android:textColor="#475569"
                 tools:ignore="HardcodedText" />
             <Spinner
                 android:id="@+id/spinnerAlgoA"
@@ -50,19 +53,20 @@
                 android:contentDescription="Select First Algorithm" />
         </LinearLayout>
 
+        <!-- Algorithm B Selector -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="4dp">
+            android:layout_marginStart="6dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select Algorithm B:"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#2C3E50"
+                android:textColor="#475569"
                 tools:ignore="HardcodedText" />
             <Spinner
                 android:id="@+id/spinnerAlgoB"
@@ -73,15 +77,16 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- PANEL A: Clean White Card with Navy Blue Details -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:elevation="4dp"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp"
+        android:elevation="3dp"
+        android:padding="14dp"
+        android:layout_marginBottom="10dp"
         android:baselineAligned="false">
 
         <LinearLayout
@@ -89,7 +94,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="3"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="8dp"
             android:baselineAligned="false">
             <TextView
                 android:id="@+id/lblAlgoA"
@@ -98,8 +103,8 @@
                 android:layout_weight="1.2"
                 android:text="Algorithm A"
                 android:textStyle="bold"
-                android:textColor="#1F618D"
-                android:textSize="15sp"
+                android:textColor="#001F3F"
+                android:textSize="16sp"
                 tools:ignore="HardcodedText" />
             <TextView
                 android:id="@+id/txtSwapsA"
@@ -108,7 +113,7 @@
                 android:layout_weight="0.9"
                 android:text="Swaps: 0"
                 android:gravity="center"
-                android:textColor="#2C3E50"
+                android:textColor="#334155"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
             <TextView
@@ -118,7 +123,7 @@
                 android:layout_weight="0.9"
                 android:text="0.00s"
                 android:gravity="end"
-                android:textColor="#C0392B"
+                android:textColor="#059669"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
@@ -131,22 +136,23 @@
             <LinearLayout
                 android:id="@+id/containerBarsA"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"/>
         </HorizontalScrollView>
     </LinearLayout>
 
+    <!-- PANEL B: Clean White Card with Navy Blue Details -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:elevation="4dp"
-        android:padding="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="12dp"
+        android:elevation="3dp"
+        android:padding="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
         android:baselineAligned="false">
 
         <LinearLayout
@@ -154,7 +160,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="3"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="8dp"
             android:baselineAligned="false">
             <TextView
                 android:id="@+id/lblAlgoB"
@@ -163,8 +169,8 @@
                 android:layout_weight="1.2"
                 android:text="Algorithm B"
                 android:textStyle="bold"
-                android:textColor="#1E8449"
-                android:textSize="15sp"
+                android:textColor="#001F3F"
+                android:textSize="16sp"
                 tools:ignore="HardcodedText" />
             <TextView
                 android:id="@+id/txtSwapsB"
@@ -173,7 +179,7 @@
                 android:layout_weight="0.9"
                 android:text="Swaps: 0"
                 android:gravity="center"
-                android:textColor="#2C3E50"
+                android:textColor="#334155"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
             <TextView
@@ -183,7 +189,7 @@
                 android:layout_weight="0.9"
                 android:text="0.00s"
                 android:gravity="end"
-                android:textColor="#C0392B"
+                android:textColor="#059669"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
@@ -196,12 +202,13 @@
             <LinearLayout
                 android:id="@+id/containerBarsB"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"/>
         </HorizontalScrollView>
     </LinearLayout>
 
+    <!-- Action Buttons Row (Premium Solid Looks) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -216,7 +223,8 @@
             android:text="Start Compare"
             android:layout_margin="4dp"
             android:padding="12dp"
-            android:backgroundTint="#8E44AD"
+            android:textStyle="bold"
+            android:backgroundTint="#001F3F"
             tools:ignore="HardcodedText" />
         <Button
             android:id="@+id/btnResetCompare"
@@ -226,7 +234,9 @@
             android:text="Reset"
             android:layout_margin="4dp"
             android:padding="12dp"
-            android:backgroundTint="#C0392B"
+            android:textStyle="bold"
+            android:textColor="#1E293B"
+            android:backgroundTint="#E2E8F0"
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
