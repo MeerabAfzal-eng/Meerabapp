@@ -19,18 +19,16 @@ public class SplashActivity extends AppCompatActivity {
         ImageView logoImage = findViewById(R.id.logoImage);
         TextView appName = findViewById(R.id.appName);
 
-        // Animation load karna (Pop-up effect)
         Animation popupAnim = AnimationUtils.loadAnimation(this, R.anim.popup);
         if (logoImage != null) logoImage.startAnimation(popupAnim);
         if (appName != null) appName.startAnimation(popupAnim);
 
-        // 3 Seconds delay ke baad WelcomeActivity par jana
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                 startActivity(intent);
-                finish(); // Taake user back kare to splash dobara na aaye
+                finish();
             }
         }, 2000);
     }

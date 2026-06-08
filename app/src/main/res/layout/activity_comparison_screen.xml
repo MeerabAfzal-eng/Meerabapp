@@ -9,11 +9,10 @@
     android:baselineAligned="false"
     tools:context=".ComparisonScreen">
 
-    <!-- Screen Main Title (Premium Navy Blue Dark Text) -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Algorithm Comparison "
+        android:text="Algorithm Comparison"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="#001F3F"
@@ -21,7 +20,6 @@
         android:layout_marginVertical="10dp"
         tools:ignore="HardcodedText" />
 
-    <!-- Spinners Row for Selecting Algorithms -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +28,6 @@
         android:layout_marginBottom="14dp"
         android:baselineAligned="false">
 
-        <!-- Algorithm A Selector -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,7 +50,6 @@
                 android:contentDescription="Select First Algorithm" />
         </LinearLayout>
 
-        <!-- Algorithm B Selector -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -77,7 +73,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- PANEL A: Clean White Card with Navy Blue Details -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -142,7 +137,6 @@
         </HorizontalScrollView>
     </LinearLayout>
 
-    <!-- PANEL B: Clean White Card with Navy Blue Details -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -208,7 +202,6 @@
         </HorizontalScrollView>
     </LinearLayout>
 
-    <!-- Action Buttons Row (Premium Solid Looks) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

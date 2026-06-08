@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-// Match physical file name: activity_quiz.java
 public class activity_quiz extends AppCompatActivity {
 
     private TextView txtQuestionCount, txtCurrentScore, txtQuestionCard;
@@ -22,7 +21,6 @@ public class activity_quiz extends AppCompatActivity {
     private int currentQuestionIndex = 0;
     private int userScore = 0;
 
-    // Documentation Compliant 30 Questions Bank Matrix
     private final String[] questions = {
             "Which sorting algorithm has a best-case time complexity of O(n) when the array is already sorted?",
             "What is the average case time complexity of Quick Sort?",
@@ -166,7 +164,6 @@ private void finalizeQuizSession() {
     builder.setMessage(feedbackMessage + "Total Score: " + userScore + "/" + questions.length);
     builder.setCancelable(false);
 
-    // Yahan wo purana button remove ho gaya aur naya performance button lag gaya
     builder.setPositiveButton("View Performance Chart", (dialog, which) -> {
         Intent intent = new Intent(activity_quiz.this, activity_progress.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

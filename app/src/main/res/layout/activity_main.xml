@@ -14,7 +14,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- ✅ FIXED: Title ko chota kiya (22sp) aur single line strict lock kiya taake ek hi line m aaye -->
         <TextView
             android:id="@+id/mainTitle"
             android:layout_width="match_parent"
@@ -133,7 +132,6 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="10dp">
 
-            <!-- 🎨 FIXED: Sort Now Button ko Navy Blue color de diya -->
             <Button
                 android:id="@+id/submitButton"
                 android:layout_width="match_parent"
@@ -148,7 +146,6 @@
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
 
-            <!-- 🎨 FIXED: Compare Two Algorithms Button ko Navy Blue color de diya -->
             <Button
                 android:id="@+id/btnGoToCompare"
                 android:layout_width="match_parent"
@@ -161,9 +158,10 @@
                 android:textAllCaps="false"
                 android:layout_marginBottom="12dp"
                 app:cornerRadius="26dp"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText">
 
-            <!-- Take Algorithm Quiz Button (Pehle se Navy Blue tha) -->
+            </Button>
+
             <Button
                 android:id="@+id/btnGoToQuiz"
                 android:layout_width="match_parent"
@@ -178,7 +176,6 @@
                 app:cornerRadius="26dp"
                 tools:ignore="HardcodedText" />
 
-            <!-- 🎨 FIXED: View Progress Record Button ko Navy Blue kiya aur styling baqi buttons jaisi set ki -->
             <Button
                 android:id="@+id/btnGoToProgress"
                 android:layout_width="match_parent"

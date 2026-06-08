@@ -27,7 +27,6 @@ public class VisualizationActivity extends AppCompatActivity {
     private ArrayList<Integer> currentNumbers = new ArrayList<>();
     private Thread sortingThread;
 
-    // 🎵 Audio components lagaye gae hain
     private ToneGenerator processToneGenerator;
     private ToneGenerator successToneGenerator;
 
@@ -39,7 +38,6 @@ public class VisualizationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualization);
 
-        // 🔊 Audio initialization for sorting screen
         processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85);
         successToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
@@ -109,7 +107,6 @@ public class VisualizationActivity extends AppCompatActivity {
             runSortingAlgorithm(swapCount, sortedIndices, startTime);
 
             if (!Thread.interrupted()) {
-                // 🎵 ✅ AWESOME CHANGE 2: Jab pooray numbers successfully sort ho jayein ge to victory chime bajega!
                 try {
                     successToneGenerator.stopTone();
                     successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150);
@@ -134,9 +131,9 @@ public class VisualizationActivity extends AppCompatActivity {
             for (int i = 0; i < n - 1; i++) {
                 for (int j = 0; j < n - i - 1; j++) {
                     if (Thread.interrupted()) return;
+
                     boolean condition = isAscending ? (currentNumbers.get(j) > currentNumbers.get(j + 1)) : (currentNumbers.get(j) < currentNumbers.get(j + 1));
 
-                    // 🎵 ✅ AWESOME CHANGE 1: Har ek compare aur swap step par clicky note play hoga
                     playStepSound();
 
                     if (condition) {
@@ -194,7 +191,6 @@ public class VisualizationActivity extends AppCompatActivity {
                 sleepDelay();
             }
         }
-        // Fallback for remaining algorithms to show uniform update
         else {
             for (int i = 0; i < n; i++) {
                 for (int j = i + 1; j < n; j++) {
@@ -213,7 +209,6 @@ public class VisualizationActivity extends AppCompatActivity {
         }
     }
 
-    // Helper method to play active click chime
     private void playStepSound() {
         try {
             processToneGenerator.stopTone();
@@ -256,11 +251,11 @@ public class VisualizationActivity extends AppCompatActivity {
             design.setCornerRadius(10f);
 
             if (m == active1 || m == active2) {
-                design.setColor(Color.parseColor("#9B59B6")); // Purple for comparing
+                design.setColor(Color.parseColor("#9B59B6"));
             } else if (sorted.contains(m)) {
-                design.setColor(Color.parseColor("#008080")); // Teal for sorted
+                design.setColor(Color.parseColor("#008080"));
             } else {
-                design.setColor(Color.parseColor("#0040FF")); // Bright Blue for unsorted
+                design.setColor(Color.parseColor("#0040FF"));
             }
             bar.setBackground(design);
 

@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfileActivity extends AppCompatActivity {
     private EditText etName, etID;
     private Button btnSubmit;
-    private DatabaseHelper dbHelper; // Database instance helper decleration
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,6 @@ public class ProfileActivity extends AppCompatActivity {
             if (name.isEmpty() || id.isEmpty()) {
                 Toast.makeText(this, "Please enter Name and ID", Toast.LENGTH_SHORT).show();
             } else {
-                // ✅ SAVING DATA TO SQLITE DATABASE
                 boolean isSaved = dbHelper.saveProfile(id, name);
 
                 if (isSaved) {
