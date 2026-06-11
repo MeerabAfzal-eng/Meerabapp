@@ -112,7 +112,8 @@ public class VisualizationActivity extends AppCompatActivity {
                     successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150);
                     SystemClock.sleep(100);
                     successToneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 200);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
 
                 runOnUiThread(() -> {
                     txtStepLog.append("\n✨ Sorting Completed Successfully!");
@@ -147,8 +148,7 @@ public class VisualizationActivity extends AppCompatActivity {
             }
             for (int i = 0; i < n; i++) sortedIndices.add(i);
             updateUI(-1, -1, swapCount[0], startTime, sortedIndices, "All elements sorted.");
-        }
-        else if (selectedAlgorithm.equalsIgnoreCase("Selection Sort")) {
+        } else if (selectedAlgorithm.equalsIgnoreCase("Selection Sort")) {
             for (int i = 0; i < n; i++) {
                 int targetIdx = i;
                 for (int j = i + 1; j < n; j++) {
@@ -167,8 +167,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 updateUI(i, targetIdx, swapCount[0], startTime, sortedIndices, "Placed element at index " + i);
                 sleepDelay();
             }
-        }
-        else if (selectedAlgorithm.equalsIgnoreCase("Insertion Sort")) {
+        } else if (selectedAlgorithm.equalsIgnoreCase("Insertion Sort")) {
             sortedIndices.add(0);
             for (int i = 1; i < n; i++) {
                 int key = currentNumbers.get(i);
@@ -190,8 +189,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 updateUI(j + 1, i, swapCount[0], startTime, sortedIndices, "Inserted key at index " + (j + 1));
                 sleepDelay();
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < n; i++) {
                 for (int j = i + 1; j < n; j++) {
                     if (Thread.interrupted()) return;
@@ -213,7 +211,8 @@ public class VisualizationActivity extends AppCompatActivity {
         try {
             processToneGenerator.stopTone();
             processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private void sleepDelay() {
