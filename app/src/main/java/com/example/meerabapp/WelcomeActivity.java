@@ -12,14 +12,12 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        // 4 Seconds delay ke baad ProfileActivity par jana
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Flow: Splash -> Welcome -> Profile
                 Intent intent = new Intent(WelcomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
-                finish(); // Welcome screen ko close karna
+                finish();
             }
         }, 3000);
     }

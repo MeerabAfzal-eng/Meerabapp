@@ -10,10 +10,11 @@
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Learn     \nSorting Visually"
+        android:text="Welcome to\nSorting Scope"
         android:textColor="#FFFFFF"
-        android:textSize="26sp"
+        android:textSize="28sp"
         android:textStyle="bold"
+        android:gravity="center"
         android:textAlignment="center"
         android:lineSpacingExtra="8dp"/>
 

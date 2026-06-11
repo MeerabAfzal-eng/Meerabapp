@@ -11,7 +11,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SortingScope.db";
     private static final int DATABASE_VERSION = 1;
 
-    // Profile Table Parameters
     private static final String TABLE_PROFILE = "user_profile";
     private static final String COL_ID = "user_id";
     private static final String COL_NAME = "user_name";
@@ -35,7 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_NAME + " TEXT)";
         db.execSQL(createProfileTable);
 
-        // Table 2: Quiz Results Table
         String createQuizTable = "CREATE TABLE " + TABLE_QUIZ + " (" +
                 COL_QUIZ_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_SCORE + " INTEGER, " +
@@ -51,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // --- Profile Methods ---
     public boolean saveProfile(String id, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -71,7 +68,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    // --- Quiz Methods (Naye Methods) ---
     public boolean saveQuizResult(int score, int total) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -82,7 +78,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    // Yeh method baad mein line graph banane ke kaam aayega
     public Cursor getAllQuizResults() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + TABLE_QUIZ + " ORDER BY " + COL_QUIZ_ID + " ASC", null);

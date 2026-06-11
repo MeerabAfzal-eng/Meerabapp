@@ -7,7 +7,6 @@
     android:background="#001F3F"
     tools:context=".SplashActivity">
 
-    <!-- Centered Logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="180dp"
@@ -16,7 +15,6 @@
         android:src="@drawable/logo"
         android:contentDescription="App Logo" />
 
-    <!-- App Name at Bottom -->
     <TextView
         android:id="@+id/appName"
         android:layout_width="wrap_content"

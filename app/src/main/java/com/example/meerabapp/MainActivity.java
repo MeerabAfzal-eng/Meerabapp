@@ -2,6 +2,7 @@ package com.example.meerabapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.ArrayAdapter;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         numberInput = findViewById(R.id.numberInput);
         btnGoToCompare = findViewById(R.id.btnGoToCompare);
         btnGoToQuiz = findViewById(R.id.btnGoToQuiz);
-        btnGoToProgress = findViewById(R.id.btnGoToProgress); // XML mein ye ID zaroor ho
+        btnGoToProgress = findViewById(R.id.btnGoToProgress);
 
         String[] algorithms = {"Bubble Sort", "Insertion Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, algorithms);
@@ -53,10 +54,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        removeLastButton.setOnClickListener(v -> {
+            if (!numbersList.isEmpty()) {
+                numbersList.remove(numbersList.size() - 1);
+                updatePreview();
+            } else {
+                Toast.makeText(this, "List pehle se khali hai", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         submitButton.setOnClickListener(v -> {
+            if (numbersList.isEmpty()) {
+                Toast.makeText(this, "Pehle kuch numbers add karein", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(MainActivity.this, VisualizationActivity.class);
             intent.putIntegerArrayListExtra("numbers", numbersList);
             intent.putExtra("algorithm", algorithmSpinner.getSelectedItem().toString());
+            startActivity(intent);
+        });
+        btnGoToCompare.setOnClickListener(v -> {
+            if (numbersList.size() < 2) {
+                Toast.makeText(this, "Comparison ke liye kam se kam 2 numbers add karein!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(MainActivity.this, ComparisonScreen.class);
+            intent.putIntegerArrayListExtra("numbers", new ArrayList<>(numbersList));
             startActivity(intent);
         });
 
@@ -70,10 +93,20 @@ public class MainActivity extends AppCompatActivity {
         for (int n : numbersList) {
             TextView tv = new TextView(this);
             tv.setText(String.valueOf(n));
-            tv.setBackgroundResource(android.R.drawable.editbox_background);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
-            params.setMargins(10, 0, 10, 0);
+            tv.setGravity(Gravity.CENTER);
+            tv.setTextColor(Color.WHITE);
+            tv.setTextSize(11f);
+            tv.setSingleLine(true);
+
+            GradientDrawable shape = new GradientDrawable();
+            shape.setCornerRadius(10f);
+            shape.setColor(Color.parseColor("#0040FF"));
+            tv.setBackground(shape);
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 100);
+            params.setMargins(6, 6, 6, 6);
             tv.setLayoutParams(params);
+
             visualContainer.addView(tv);
         }
     }

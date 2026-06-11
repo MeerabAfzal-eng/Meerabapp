@@ -51,9 +51,10 @@ public class ComparisonScreen extends AppCompatActivity {
     private LinearLayout containerBarsA, containerBarsB;
     private TextView lblAlgoA, lblAlgoB, txtSwapsA, txtSwapsB, txtTimerA, txtTimerB;
     private Thread raceThread;
-    private ToneGenerator toneGenerator;
 
-    // ✅ FIXED: Separate independent final holders
+    private ToneGenerator processToneGenerator;
+    private ToneGenerator successToneGenerator;
+
     private int finalTotalSwapsA = 0;
     private int finalTotalSwapsB = 0;
 
@@ -65,7 +66,8 @@ public class ComparisonScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comparison_screen);
 
-        toneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 70);
+        processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85);
+        successToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
 
         spinnerAlgoA = findViewById(R.id.spinnerAlgoA);
         spinnerAlgoB = findViewById(R.id.spinnerAlgoB);
@@ -90,7 +92,7 @@ public class ComparisonScreen extends AppCompatActivity {
         spinnerAlgoB.setAdapter(spinnerAdapter);
 
         spinnerAlgoA.setSelection(0);
-        spinnerAlgoB.setSelection(6);
+        spinnerAlgoB.setSelection(1);
 
         ArrayList<Integer> incomingNumbers = getIntent().getIntegerArrayListExtra("numbers");
         if (incomingNumbers != null) {
@@ -135,15 +137,16 @@ public class ComparisonScreen extends AppCompatActivity {
             bar.setText(String.valueOf(item));
             bar.setGravity(Gravity.CENTER);
             bar.setTextColor(Color.WHITE);
-            bar.setTextSize(12f);
+            bar.setTextSize(11f);
+            bar.setSingleLine(true);
 
             GradientDrawable design = new GradientDrawable();
             design.setCornerRadius(10f);
-            design.setColor(Color.parseColor("#1F618D"));
+            design.setColor(Color.parseColor("#0040FF")); // Bright Blue
             bar.setBackground(design);
 
-            LinearLayout.LayoutParams space = new LinearLayout.LayoutParams(75, 80);
-            space.setMargins(5, 5, 5, 5);
+            LinearLayout.LayoutParams space = new LinearLayout.LayoutParams(110, 100);
+            space.setMargins(6, 6, 6, 6);
             container.addView(bar, space);
         }
     }
@@ -166,14 +169,12 @@ public class ComparisonScreen extends AppCompatActivity {
             ArrayList<Integer> workingA = new ArrayList<>(initialNumbers);
             ArrayList<Integer> workingB = new ArrayList<>(initialNumbers);
 
-            // Local tracking discrete objects pass karenge taake data isolate rahe
             int[] swapCounterA = new int[]{0};
             int[] swapCounterB = new int[]{0};
 
             ArrayList<CompareStep> algorithmASteps = generateStepsForAlgo(workingA, selectedA, true, swapCounterA);
             ArrayList<CompareStep> algorithmBSteps = generateStepsForAlgo(workingB, selectedB, false, swapCounterB);
 
-            // ✅ PURE SECURITY LOCK: Submited static values are preserved immediately
             finalTotalSwapsA = swapCounterA[0];
             finalTotalSwapsB = swapCounterB[0];
 
@@ -203,11 +204,13 @@ public class ComparisonScreen extends AppCompatActivity {
                 CompareStep activeFrame = timelineSteps.get(t);
                 long currentDuration = SystemClock.elapsedRealtime() - tickerStart;
 
+                // 🎵 ✅ AWESOME CHANGE 1: Jab sorting chal rhi ho to pyari si crisp click/tinkle sound aye gi
                 if ((!activeFrame.isFinishedA && (activeFrame.activeA1 != -1)) ||
                         (!activeFrame.isFinishedB && (activeFrame.activeB1 != -1))) {
                     try {
-                        toneGenerator.stopTone();
-                        toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 40);
+                        processToneGenerator.stopTone();
+                        // TONE_DTMF_1 se ek short aur pyari high-pitch game sound baje gi
+                        processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
                     } catch (Exception ignored) {}
                 }
 
@@ -218,14 +221,16 @@ public class ComparisonScreen extends AppCompatActivity {
                 } catch (InterruptedException e) { return; }
             }
 
+
             try {
-                toneGenerator.stopTone();
-                toneGenerator.startTone(ToneGenerator.TONE_CDMA_PIP, 250);
+                successToneGenerator.stopTone();
+                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150);
+                SystemClock.sleep(100);
+                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 200);
             } catch (Exception ignored) {}
 
             runOnUiThread(() -> {
                 String finalResult;
-                // ✅ COMPARISON VALIDATION: Koi tie issue nahi aayega ab completely genuine values compare hongi
                 if (finalTotalSwapsA < finalTotalSwapsB) {
                     finalResult = "🏆 " + selectedA + " is more efficient! \n(Swaps: " + finalTotalSwapsA + " vs " + finalTotalSwapsB + ")";
                 } else if (finalTotalSwapsB < finalTotalSwapsA) {
@@ -452,22 +457,24 @@ public class ComparisonScreen extends AppCompatActivity {
             cell.setText(String.valueOf(items.get(m)));
             cell.setGravity(Gravity.CENTER);
             cell.setTextColor(Color.WHITE);
-            cell.setTextSize(12f);
+            cell.setTextSize(11f);
+            cell.setSingleLine(true);
 
             GradientDrawable drawable = new GradientDrawable();
             drawable.setCornerRadius(10f);
 
             if (m == a1 || m == a2) {
-                drawable.setColor(Color.parseColor("#E74C3C"));
+                drawable.setColor(Color.parseColor("#9B59B6"));
             } else if (sorted.contains(m)) {
                 drawable.setColor(Color.parseColor("#008080"));
             } else {
-                drawable.setColor(Color.parseColor("#1F618D"));
+                drawable.setColor(Color.parseColor("#0040FF"));
             }
 
             cell.setBackground(drawable);
-            LinearLayout.LayoutParams rule = new LinearLayout.LayoutParams(75, 80);
-            rule.setMargins(5, 5, 5, 5);
+
+            LinearLayout.LayoutParams rule = new LinearLayout.LayoutParams(110, 100);
+            rule.setMargins(6, 6, 6, 6);
             container.addView(cell, rule);
         }
     }
@@ -475,8 +482,11 @@ public class ComparisonScreen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (toneGenerator != null) {
-            toneGenerator.release();
+        if (processToneGenerator != null) {
+            processToneGenerator.release();
+        }
+        if (successToneGenerator != null) {
+            successToneGenerator.release();
         }
     }
 }
