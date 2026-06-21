@@ -1,194 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="#F8FAFC"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/mainTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:text="Sorting Algorithm Visualizer"
-            android:textColor="#001F3F"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:textColor="#001F3F"
             android:gravity="center"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            tools:ignore="HardcodedText" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:paddingEnd="12dp"
-            android:paddingStart="0dp">
-
-            <Spinner
-                android:id="@+id/algorithmSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:spinnerMode="dropdown"
-                android:contentDescription="Select sorting algorithm" />
-        </FrameLayout>
-
-        <EditText
-            android:id="@+id/numberInput"
+        <Spinner
+            android:id="@+id/spinnerAlgorithm"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Enter a number"
-            android:textColorHint="#757575"
-            android:importantForAutofill="no"
+            android:background="@drawable/spinner_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="40dp"
+            android:layout_marginBottom="16dp"
+            android:spinnerMode="dropdown" />
+
+        <EditText
+            android:id="@+id/etInputNumber"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Enter Number (Max 30)"
+            android:textColorHint="#94A3B8"
+            android:textColor="#001F3F"
             android:inputType="number"
-            android:paddingHorizontal="16dp"
-            android:textColor="#000000"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:textSize="16sp"
             android:layout_marginBottom="16dp"
-            tools:ignore="HardcodedText" />
+            android:importantForAutofill="no" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2"
             android:layout_marginBottom="20dp">
 
             <Button
-                android:id="@+id/addButton"
+                android:id="@+id/btnValueAdd"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="8dp"
                 android:text="Add Value"
-                android:backgroundTint="#001F3F"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
                 android:textAllCaps="false"
-                app:cornerRadius="24dp"
-                tools:ignore="ButtonStyle,HardcodedText" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:backgroundTint="#001F3F"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="6dp" />
 
             <Button
-                android:id="@+id/removeLastButton"
+                android:id="@+id/btnValueRemove"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="44dp"
                 android:layout_weight="1"
-                android:layout_marginStart="8dp"
                 android:text="Remove Last"
-                android:backgroundTint="#001F3F"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
                 android:textAllCaps="false"
-                app:cornerRadius="24dp"
-                tools:ignore="ButtonStyle,HardcodedText" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:backgroundTint="#001F3F"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="6dp" />
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@android:color/white">
+            android:layout_height="110dp"
+            android:scrollbars="none"
+            android:layout_marginBottom="20dp">
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/layoutBarsWrapper"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:scrollbars="none"
-                android:fillViewport="true"
-                android:contentDescription="Horizontal preview of entered numbers">
+                android:background="@android:color/white"
+                android:elevation="1dp"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
-                <LinearLayout
-                    android:id="@+id/visualContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="12dp" />
-            </HorizontalScrollView>
-        </androidx.cardview.widget.CardView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnSortNow"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Sort Now"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#001F3F"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="16dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="10dp">
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginBottom="10dp">
 
-            <Button
-                android:id="@+id/submitButton"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:text="Sort Now"
-                android:backgroundTint="#1E90FF"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCompareScreen"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:text="📊\nCompare"
                 android:textAllCaps="false"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="26dp"
-                tools:ignore="HardcodedText" />
-
-            <Button
-                android:id="@+id/btnGoToCompare"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:text="Compare Two Algorithms"
-                android:backgroundTint="#800080"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
+                android:background="@drawable/button_background"
+                android:textColor="#001F3F"
+                android:layout_margin="5dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnTakeQuiz"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:text="📝\nTake Quiz"
                 android:textAllCaps="false"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="26dp"
-                tools:ignore="HardcodedText">
-
-            </Button>
-
-            <Button
-                android:id="@+id/btnGoToQuiz"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:text="Take Algorithm Quiz"
-                android:backgroundTint="#001F3F"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:textAllCaps="false"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="26dp"
-                tools:ignore="HardcodedText" />
+                android:background="@drawable/button_background"
+                android:textColor="#001F3F"
+                android:layout_margin="5dp" />
 
-            <Button
-                android:id="@+id/btnGoToProgress"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:text="View Progress Record"
-                android:backgroundTint="#2E8B57"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnViewProgress"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:text="📈\nProgress"
                 android:textAllCaps="false"
-                android:layout_marginBottom="4dp"
-                app:cornerRadius="26dp"
-                tools:ignore="HardcodedText" />
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_background"
+                android:textColor="#001F3F"
+                android:layout_margin="5dp" />
+
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

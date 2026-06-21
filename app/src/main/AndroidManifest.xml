@@ -41,9 +41,6 @@
         <activity
             android:name=".VisualizationActivity"
             android:exported="false" />
-        <activity
-            android:name=".spinner_item"
-            android:exported="false" />
     </application>
 
 </manifest>
