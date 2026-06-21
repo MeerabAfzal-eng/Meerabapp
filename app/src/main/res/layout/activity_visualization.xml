@@ -116,7 +116,7 @@
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
             android:padding="15dp"
-            android:backgroundTint="#27AE60" />
+            android:backgroundTint="#001F3F" />
 
         <Button
             android:id="@+id/btnDesc"
@@ -124,7 +124,7 @@
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
             android:padding="15dp"
-            android:backgroundTint="#FFC0CB" />
+            android:backgroundTint="#001F3F" />
 
         <Button
             android:id="@+id/btnRestart"
@@ -132,7 +132,7 @@
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
             android:padding="15dp"
-            android:backgroundTint="#2980B9" />
+            android:backgroundTint="#001F3F" />
 
         <Button
             android:id="@+id/btnReset"
@@ -140,6 +140,6 @@
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
             android:padding="15dp"
-            android:backgroundTint="#C0392B" />
+            android:backgroundTint="#001F3F" />
     </GridLayout>
 </LinearLayout>
