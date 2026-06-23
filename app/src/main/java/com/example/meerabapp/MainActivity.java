@@ -72,28 +72,26 @@ public class MainActivity extends AppCompatActivity {
         };
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spinnerAlgorithm.setAdapter(adapter);
-
-        // 1. Add Value Button Logic (Max 30 items & Max 1 Arab limit)
         btnValueAdd.setOnClickListener(v -> {
             String valStr = etInputNumber.getText().toString().trim();
             if (!valStr.isEmpty()) {
                 try {
-                    // 🛑 Limit 1: Sirf max 30 numbers enter ho sakein
                     if (numbersList.size() >= 30) {
                         Toast.makeText(this, "You can only add a maximum of 30 numbers!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    long inputVal = Long.parseLong(valStr);
-
-                    // 🛑 Limit 2: Har number 1 Arab (1,000,000,000) tak bada ho sakta hai
-                    if (inputVal > 1000000000L) {
-                        Toast.makeText(this, "Maximum value allowed is 1 Arab (1 Billion)!", Toast.LENGTH_SHORT).show();
+                    // Agar sirf sign enter kiya ho toh rok dein
+                    if (valStr.equals("+") || valStr.equals("-")) {
+                        Toast.makeText(this, "Please enter a number!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    if (inputVal < 0) {
-                        Toast.makeText(this, "Enter a positive number!", Toast.LENGTH_SHORT).show();
+                    long inputVal = Long.parseLong(valStr);
+
+                    // Limit: -1 Arab se +1 Arab
+                    if (inputVal > 1000000000L || inputVal < -1000000000L) {
+                        Toast.makeText(this, "Value must be between -1 Arab and +1 Arab!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -101,10 +99,12 @@ public class MainActivity extends AppCompatActivity {
                     updatePreview();
                     etInputNumber.setText("");
                 } catch (NumberFormatException e) {
-                    Toast.makeText(this, "Value is too large or invalid!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Invalid number format!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+
 
         // 2. Sort Now Button Logic (With Auto-Conversion Crash Fix)
         btnSortNow.setOnClickListener(v -> {
@@ -163,14 +163,20 @@ public class MainActivity extends AppCompatActivity {
         btnTakeQuiz.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_quiz.class)));
         btnViewProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
     }
-
-    // 🎨 UI Preview Containers Generator (Matches Visualization Sky Blue Screen)
+    // 🎨 UI Preview Containers Generator (Plus Sign Enhancement)
     private void updatePreview() {
         if (layoutBarsWrapper != null) {
             layoutBarsWrapper.removeAllViews();
             for (long n : numbersList) {
                 TextView tv = new TextView(this);
-                tv.setText(String.valueOf(n));
+
+                // 🛠️ FIX HERE: Agar number positive (0 se bada) hai, toh uske sath "+" ka sign wazeh jodh dein
+                if (n > 0) {
+                    tv.setText("+" + n);
+                } else {
+                    tv.setText(String.valueOf(n)); // Minus aur zero khud ba khud sahi show honge
+                }
+
                 tv.setGravity(Gravity.CENTER);
                 tv.setTextColor(Color.WHITE); // White text inside boxes
                 tv.setTextSize(11f);
@@ -182,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 boxDesign.setCornerRadius(6f);
                 tv.setBackground(boxDesign);
 
-                // Width set to 120 so larger numbers don't clip
+                // Width and Height of the preview box
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 80);
                 params.setMargins(6, 0, 6, 0);
                 tv.setLayoutParams(params);
@@ -191,4 +197,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-}
+            }
