@@ -1,145 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F4F7F9"
-    android:padding="12dp">
-
-    <TextView
-        android:id="@+id/txtAlgoName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="26sp"
-        android:gravity="center"
-        android:textColor="#2C3E50"
-        android:layout_marginVertical="8dp"
-        android:text="Sorting Visualizer" />
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:background="@android:color/white"
-        android:elevation="6dp"
-        android:padding="10dp"
-        android:scrollbars="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
-
-            <LinearLayout
-                android:id="@+id/arrowContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:orientation="horizontal"
-                android:gravity="bottom" />
-
-            <LinearLayout
-                android:id="@+id/containerBars"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:animateLayoutChanges="true"
-                android:layout_marginTop="50dp" />
-
-
-        </LinearLayout>
-    </HorizontalScrollView>
+    android:background="#F8FAFC"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:weightSum="3">
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/txtSwaps"
-            android:layout_width="0dp"
+            android:id="@+id/txtAlgoName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Swaps: 0"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/txtTimer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="0.00s"
+            android:text="Insertion Sort"
             android:textSize="18sp"
-            android:textColor="#E74C3C"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="#001F3F"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center" />
 
-        <TextView
-            android:id="@+id/txtComplexity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="#8E44AD"
-            android:text="O(n²)"/>
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/logScroll"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp"
-        android:background="#EBF5FB"
-        android:padding="12dp">
-
-        <TextView
-            android:id="@+id/txtStepLog"
+        <LinearLayout
+            android:id="@+id/arrowContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#2980B9"
-            android:textSize="14sp"
-            android:text="Ready for Sorting..." />
-    </ScrollView>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="2dp">
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:columnCount="2">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="i"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="#7C3AED" />
 
-        <Button
-            android:id="@+id/btnAsc"
-            android:text="Ascending"
-            android:layout_columnWeight="1"
-            android:layout_margin="5dp"
-            android:padding="15dp"
-            android:backgroundTint="#27AE60" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↓"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#7C3AED"
+                android:layout_marginTop="-4dp" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btnDesc"
-            android:text="Descending"
-            android:layout_columnWeight="1"
-            android:layout_margin="5dp"
-            android:padding="15dp"
-            android:backgroundTint="#FFC0CB" />
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:scrollbars="none"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp">
 
-        <Button
-            android:id="@+id/btnRestart"
-            android:text="Restart"
-            android:layout_columnWeight="1"
-            android:layout_margin="5dp"
-            android:padding="15dp"
-            android:backgroundTint="#2980B9" />
+            <LinearLayout
+                android:id="@+id/containerBars"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp" />
+        </HorizontalScrollView>
 
-        <Button
-            android:id="@+id/btnReset"
-            android:text="Reset"
-            android:layout_columnWeight="1"
-            android:layout_margin="5dp"
-            android:padding="15dp"
-            android:backgroundTint="#C0392B" />
-    </GridLayout>
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:background="#FFFFFF"
+            android:padding="10dp"
+            android:elevation="1dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/txtSwaps"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔄 Swaps: 2"
+                android:textColor="#001F3F"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/txtTimer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⏱️ 1.80 s"
+                android:textColor="#001F3F"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/txtComplexity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📊 O(n²)"
+                android:textColor="#001F3F"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/logScroll"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:background="#F1F5F9"
+            android:padding="10dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/txtStepLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="> Picking numbers to sort..."
+                android:textColor="#334155"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp" />
+        </ScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="8dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAsc"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:text="Ascending"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_background"
+                    android:textColor="#001F3F"
+                    android:layout_marginHorizontal="4dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnDesc"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:text="Descending"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_background"
+                    android:textColor="#001F3F"
+                    android:layout_marginHorizontal="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="4dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnRestart"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:text="Restart"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_background"
+                    android:textColor="#001F3F"
+                    android:layout_marginHorizontal="4dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnReset"
+                    android:layout_width="0dp"
+                    android:layout_height="46dp"
+                    android:layout_weight="1"
+                    android:text="Reset"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_background"
+                    android:textColor="#001F3F"
+                    android:layout_marginHorizontal="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
