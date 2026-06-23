@@ -22,11 +22,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private LinearLayout layoutBarsWrapper;
-    private Button btnValueAdd, btnValueRemove, btnSortNow, btnCompareScreen, btnTakeQuiz, btnViewProgress;
+    private Button btnValueAdd, btnValueRemove, btnSortNow;
+    private androidx.appcompat.widget.AppCompatButton btnCompareScreen, btnTakeQuiz, btnViewProgress;
     private Spinner spinnerAlgorithm;
     private EditText etInputNumber;
 
-    // 👑 1 Arab tak ki badi values handle karne ke liye Long array list
+    // 👑 1 Arab tak ki badi values (+ aur - dono) handle karne ke liye Long array list
     private ArrayList<Long> numbersList = new ArrayList<>();
 
     @Override
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         btnTakeQuiz = findViewById(R.id.btnTakeQuiz);
         btnViewProgress = findViewById(R.id.btnViewProgress);
 
-        // 📋 Dropdown List (Spinner) Placeholder Logic
+        // 📋 Dropdown List (Spinner) Setup
         String[] algorithms = {
                 "Select Algorithm", "Bubble Sort", "Insertion Sort",
                 "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"
@@ -72,41 +73,45 @@ public class MainActivity extends AppCompatActivity {
         };
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spinnerAlgorithm.setAdapter(adapter);
+
+        // 1. ➕ ADD VALUE BUTTON LOGIC (Fixed for Plus & Minus both)
         btnValueAdd.setOnClickListener(v -> {
             String valStr = etInputNumber.getText().toString().trim();
             if (!valStr.isEmpty()) {
                 try {
+                    // 🛑 Check 1: Max 30 items limit
                     if (numbersList.size() >= 30) {
                         Toast.makeText(this, "You can only add a maximum of 30 numbers!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Agar sirf sign enter kiya ho toh rok dein
+                    // Agar user ne galti se sirf '+' ya '-' likh kar add daba diya ho
                     if (valStr.equals("+") || valStr.equals("-")) {
-                        Toast.makeText(this, "Please enter a number!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Please enter a valid number after the sign!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    // Value convert karein
                     long inputVal = Long.parseLong(valStr);
 
-                    // Limit: -1 Arab se +1 Arab
+                    // 🛑 Check 2: Range limit (-1 Arab se +1 Arab tak allowed hai)
                     if (inputVal > 1000000000L || inputVal < -1000000000L) {
                         Toast.makeText(this, "Value must be between -1 Arab and +1 Arab!", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    // ✅ Sub sahi hai toh list mein add karein (Ab positive check bilkul saaf kar di hai)
                     numbersList.add(inputVal);
                     updatePreview();
                     etInputNumber.setText("");
+
                 } catch (NumberFormatException e) {
                     Toast.makeText(this, "Invalid number format!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-
-
-        // 2. Sort Now Button Logic (With Auto-Conversion Crash Fix)
+        // 2. 🚀 SORT NOW BUTTON LOGIC
         btnSortNow.setOnClickListener(v -> {
             String selectedAlgo = spinnerAlgorithm.getSelectedItem().toString();
             if (selectedAlgo.equals("Select Algorithm")) {
@@ -120,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(MainActivity.this, VisualizationActivity.class);
 
-            // 🛠️ CRASH FIX: Long values ko Integer list mein badal kar bheja taake next screen crash na ho
+            // Auto-conversion to Integer for next screens
             ArrayList<Integer> intList = new ArrayList<>();
             for (Long l : numbersList) {
                 intList.add(l.intValue());
@@ -131,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 3. Remove Last Button Logic
+        // 3. ❌ REMOVE LAST BUTTON LOGIC
         btnValueRemove.setOnClickListener(v -> {
             if (!numbersList.isEmpty()) {
                 numbersList.remove(numbersList.size() - 1);
@@ -141,14 +146,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 4. Compare Screen Button (With Auto-Conversion Crash Fix)
+        // 4. 📊 COMPARE SCREEN BUTTON
         btnCompareScreen.setOnClickListener(v -> {
             if (numbersList.size() < 2) {
                 Toast.makeText(this, "Enter at least 2 numbers for comparison!", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(MainActivity.this, ComparisonScreen.class);
 
-                // 🛠️ CRASH FIX: Yahan bhi safe conversion lagayi
                 ArrayList<Integer> intList = new ArrayList<>();
                 for (Long l : numbersList) {
                     intList.add(l.intValue());
@@ -159,36 +163,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 5. Quiz & Progress Navigation
+        // 5. 📝 QUIZ & PROGRESS NAVIGATION
         btnTakeQuiz.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_quiz.class)));
         btnViewProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
     }
-    // 🎨 UI Preview Containers Generator (Plus Sign Enhancement)
+
+    // 🎨 UI PREVIEW GENERATOR (Plus aur Minus ke signs ke sath chamkega)
     private void updatePreview() {
         if (layoutBarsWrapper != null) {
             layoutBarsWrapper.removeAllViews();
             for (long n : numbersList) {
                 TextView tv = new TextView(this);
 
-                // 🛠️ FIX HERE: Agar number positive (0 se bada) hai, toh uske sath "+" ka sign wazeh jodh dein
+                // Agar number 0 se bada hai toh "+" lagayein, minus khud ba khud show hoga
                 if (n > 0) {
                     tv.setText("+" + n);
                 } else {
-                    tv.setText(String.valueOf(n)); // Minus aur zero khud ba khud sahi show honge
+                    tv.setText(String.valueOf(n));
                 }
 
                 tv.setGravity(Gravity.CENTER);
-                tv.setTextColor(Color.WHITE); // White text inside boxes
+                tv.setTextColor(Color.WHITE);
                 tv.setTextSize(11f);
                 tv.setSingleLine(true);
 
-                // 🔵 Light Sky Blue boxes background
+                // 🔵 Blue Boxes Style
                 GradientDrawable boxDesign = new GradientDrawable();
-                boxDesign.setColor(Color.parseColor("#3B97E3")); // Professional light blue
+                boxDesign.setColor(Color.parseColor("#3B97E3"));
                 boxDesign.setCornerRadius(6f);
                 tv.setBackground(boxDesign);
 
-                // Width and Height of the preview box
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 80);
                 params.setMargins(6, 0, 6, 0);
                 tv.setLayoutParams(params);
@@ -197,4 +201,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-            }
+}
