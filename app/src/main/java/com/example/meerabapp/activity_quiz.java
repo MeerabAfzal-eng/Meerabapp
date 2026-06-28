@@ -194,4 +194,16 @@ public class activity_quiz extends AppCompatActivity {
         optionC.setBackgroundColor(Color.WHITE);
         optionD.setBackgroundColor(Color.WHITE);
     }
-}
+    private void saveProgress() {
+        SharedPreferences pref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        String history = pref.getString("quiz_history", "");
+
+        // Naya score add karo (score variable aapka global hai)
+        String newHistory = history + score + ",";
+
+        pref.edit().putString("quiz_history", newHistory).apply();
+
+        // Debug ke liye toast show karein taake pata chale save hua
+        Toast.makeText(this, "Data Saved: " + newHistory, Toast.LENGTH_LONG).show();
+    }
+    }
