@@ -1,115 +1,77 @@
 package com.example.meerabapp;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.IOException;
-import java.io.InputStream;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class activity_progress extends AppCompatActivity {
-
-    private TextView txtQuestionCount, txtCurrentScore, txtQuestionCard;
-    private RadioGroup optionsRadioGroup;
-    private RadioButton optionA, optionB, optionC, optionD;
-    private Button btnNextQuestion;
-    private List<JSONObject> finalQuestionsList;
-    private int currentQuestionIndex = 0;
-    private String correctAnswer;
-    private int score = 0;
-    private boolean isAnswered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_quiz);
+        setContentView(R.layout.activity_progress);
 
-        txtQuestionCount = findViewById(R.id.txtQuestionCount);
-        txtCurrentScore = findViewById(R.id.txtCurrentScore);
-        txtQuestionCard = findViewById(R.id.txtQuestionCard);
-        optionsRadioGroup = findViewById(R.id.optionsRadioGroup);
-        optionA = findViewById(R.id.optionA);
-        optionB = findViewById(R.id.optionB);
-        optionC = findViewById(R.id.optionC);
-        optionD = findViewById(R.id.optionD);
-        btnNextQuestion = findViewById(R.id.btnNextQuestion);
+        TextView tvHigh = findViewById(R.id.tv_high_score);
+        TextView tvRecent = findViewById(R.id.tv_recent_score);
+        LineChart lineChart = findViewById(R.id.progressChart);
 
-        loadQuizData();
+        SharedPreferences pref = getSharedPreferences("UserProfile", MODE_PRIVATE);
+        int high = pref.getInt("high_score", 0);
+        int recent = pref.getInt("recent_score", 0);
+        String history = pref.getString("quiz_history", "");
 
-        btnNextQuestion.setOnClickListener(v -> {
-            if (!isAnswered) {
-                int selectedId = optionsRadioGroup.getCheckedRadioButtonId();
-                if (selectedId == -1) {
-                    Toast.makeText(this, "Select an option!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                isAnswered = true;
-                RadioButton selected = findViewById(selectedId);
-                if (selected.getText().toString().equals(correctAnswer)) {
-                    score++;
-                    txtCurrentScore.setText("Score: " + score);
-                }
-                btnNextQuestion.setText("Next Question");
-            } else {
-                currentQuestionIndex++;
-                if (currentQuestionIndex < finalQuestionsList.size()) {
-                    showQuestion(currentQuestionIndex);
-                } else {
-                    saveProgress();
-                    txtQuestionCard.setText("Quiz Finished! Score: " + score + "/20");
-                    btnNextQuestion.setVisibility(View.GONE);
+        tvHigh.setText("Highest Score: " + high + "/20");
+        tvRecent.setText("Last Score: " + recent + "/20");
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        if (history.isEmpty()) {
+            entries.add(new Entry(0, 5));
+            entries.add(new Entry(1, 10));
+            entries.add(new Entry(2, 8));
+            entries.add(new Entry(3, 15));
+        } else {
+            String[] scores = history.split(",");
+            for (int i = 0; i < scores.length; i++) {
+                if(!scores[i].isEmpty()) {
+                    entries.add(new Entry((float) i, Float.parseFloat(scores[i])));
                 }
             }
-        });
-    }
+        }
 
-    private void loadQuizData() {
-        try {
-            InputStream is = getAssets().open("questions.json");
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            JSONArray array = new JSONArray(new String(buffer, "UTF-8"));
-            List<JSONObject> all = new ArrayList<>();
-            for(int i=0; i<array.length(); i++) all.add(array.getJSONObject(i));
-            Collections.shuffle(all);
-            finalQuestionsList = all.subList(0, Math.min(all.size(), 20));
-            showQuestion(0);
-        } catch (Exception e) { e.printStackTrace(); }
-    }
+        LineDataSet dataSet = new LineDataSet(entries, "Quiz Performance");
 
-    private void saveProgress() {
-        SharedPreferences pref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
-        int high = pref.getInt("high_score", 0);
-        if (score > high) pref.edit().putInt("high_score", score).apply();
-        pref.edit().putInt("recent_score", score).apply();
-    }
+        // Professional Styling
+        dataSet.setColor(Color.parseColor("#001F3F")); // Navy Blue Line
+        dataSet.setCircleColor(Color.parseColor("#0040FF")); // Bright Blue Dots
+        dataSet.setCircleHoleColor(Color.WHITE);
+        dataSet.setCircleRadius(6f);
+        dataSet.setLineWidth(3f);
+        dataSet.setDrawFilled(true);
+        dataSet.setFillColor(Color.parseColor("#E2E8F0")); // Light Navy Fill
+        dataSet.setValueTextSize(12f);
+        dataSet.setValueTextColor(Color.parseColor("#001F3F"));
 
-    private void showQuestion(int index) {
-        try {
-            JSONObject q = finalQuestionsList.get(index);
-            txtQuestionCount.setText("Q: " + (index+1) + "/20");
-            txtQuestionCard.setText(q.getString("question"));
-            optionA.setText(q.getString("optionA"));
-            optionB.setText(q.getString("optionB"));
-            optionC.setText(q.getString("optionC"));
-            optionD.setText(q.getString("optionD"));
-            correctAnswer = q.getString("correct");
-            isAnswered = false;
-            optionsRadioGroup.clearCheck();
-            btnNextQuestion.setText("Submit");
-        } catch (Exception e) { e.printStackTrace(); }
+        LineData lineData = new LineData(dataSet);
+        lineChart.setData(lineData);
+
+        // Axis Configuration
+        lineChart.getDescription().setEnabled(false);
+        lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        lineChart.getXAxis().setGranularity(1f); // Sirf 1, 2, 3 dikhaye
+        lineChart.getAxisLeft().setAxisMinimum(0f);
+        lineChart.getAxisLeft().setAxisMaximum(20f); // Max limit 20 fix
+        lineChart.getAxisRight().setEnabled(false); // Right side hide ki
+
+        lineChart.animateX(1000);
+        lineChart.invalidate();
     }
 }
