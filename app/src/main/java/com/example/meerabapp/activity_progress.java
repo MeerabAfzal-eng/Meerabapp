@@ -1,87 +1,115 @@
 package com.example.meerabapp;
 
-import android.database.Cursor;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class activity_progress extends AppCompatActivity {
+
+    private TextView txtQuestionCount, txtCurrentScore, txtQuestionCard;
+    private RadioGroup optionsRadioGroup;
+    private RadioButton optionA, optionB, optionC, optionD;
+    private Button btnNextQuestion;
+    private List<JSONObject> finalQuestionsList;
+    private int currentQuestionIndex = 0;
+    private String correctAnswer;
+    private int score = 0;
+    private boolean isAnswered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_progress);
+        setContentView(R.layout.activity_quiz);
 
-        LineChart lineChart = findViewById(R.id.progressChart);
+        txtQuestionCount = findViewById(R.id.txtQuestionCount);
+        txtCurrentScore = findViewById(R.id.txtCurrentScore);
+        txtQuestionCard = findViewById(R.id.txtQuestionCard);
+        optionsRadioGroup = findViewById(R.id.optionsRadioGroup);
+        optionA = findViewById(R.id.optionA);
+        optionB = findViewById(R.id.optionB);
+        optionC = findViewById(R.id.optionC);
+        optionD = findViewById(R.id.optionD);
+        btnNextQuestion = findViewById(R.id.btnNextQuestion);
 
-        // 🛡️ Safety Check: Agar XML mein ID galat ho toh app crash na ho
-        if (lineChart == null) {
-            Toast.makeText(this, "Error: progressChart not found in XML!", Toast.LENGTH_LONG).show();
-            return;
-        }
+        loadQuizData();
 
-        DatabaseHelper db = new DatabaseHelper(this);
-        ArrayList<Entry> entries = new ArrayList<>();
-        Cursor cursor = db.getAllQuizResults();
-
-        // 📊 Database se Quiz ke data (Scores) ko nikalna
-        int quizCount = 1;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                // Column name lowercase ya uppercase dono ko check karne ke liye safe approach
-                int scoreIndex = cursor.getColumnIndex("score");
-                if (scoreIndex == -1) {
-                    scoreIndex = cursor.getColumnIndex("Score");
+        btnNextQuestion.setOnClickListener(v -> {
+            if (!isAnswered) {
+                int selectedId = optionsRadioGroup.getCheckedRadioButtonId();
+                if (selectedId == -1) {
+                    Toast.makeText(this, "Select an option!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-
-                if (scoreIndex != -1) {
-                    do {
-                        float score = (float) cursor.getInt(scoreIndex);
-                        // Entry(X-axis par quiz number, Y-axis par score)
-                        entries.add(new Entry(quizCount++, score));
-                    } while (cursor.moveToNext());
+                isAnswered = true;
+                RadioButton selected = findViewById(selectedId);
+                if (selected.getText().toString().equals(correctAnswer)) {
+                    score++;
+                    txtCurrentScore.setText("Score: " + score);
+                }
+                btnNextQuestion.setText("Next Question");
+            } else {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < finalQuestionsList.size()) {
+                    showQuestion(currentQuestionIndex);
                 } else {
-                    Toast.makeText(this, "Database error: 'score' column missing!", Toast.LENGTH_LONG).show();
+                    saveProgress();
+                    txtQuestionCard.setText("Quiz Finished! Score: " + score + "/20");
+                    btnNextQuestion.setVisibility(View.GONE);
                 }
             }
-            cursor.close(); // Cursor ko close karna zaroori hai memory leak se bachne ke liye
-        }
+        });
+    }
 
-        // 📈 Agar data moojood hai toh graph plot karein
-        if (!entries.isEmpty()) {
-            LineDataSet dataSet = new LineDataSet(entries, "Quiz Score Progress");
+    private void loadQuizData() {
+        try {
+            InputStream is = getAssets().open("questions.json");
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            JSONArray array = new JSONArray(new String(buffer, "UTF-8"));
+            List<JSONObject> all = new ArrayList<>();
+            for(int i=0; i<array.length(); i++) all.add(array.getJSONObject(i));
+            Collections.shuffle(all);
+            finalQuestionsList = all.subList(0, Math.min(all.size(), 20));
+            showQuestion(0);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
 
-            // 🎨 Premium Styling matching with your App Theme
-            dataSet.setColor(Color.parseColor("#001F3F"));      // Dark Navy Blue Line
-            dataSet.setCircleColor(Color.parseColor("#0040FF"));// Uniform Bright Blue Dots
-            dataSet.setLineWidth(3f);                            // Thick premium line
-            dataSet.setCircleRadius(5f);                         // Dot size
-            dataSet.setValueTextSize(12f);                       // Font size of scores
-            dataSet.setValueTextColor(Color.parseColor("#334155"));
-            dataSet.setDrawFilled(true);                         // Graph ke neeche shadow fill karne ke liye
-            dataSet.setFillColor(Color.parseColor("#E2E8F0"));   // Light grey/blue shadow fill
+    private void saveProgress() {
+        SharedPreferences pref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
+        int high = pref.getInt("high_score", 0);
+        if (score > high) pref.edit().putInt("high_score", score).apply();
+        pref.edit().putInt("recent_score", score).apply();
+    }
 
-            LineData lineData = new LineData(dataSet);
-            lineChart.setData(lineData);
-
-            // ⚙️ Chart Configuration for Clean Look
-            lineChart.getDescription().setEnabled(false);        // Extra text clear kiya
-            lineChart.getAxisRight().setEnabled(false);          // Right side wali border scale disable ki
-            lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM); // X-Axis labels bottom par laye
-            lineChart.getXAxis().setDrawGridLines(false);        // Vertical background grid lines band ki
-
-            lineChart.animateX(1000);                            // 1 second ki smooth loading animation
-            lineChart.invalidate();                              // Chart refresh completely
-        } else {
-            // Agar pehli dafa open kiya aur database khali hai
-            Toast.makeText(this, "No quiz data available yet!", Toast.LENGTH_SHORT).show();
-        }
+    private void showQuestion(int index) {
+        try {
+            JSONObject q = finalQuestionsList.get(index);
+            txtQuestionCount.setText("Q: " + (index+1) + "/20");
+            txtQuestionCard.setText(q.getString("question"));
+            optionA.setText(q.getString("optionA"));
+            optionB.setText(q.getString("optionB"));
+            optionC.setText(q.getString("optionC"));
+            optionD.setText(q.getString("optionD"));
+            correctAnswer = q.getString("correct");
+            isAnswered = false;
+            optionsRadioGroup.clearCheck();
+            btnNextQuestion.setText("Submit");
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }
