@@ -1,0 +1,2364 @@
+[
+  {
+    "question": "Which sorting algorithm is the simplest and easiest to understand for beginners?",
+    "optionA": "Merge Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Bubble Sort, which two elements are compared at a time?",
+    "optionA": "The first and last elements",
+    "optionB": "Two adjacent (side-by-side) elements",
+    "optionC": "Random elements",
+    "optionD": "Only even numbers",
+    "correct": "Two adjacent (side-by-side) elements"
+  },
+  {
+    "question": "Which sorting algorithm always finds the smallest number and puts it at the front?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Merge Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "Which sorting algorithm works like arranging playing cards in your hand?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Heap Sort",
+    "optionD": "Selection Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What does 'Divide and Conquer' mean in simple words for Merge Sort?",
+    "optionA": "Multiply all the numbers",
+    "optionB": "Breaking a big array into smaller halves to sort them easily",
+    "optionC": "Deleting unwanted numbers",
+    "optionD": "Reversing the whole list",
+    "correct": "Breaking a big array into smaller halves to sort them easily"
+  },
+  {
+    "question": "What is the special element called that Quick Sort uses to split data into two sides?",
+    "optionA": "Center",
+    "optionB": "Pivot",
+    "optionC": "Middle",
+    "optionD": "Target",
+    "correct": "Pivot"
+  },
+  {
+    "question": "Which tree structure does Heap Sort use internally to manage data?",
+    "optionA": "Binary Heap Tree",
+    "optionB": "AVL Tree",
+    "optionC": "B-Tree",
+    "optionD": "Red-Black Tree",
+    "correct": "Binary Heap Tree"
+  },
+  {
+    "question": "Shell Sort is an upgraded and faster version of which basic algorithm?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Merge Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "If an array is already fully sorted, which basic algorithm can finish its check the fastest?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Standard Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the final gap value used in Shell Sort to complete the sorting?",
+    "optionA": "5",
+    "optionB": "1",
+    "optionC": "0",
+    "optionD": "N/2",
+    "correct": "1"
+  },
+  {
+    "question": "In a Max-Heap tree, where is the largest number always found?",
+    "optionA": "At the bottom leaf",
+    "optionB": "At the root node (the very top)",
+    "optionC": "In the middle row",
+    "optionD": "Anywhere randomly",
+    "correct": "At the root node (the very top)"
+  },
+  {
+    "question": "What does a 'Stable' sorting algorithm guarantee?",
+    "optionA": "It keeps the original order of duplicate elements",
+    "optionB": "It converts numbers into words",
+    "optionC": "It stops the mobile app from crashing",
+    "optionD": "It deletes negative numbers",
+    "correct": "It keeps the original order of duplicate elements"
+  },
+  {
+    "question": "Which sorting algorithm requires extra temporary space to merge two sorted halves?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Insertion Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for standard Bubble Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the typical time complexity notation for standard Merge Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting algorithm is famous for making the absolute minimum number of swaps?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Merge Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "In Quick Sort, after selecting a pivot, where do smaller elements usually go?",
+    "optionA": "To the right side of the pivot",
+    "optionB": "To the left side of the pivot",
+    "optionC": "They are removed from the array",
+    "optionD": "They stay exactly where they are",
+    "correct": "To the left side of the pivot"
+  },
+  {
+    "question": "In a Min-Heap tree structure, where is the smallest number located?",
+    "optionA": "At the root node (the very top)",
+    "optionB": "At the deepest leaf node",
+    "optionC": "In the exact middle row",
+    "optionD": "It can be at any random position",
+    "correct": "At the root node (the very top)"
+  },
+  {
+    "question": "What happens in an optimized Bubble Sort if a full pass finishes with zero swaps?",
+    "optionA": "The array is reversed",
+    "optionB": "The algorithm stops because the array is already fully sorted",
+    "optionC": "The system throws an error",
+    "optionD": "It starts over again",
+    "correct": "The algorithm stops because the array is already fully sorted"
+  },
+  {
+    "question": "Which sorting algorithm compares elements across large gaps like N/2, N/4, ..., 1?",
+    "optionA": "Merge Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Is Quick Sort considered a stable sorting algorithm by default?",
+    "optionA": "Yes, always",
+    "optionB": "No, it is unstable",
+    "optionC": "Only for single digit numbers",
+    "optionD": "Only when the array is small",
+    "correct": "No, it is unstable"
+  },
+  {
+    "question": "Which of these sorting algorithms is completely stable by design?",
+    "optionA": "Quick Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Heap Sort",
+    "optionD": "Selection Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What is the name of the process used to build or fix a heap structure in Heap Sort?",
+    "optionA": "Quick Split",
+    "optionB": "Heapify",
+    "optionC": "Linear Merge",
+    "optionD": "Gap Shift",
+    "correct": "Heapify"
+  },
+  {
+    "question": "If we use Bubble Sort on the array [3, 1, 2], what is its state after the very first swap?",
+    "optionA": "[1, 3, 2]",
+    "optionB": "[1, 2, 3]",
+    "optionC": "[2, 1, 3]",
+    "optionD": "[3, 2, 1]",
+    "correct": "[1, 3, 2]"
+  },
+  {
+    "question": "In standard Merge Sort, into how many pieces is the array split at each step?",
+    "optionA": "Three equal parts",
+    "optionB": "Two equal halves",
+    "optionC": "Four parts",
+    "optionD": "It depends on the numbers",
+    "correct": "Two equal halves"
+  },
+  {
+    "question": "Which algorithm keeps a sorted section at the front and slides new elements into place one by one?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Heap Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What does an 'in-place' sorting algorithm mean?",
+    "optionA": "It only runs on cloud servers",
+    "optionB": "It sorts the data inside the original array without needing large extra arrays",
+    "optionC": "The data values are frozen",
+    "optionD": "It takes a lot of memory",
+    "correct": "It sorts the data inside the original array without needing large extra arrays"
+  },
+  {
+    "question": "When does standard Quick Sort perform at its worst O(n²) speed?",
+    "optionA": "When the data is completely randomized",
+    "optionB": "When the data is already fully sorted or reverse sorted",
+    "optionC": "When the array size is tiny",
+    "optionD": "When all elements are zero",
+    "correct": "When the data is already fully sorted or reverse sorted"
+  },
+  {
+    "question": "How many basic loop layers are used in the standard implementation of Selection Sort?",
+    "optionA": "One single loop layer",
+    "optionB": "Two nested loop layers",
+    "optionC": "Three loop layers",
+    "optionD": "Zero loops",
+    "correct": "Two nested loop layers"
+  },
+  {
+    "question": "What is the average-case time complexity notation for Quick Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for standard Insertion Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for Shell Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(1)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "Which sorting algorithm is historically called the 'Diminishing Increment Sort'?",
+    "optionA": "Quick Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "In a standard array representation of a heap, if a parent is at index 'i', where is its left child?",
+    "optionA": "i + 1",
+    "optionB": "2i + 1",
+    "optionC": "2i + 2",
+    "optionD": "i / 2",
+    "correct": "2i + 1"
+  },
+  {
+    "question": "In Merge Sort, where does the actual ordering and sorting of elements happen?",
+    "optionA": "During the splitting step",
+    "optionB": "During the merging step when combining pieces back together",
+    "optionC": "Before the program starts running",
+    "optionD": "At the very beginning",
+    "correct": "During the merging step when combining pieces back together"
+  },
+  {
+    "question": "What is the best-case time complexity notation for Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting algorithm is known as 'out-of-place' because it requires a whole extra temporary array to merge data?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which of these sorting routines does NOT use recursive functions by default?",
+    "optionA": "Merge Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Quick Sort",
+    "optionD": "None of these",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Selection Sort, what do you do right after finding the smallest element in the unsorted section?",
+    "optionA": "Shift all numbers to the right side",
+    "optionB": "Swap it with the first element of that unsorted section",
+    "optionC": "Delete it from memory",
+    "optionD": "Multiply it by 10",
+    "correct": "Swap it with the first element of that unsorted section"
+  },
+  {
+    "question": "What is the best-case time complexity notation of optimized Bubble Sort on a fully sorted array?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(n log n)",
+    "optionD": "O(n²)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "In Quick Sort, once a pivot is placed in its final correct spot, what does the algorithm do?",
+    "optionA": "It stops immediately",
+    "optionB": "It recursively sorts the left and right sides around the pivot",
+    "optionC": "It deletes the pivot",
+    "optionD": "It combines everything into a new array",
+    "correct": "It recursively sorts the left and right sides around the pivot"
+  },
+  {
+    "question": "What is the time complexity notation of swapping two values inside a standard array?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "Which sorting algorithm can easily handle live, incoming stream elements one-by-one (Online sorting)?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Heap Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the average-case time complexity notation for Selection Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which sorting algorithm performs an internal insertion sort based on custom gap steps?",
+    "optionA": "Shell Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "Which sorting algorithm continuously passes through the array and pushes the largest number to the very end?",
+    "optionA": "Insertion Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Merge Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Selection Sort, if the array size is N, how many total passes does the outer loop perform?",
+    "optionA": "N - 1",
+    "optionB": "1",
+    "optionC": "N²",
+    "optionD": "Log N",
+    "correct": "N - 1"
+  },
+  {
+    "question": "What is the best-case time complexity notation for standard Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which word describes the action of Bubble Sort moving numbers step-by-step?",
+    "optionA": "Dividing",
+    "optionB": "Swapping",
+    "optionC": "Tree building",
+    "optionD": "Splitting",
+    "correct": "Swapping"
+  },
+  {
+    "question": "In standard Merge Sort, what happens right after the array is completely broken down into individual numbers?",
+    "optionA": "The numbers are deleted",
+    "optionB": "The numbers are merged back together in perfect sorted order",
+    "optionC": "It switches to Heap Sort logic",
+    "optionD": "It shuffles them randomly",
+    "correct": "The numbers are merged back together in perfect sorted order"
+  },
+  {
+    "question": "What is a complete binary tree called when it satisfies the heap properties for Heap Sort?",
+    "optionA": "A Binary Heap",
+    "optionB": "A Linked Chain",
+    "optionC": "A Grid Matrix",
+    "optionD": "A Database Row",
+    "correct": "A Binary Heap"
+  },
+  {
+    "question": "In Shell Sort, if the starting gap size is 4, elements at what index distance are compared?",
+    "optionA": "Adjacent elements (distance 1)",
+    "optionB": "Elements separated by 4 index positions",
+    "optionC": "The first and last items only",
+    "optionD": "No elements are compared",
+    "correct": "Elements separated by 4 index positions"
+  },
+  {
+    "question": "Which sorting algorithm behaves exactly like sliding new cards into a sorted sequence in your hand?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the best-case time complexity notation for standard Merge Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for standard Insertion Sort?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "If an algorithm works directly inside the original array without asking for extra helper arrays, it is called:",
+    "optionA": "Out-of-place",
+    "optionB": "In-place",
+    "optionC": "External Sort",
+    "optionD": "Slow Sort",
+    "correct": "In-place"
+  },
+  {
+    "question": "In an optimized Bubble Sort, what structural variable is used to skip unnecessary passes?",
+    "optionA": "A boolean swap flag",
+    "optionB": "A separate tree counter",
+    "optionC": "A floating point matrix",
+    "optionD": "A background thread runner",
+    "correct": "A boolean swap flag"
+  },
+  {
+    "question": "Which of these sorting routines offers a guaranteed O(n log n) runtime across all best, average, and worst cases?",
+    "optionA": "Quick Sort",
+    "optionB": "Heap Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Insertion Sort",
+    "correct": "Heap Sort"
+  },
+  {
+    "question": "In a standard array heap tree layout, what is the index position of the top root node?",
+    "optionA": "Index 0",
+    "optionB": "The absolute last index position",
+    "optionC": "The exact middle index position",
+    "optionD": "It changes randomly every loop",
+    "correct": "Index 0"
+  },
+  {
+    "question": "What is the average-case time complexity notation for standard Insertion Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "If you process an already fully sorted array using standard Insertion Sort, how many elements actually need to shift?",
+    "optionA": "All elements must shift",
+    "optionB": "Zero elements shift",
+    "optionC": "Half of the elements shift",
+    "optionD": "It crashes the application execution",
+    "correct": "Zero elements shift"
+  },
+  {
+    "question": "Which algorithmic design approach does Merge Sort use?",
+    "optionA": "Greedy Paradigm Choice",
+    "optionB": "Divide and Conquer",
+    "optionC": "Dynamic Table Optimization",
+    "optionD": "Brute Force Guessing",
+    "correct": "Divide and Conquer"
+  },
+  {
+    "question": "What is the average-case time complexity notation for Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "In a structural Min-Heap array layout, a parent node is always:",
+    "optionA": "Greater than or equal to its child nodes",
+    "optionB": "Smaller than or equal to its child nodes",
+    "optionC": "Equal to the sum of its child nodes",
+    "optionD": "Completely unrelated to its children",
+    "correct": "Smaller than or equal to its child nodes"
+  },
+  {
+    "question": "What is the baseline sorting method executed repeatedly within the internal gaps of Shell Sort?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Merge Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for standard Merge Sort?",
+    "optionA": "O(1)",
+    "optionB": "O(log n)",
+    "optionC": "O(n)",
+    "optionD": "O(n²)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "If we use a Max-Heap tree to sort data in ascending order, where do we place the largest element once it is extracted from root?",
+    "optionA": "At index position 0",
+    "optionB": "At the end of the current active heap array boundaries",
+    "optionC": "In an external linked storage loop",
+    "optionD": "We delete it permanently from data pools",
+    "correct": "At the end of the current active heap array boundaries"
+  },
+  {
+    "question": "What is the main combination operation performed repeatedly inside Merge Sort?",
+    "optionA": "Partitioning around a layout pivot",
+    "optionB": "Merging two separate sorted sub-arrays into a single sorted unit",
+    "optionC": "Sinking a node down tree indexes",
+    "optionD": "Swapping adjacent items random times",
+    "correct": "Merging two separate sorted sub-arrays into a single sorted unit"
+  },
+  {
+    "question": "Which sorting routine minimizes data writes, performing at most O(n) swaps overall?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Quick Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What happens to identical keys (duplicate elements) when processed by a 'Stable' sort?",
+    "optionA": "They are combined into one value",
+    "optionB": "They preserve their original relative order from the input",
+    "optionC": "Their placement is always inverted",
+    "optionD": "They produce an runtime logic crash",
+    "correct": "They preserve their original relative order from the input"
+  },
+  {
+    "question": "In Quick Sort, what is the name of the process that splits data items around a pivot element?",
+    "optionA": "Merging segments",
+    "optionB": "Partitioning",
+    "optionC": "Heapifying nodes",
+    "optionD": "Linear shifting",
+    "correct": "Partitioning"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for Shell Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(1)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "In a standard heap array, if a child node is located at index 'i', what integer division formula finds its parent index?",
+    "optionA": "2i",
+    "optionB": "(i - 1) / 2",
+    "optionC": "2i + 1",
+    "optionD": "i - 2",
+    "correct": "(i - 1) / 2"
+  },
+  {
+    "question": "Which straightforward sorting method checks items side-by-side and swaps them if they are out of order?",
+    "optionA": "Selection Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Merge Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Insertion Sort, what happens to elements that are strictly greater than the active key element being sorted?",
+    "optionA": "They are removed from the system completely",
+    "optionB": "They are shifted exactly one slot to the right to clear a path",
+    "optionC": "They are swapped directly with a pivot element",
+    "optionD": "They are sent to a background binary tree",
+    "correct": "They are shifted exactly one slot to the right to clear a path"
+  },
+  {
+    "question": "Which of these sorting routines does NOT rely on a recursive divide-and-conquer function structure by default?",
+    "optionA": "Merge Sort",
+    "optionB": "Quick Sort",
+    "optionC": "Selection Sort",
+    "optionD": "None of these use recursion",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What does the 'heapify' method do during the execution of Heap Sort?",
+    "optionA": "It adjusts array node indices to satisfy heap tree properties properly",
+    "optionB": "It deletes items from active storage memory",
+    "optionC": "It breaks the data pool into exact halves",
+    "optionD": "It multiples array boundaries by two",
+    "correct": "It adjusts array node indices to satisfy heap tree properties properly"
+  },
+  {
+    "question": "What memory baseline advantage does Quick Sort typically have over standard Merge Sort?",
+    "optionA": "Quick Sort requires a massive external array",
+    "optionB": "Quick Sort operates in-place on the array, requiring no massive secondary array for staging data",
+    "optionC": "Quick Sort uses zero runtime comparisons",
+    "optionD": "Quick Sort runs in constant O(1) total time limits",
+    "correct": "Quick Sort operates in-place on the array, requiring no massive secondary array for staging data"
+  },
+  {
+    "question": "In a standard heap array representation, if a parent node is at index 'i', what is the index of its right child node?",
+    "optionA": "2i + 1",
+    "optionB": "2i + 2",
+    "optionC": "i + 2",
+    "optionD": "2i",
+    "correct": "2i + 2"
+  },
+  {
+    "question": "What action occurs when Shell Sort fires its final pass with a gap sequence size of 1?",
+    "optionA": "It builds a complete max heap tree map",
+    "optionB": "It runs a standard Insertion Sort sweep to finalize the nearly sorted list",
+    "optionC": "It throws an index bound runtime failure",
+    "optionD": "It splits structural elements around a pivot",
+    "correct": "It runs a standard Insertion Sort sweep to finalize the nearly sorted list"
+  },
+  {
+    "question": "Which algorithm passes through an unsorted array range repeatedly, isolating the minimum element and swapping it to the front?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Quick Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "In standard Merge Sort, if an array containing 8 elements is split recursively, what is the initial split size?",
+    "optionA": "Single units of size 1 each",
+    "optionB": "Two separate segments of size 4 each",
+    "optionC": "One segment of size 8 and one empty list",
+    "optionD": "Varying random size limits",
+    "correct": "Two separate segments of size 4 each"
+  },
+  {
+    "question": "What is the best-case time complexity notation for standard Insertion Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "Is standard Selection Sort considered a stable sorting algorithm by default?",
+    "optionA": "Yes, always stable",
+    "optionB": "No, it is unstable by default layout design",
+    "optionC": "Only stable on reverse structured lists",
+    "optionD": "Only stable when values are negative",
+    "correct": "No, it is unstable by default layout design"
+  },
+  {
+    "question": "In a Max-Heap structure layout, parent nodes must be:",
+    "optionA": "Smaller than or equal to their child nodes",
+    "optionB": "Greater than or equal to their child nodes",
+    "optionC": "Bound strictly to a value of zero",
+    "optionD": "Completely random integers",
+    "correct": "Greater than or equal to their child nodes"
+  },
+  {
+    "question": "Which sorting technique works like a multi-stage bubble sequence running across custom gaps?",
+    "optionA": "Insertion Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Shell Sort",
+    "optionD": "Selection Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "What is the structural foundation used to implement Heap Sort seamlessly?",
+    "optionA": "An open key hash map tracking values",
+    "optionB": "A linear array treated conceptually as a Complete Binary Tree layout",
+    "optionC": "A circular doubly linked list chain",
+    "optionD": "An open graph mesh framework",
+    "correct": "A linear array treated conceptually as a Complete Binary Tree layout"
+  },
+  {
+    "question": "What does Quick Sort execute once its main partitioning loops finish for a segment?",
+    "optionA": "Weaves everything back into external lists",
+    "optionB": "Recursively applies the exact same splitting logic to the left and right partitions",
+    "optionC": "Swaps all remaining element indexes randomly",
+    "optionD": "Shuts down runtime stacks automatically",
+    "correct": "Recursively applies the exact same splitting logic to the left and right partitions"
+  },
+  {
+    "question": "What is the typical time complexity notation of Selection Sort in its best-case scenario?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In an optimized Bubble Sort, what event triggers an early, safe termination of the algorithm?",
+    "optionA": "An inner loop completing a full pass without making a single swap",
+    "optionB": "Halving array index markers at random steps",
+    "optionC": "Forcing elements into a linked structure format",
+    "optionD": "Receiving a background hardware system interrupt",
+    "correct": "An inner loop completing a full pass without making a single swap"
+  },
+  {
+    "question": "Which sorting workflow conceptually separates a list into 'sorted' and 'unsorted' fields, sliding elements sequentially to fit empty slots?",
+    "optionA": "Insertion Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Shell Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What does a basic inner loop pass of Bubble Sort achieve on an unsorted array?",
+    "optionA": "It calculates the array median value",
+    "optionB": "It successfully shifts the largest unsorted element to its final correct index position at the end",
+    "optionC": "It splits the array dimensions into exact halves",
+    "optionD": "It guarantees the entire array sorts instantly",
+    "correct": "It successfully shifts the largest unsorted element to its final correct index position at the end"
+  },
+  {
+    "question": "What occurs in the first major operational phase of Heap Sort?",
+    "optionA": "The input data array is completely sorted in reverse order",
+    "optionB": "The raw array elements are rearranged into a structurally valid Max or Min Heap",
+    "optionC": "The array boundaries are broken into separate pairs",
+    "optionD": "Pivots are globally assigned to data nodes",
+    "correct": "The raw array elements are rearranged into a structurally valid Max or Min Heap"
+  },
+  {
+    "question": "Which term describes a sorting method where the relative index order of duplicate elements is securely preserved?",
+    "optionA": "Stable Sort",
+    "optionB": "Unstable Sort",
+    "optionC": "Internal Linear Sort",
+    "optionD": "External Storage Sort",
+    "correct": "Stable Sort"
+  },
+  {
+    "question": "What is the average-case time complexity notation for standard Bubble Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the maximum number of structural partitions created during a standard Quick Sort split step?",
+    "optionA": "Two distinct subsegments around a chosen pivot element",
+    "optionB": "Three identical multi-dimensional fields",
+    "optionC": "N individual standalone array segments",
+    "optionD": "It varies dynamically depending on hardware",
+    "correct": "Two distinct subsegments around a chosen pivot element"
+  },
+  {
+    "question": "Which data structure framework is inherently used to implement Heap Sort cleanly without extra auxiliary arrays?",
+    "optionA": "A System Memory Stack",
+    "optionB": "A Priority Queue Queue",
+    "optionC": "A Complete Binary Heap layout within the array",
+    "optionD": "An Adjacency Graph Map",
+    "correct": "A Complete Binary Heap layout within the array"
+  }
+,
+{
+    "question": "Which sorting algorithm checks elements in pairs and is often compared to bubbles rising in water?",
+    "optionA": "Quick Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Selection Sort, what do we look for in the unsorted part of the array?",
+    "optionA": "The largest number only",
+    "optionB": "The smallest number (or minimum element)",
+    "optionC": "A random negative number",
+    "optionD": "The middle number",
+    "correct": "The smallest number (or minimum element)"
+  },
+  {
+    "question": "Which algorithm inserts each new number into its correct position within an already sorted sub-list?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the name of the operation that joins two sorted halves back together in Merge Sort?",
+    "optionA": "Splitting",
+    "optionB": "Merging",
+    "optionC": "Partitioning",
+    "optionD": "Swapping",
+    "correct": "Merging"
+  },
+  {
+    "question": "What is the main purpose of picking a pivot element in Quick Sort?",
+    "optionA": "To divide the array into smaller and larger sections",
+    "optionB": "To delete duplicate numbers",
+    "optionC": "To find the average value",
+    "optionD": "To stop the program",
+    "correct": "To divide the array into smaller and larger sections"
+  },
+  {
+    "question": "In a Max-Heap structure, the root node at the top must be:",
+    "optionA": "Smaller than its child nodes",
+    "optionB": "The largest element in the heap",
+    "optionC": "Equal to zero",
+    "optionD": "A negative integer",
+    "correct": "The largest element in the heap"
+  },
+  {
+    "question": "Shell Sort uses a system of shifting distances to compare numbers. What are these distances called?",
+    "optionA": "Pivots",
+    "optionB": "Gaps (or Increments)",
+    "optionC": "Roots",
+    "optionD": "Leaves",
+    "correct": "Gaps (or Increments)"
+  },
+  {
+    "question": "If an algorithm does not need any extra temporary array to sort data, it is called an:",
+    "optionA": "Out-of-place algorithm",
+    "optionB": "In-place algorithm",
+    "optionC": "External algorithm",
+    "optionD": "Online algorithm",
+    "correct": "In-place algorithm"
+  },
+  {
+    "question": "What happens when you run an optimized Bubble Sort on an array that is already perfectly sorted?",
+    "optionA": "It keeps swapping forever",
+    "optionB": "It stops after just 1 pass because no swaps were made",
+    "optionC": "It throws an error",
+    "optionD": "It reverses the array",
+    "correct": "It stops after just 1 pass because no swaps were made"
+  },
+  {
+    "question": "Which sorting algorithm breaks down the array until every sub-array has a size of 1?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "In Insertion Sort, when we find a number smaller than our key, what do we do to make space?",
+    "optionA": "Delete the larger numbers",
+    "optionB": "Shift the larger numbers one position to the right",
+    "optionC": "Multiply the numbers",
+    "optionD": "Nothing",
+    "correct": "Shift the larger numbers one position to the right"
+  },
+  {
+    "question": "What is the worst-case time complexity of Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which sorting algorithm is a faster, gap-based extension of Insertion Sort?",
+    "optionA": "Bubble Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Selection Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "What is the main structure used conceptually to perform Heap Sort?",
+    "optionA": "A Hash Table",
+    "optionB": "A Complete Binary Tree",
+    "optionC": "A Stack",
+    "optionD": "A Graph Map",
+    "correct": "A Complete Binary Tree"
+  },
+  {
+    "question": "In Quick Sort, what is the process of rearranging elements around the pivot called?",
+    "optionA": "Merging",
+    "optionB": "Partitioning",
+    "optionC": "Heapifying",
+    "optionD": "Looping",
+    "correct": "Partitioning"
+  },
+  {
+    "question": "What is the typical time complexity of Merge Sort in all cases?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which basic sorting algorithm is known for doing a lot of adjacent swaps but being very slow?",
+    "optionA": "Quick Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In a Min-Heap structure, where is the smallest number always located?",
+    "optionA": "At the root node (the very top)",
+    "optionB": "At the last leaf node",
+    "optionC": "In the middle row",
+    "optionD": "Anywhere randomly",
+    "correct": "At the root node (the very top)"
+  },
+  {
+    "question": "What does it mean if a sorting algorithm is 'Stable'?",
+    "optionA": "It never crashes the phone",
+    "optionB": "It keeps duplicate elements in their original relative order",
+    "optionC": "It sorts numbers into descending order only",
+    "optionD": "It uses a pivot element",
+    "correct": "It keeps duplicate elements in their original relative order"
+  },
+  {
+    "question": "Which sorting algorithm needs an extra helper array of size N to combine sorted pieces?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Insertion Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What is the final gap size applied in the very last pass of Shell Sort?",
+    "optionA": "0",
+    "optionB": "1",
+    "optionC": "N/2",
+    "optionD": "5",
+    "correct": "1"
+  },
+  {
+    "question": "Which sorting algorithm uses a function called 'heapify'?",
+    "optionA": "Quick Sort",
+    "optionB": "Heap Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Heap Sort"
+  },
+  {
+    "question": "What is the average-case time complexity of Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In Quick Sort, if we pick a pivot, where do elements larger than the pivot go?",
+    "optionA": "To the left side of the pivot",
+    "optionB": "To the right side of the pivot",
+    "optionC": "They are deleted",
+    "optionD": "They stay at index 0",
+    "correct": "To the right side of the pivot"
+  },
+  {
+    "question": "Which sorting algorithm works best when data elements arrive one-by-one in a live stream?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the best-case time complexity of standard Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which design approach does Merge Sort use to solve the sorting problem?",
+    "optionA": "Greedy Choice",
+    "optionB": "Divide and Conquer",
+    "optionC": "Brute Force",
+    "optionD": "Random Guessing",
+    "correct": "Divide and Conquer"
+  },
+  {
+    "question": "In a standard array representation of a tree, if a parent is at index 'i', what is the index of its left child?",
+    "optionA": "i + 1",
+    "optionB": "2i + 1",
+    "optionC": "2i + 2",
+    "optionD": "i / 2",
+    "correct": "2i + 1"
+  },
+  {
+    "question": "What is the main baseline advantage of Heap Sort over Merge Sort?",
+    "optionA": "Heap Sort is faster than Merge Sort",
+    "optionB": "Heap Sort is an in-place algorithm and does not need a large extra array",
+    "optionC": "Heap Sort is simpler to code",
+    "optionD": "Heap Sort does not compare elements",
+    "correct": "Heap Sort is an in-place algorithm and does not need a large extra array"
+  },
+  {
+    "question": "What is the time complexity of swapping two elements in a simple array?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "Which sorting algorithm is often taught first because its logic mimics manual side-by-side sorting?",
+    "optionA": "Merge Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "What does Selection Sort do once it finds the lowest value in the remaining unsorted section?",
+    "optionA": "Shifts all elements up",
+    "optionB": "Swaps it with the first element of that unsorted section",
+    "optionC": "Deletes it",
+    "optionD": "Moves it to a separate array",
+    "correct": "Swaps it with the first element of that unsorted section"
+  },
+  {
+    "question": "What is the best-case time complexity of standard Insertion Sort on an already sorted array?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "In an array heap tree layout, what is the index position of the top root node?",
+    "optionA": "Index 0",
+    "optionB": "The last index position",
+    "optionC": "The middle index position",
+    "optionD": "It changes randomly",
+    "correct": "Index 0"
+  },
+  {
+    "question": "Is Selection Sort considered a stable sorting algorithm by default?",
+    "optionA": "Yes, always",
+    "optionB": "No, it is unstable",
+    "optionC": "Only for positive numbers",
+    "optionD": "Only when the array is small",
+    "correct": "No, it is unstable"
+  },
+  {
+    "question": "What is the average-case time complexity of Quick Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting algorithm systematically uses decreasing gap intervals like N/2, N/4, ..., 1?",
+    "optionA": "Merge Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "In standard Merge Sort, into how many pieces is a single array split at each step?",
+    "optionA": "Three parts",
+    "optionB": "Two equal halves",
+    "optionC": "Four parts",
+    "optionD": "It depends on the data size",
+    "correct": "Two equal halves"
+  },
+  {
+    "question": "What is the auxiliary space complexity of standard Insertion Sort?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "What is the worst-case time complexity of Bubble Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In a Max-Heap layout, a parent node must always be:",
+    "optionA": "Smaller than its child nodes",
+    "optionB": "Greater than or equal to its child nodes",
+    "optionC": "Equal to zero",
+    "optionD": "A prime number",
+    "correct": "Greater than or equal to its child nodes"
+  },
+  {
+    "question": "Which algorithm behaves like a card player inserting a new card into its proper place?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Merge Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the average-case time complexity of Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "In a standard array representation of a tree, if a parent is at index 'i', what is the index of its right child?",
+    "optionA": "2i + 1",
+    "optionB": "2i + 2",
+    "optionC": "i + 2",
+    "optionD": "2i",
+    "correct": "2i + 2"
+  },
+  {
+    "question": "Which sorting algorithm is known as an 'out-of-place' routine because it copies data into a temporary array during execution?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What does Quick Sort do after successfully placing a pivot in its final position?",
+    "optionA": "It stops immediately",
+    "optionB": "It recursively sorts the left and right sub-arrays",
+    "optionC": "It deletes the pivot element",
+    "optionD": "It combines everything into a new array",
+    "correct": "It recursively sorts the left and right sub-arrays"
+  },
+  {
+    "question": "What is the space complexity of Shell Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(1)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "In an optimized Bubble Sort, what variable tracks whether any swaps occurred during a pass?",
+    "optionA": "A boolean swap tracker flag",
+    "optionB": "A separate tree counter",
+    "optionC": "An integer matrix",
+    "optionD": "A background system runner",
+    "correct": "A boolean swap tracker flag"
+  },
+  {
+    "question": "Which basic sorting routine layout features a double nested loop to search for the absolute smallest element?",
+    "optionA": "Merge Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity of standard Insertion Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the main combination operation performed repeatedly inside Merge Sort?",
+    "optionA": "Partitioning around a pivot",
+    "optionB": "Merging two sorted sub-arrays into one unified sorted array",
+    "optionC": "Sinking a node down a heap tree",
+    "optionD": "Swapping adjacent items randomly",
+    "correct": "Merging two sorted sub-arrays into one unified sorted array"
+  },
+  {
+    "question": "Which sorting algorithm is famous for minimizing memory writes, making at most N-1 swaps?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Merge Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "In a complete binary heap stored in an array, if a child node is at index 'i', what is its parent's index?",
+    "optionA": "2i",
+    "optionB": "(i - 1) / 2 using integer division",
+    "optionC": "2i + 1",
+    "optionD": "i - 2",
+    "correct": "(i - 1) / 2 using integer division"
+  },
+  {
+    "question": "When does standard Quick Sort perform at its worst O(n²) speed?",
+    "optionA": "When the data is randomized",
+    "optionB": "When the data is already sorted or reverse sorted",
+    "optionC": "When the array size is very small",
+    "optionD": "When all numbers are prime",
+    "correct": "When the data is already sorted or reverse sorted"
+  },
+  {
+    "question": "What happens during the first phase of Heap Sort?",
+    "optionA": "The array is completely sorted in reverse order",
+    "optionB": "The raw elements are rearranged into a valid binary heap structure",
+    "optionC": "The array is split into standalone halves",
+    "optionD": "Pivots are assigned to random positions",
+    "correct": "The raw elements are rearranged into a valid binary heap structure"
+  },
+  {
+    "question": "What does a single pass of standard Bubble Sort guarantee?",
+    "optionA": "The whole array gets sorted instantly",
+    "optionB": "The largest unsorted element moves to its final position at the end",
+    "optionC": "The array splits into two halves",
+    "optionD": "The minimum element moves to index 0",
+    "correct": "The largest unsorted element moves to its final position at the end"
+  },
+  {
+    "question": "Which sorting algorithm performs an internal insertion sort on elements separated by gap increments?",
+    "optionA": "Shell Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Bubble Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity of standard Merge Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting technique splits an array into halves, sorts them, and then weaves them back together?",
+    "optionA": "Quick Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Shell Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "In Bubble Sort, if the left element is larger than the right element, what action is taken?",
+    "optionA": "The left element is deleted",
+    "optionB": "They are swapped with each other",
+    "optionC": "The right element is multiplied by two",
+    "optionD": "Nothing happens",
+    "correct": "They are swapped with each other"
+  },
+  {
+    "question": "What happens during a pass of Selection Sort?",
+    "optionA": "Adjacent elements are continuously swapped",
+    "optionB": "The smallest value in the unsorted section is found and moved to its proper spot",
+    "optionC": "Elements are divided into groups based on gaps",
+    "optionD": "A pivot element is positioned at the exact center",
+    "correct": "The smallest value in the unsorted section is found and moved to its proper spot"
+  },
+  {
+    "question": "In standard Merge Sort, if the original array size is 1, what does the recursive function do?",
+    "optionA": "Splits it further into empty pieces",
+    "optionB": "Returns immediately because an array of size 1 is already sorted",
+    "optionC": "Triggers a Bubble Sort pass",
+    "optionD": "Throws a stack error",
+    "correct": "Returns immediately because an array of size 1 is already sorted"
+  },
+  {
+    "question": "Which of these algorithms utilizes a pivot element to group smaller numbers on one side and larger numbers on the other?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Merge Sort",
+    "correct": "Quick Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity of standard Selection Sort when the input array is already sorted?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "During the final steps of Heap Sort, where is each extracted root element placed?",
+    "optionA": "In a separate external array list",
+    "optionB": "At the end of the array, shrinking the active heap size by one each time",
+    "optionC": "At index 0 continuously",
+    "optionD": "In a temporary system loop tracker",
+    "correct": "At the end of the array, shrinking the active heap size by one each time"
+  },
+  {
+    "question": "What is the best-case time complexity of an unoptimized Bubble Sort that does not track swaps?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which algorithm is basically Insertion Sort but allows large jumps across elements using gap intervals?",
+    "optionA": "Selection Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Quick Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "If we want to implement Heap Sort to sort numbers in descending order (highest to lowest), which variant of the heap should we build first?",
+    "optionA": "Max-Heap",
+    "optionB": "Min-Heap",
+    "optionC": "Binary Search Tree",
+    "optionD": "A linear stack",
+    "correct": "Min-Heap"
+  },
+  {
+    "question": "What is the space complexity of standard Merge Sort on an array?",
+    "optionA": "O(1)",
+    "optionB": "O(log n)",
+    "optionC": "O(n)",
+    "optionD": "O(n²)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "Which algorithm divides the array conceptually into sorted and unsorted segments, and slides numbers to find their relative spot?",
+    "optionA": "Insertion Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the maximum number of comparisons performed by Selection Sort for an array of size N?",
+    "optionA": "N",
+    "optionB": "N²",
+    "optionC": "N(N-1)/2",
+    "optionD": "Log N",
+    "correct": "N(N-1)/2"
+  },
+  {
+    "question": "In Quick Sort, if we are incredibly lucky and choose the exact median value as our pivot every time, what is the time complexity?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Why is Bubble Sort considered highly inefficient for large, reverse-sorted datasets?",
+    "optionA": "It crashes due to out-of-bounds limits",
+    "optionB": "It makes O(n²) comparisons and O(n²) adjacent swaps, shifting items very slowly",
+    "optionC": "It can only process small positive integers",
+    "optionD": "It runs background processing loops",
+    "correct": "It makes O(n²) comparisons and O(n²) adjacent swaps, shifting items very slowly"
+  },
+  {
+    "question": "What happens during the 'Conquer' phase of the standard Merge Sort workflow?",
+    "optionA": "The array halves are recursively sorted",
+    "optionB": "The array is completely cleared from memory",
+    "optionC": "Pivots are mapped across indices",
+    "optionD": "Duplicate elements are removed",
+    "correct": "The array halves are recursively sorted"
+  },
+  {
+    "question": "In a binary heap tree stored as an array, if a parent node is at index 3, what are the indices of its left and right children?",
+    "optionA": "4 and 5",
+    "optionB": "6 and 7",
+    "optionC": "7 and 8",
+    "optionD": "5 and 6",
+    "correct": "7 and 8"
+  },
+  {
+    "question": "Which statement is true regarding the stability of standard Insertion Sort?",
+    "optionA": "It is highly unstable by design",
+    "optionB": "It is stable because it only shifts elements past strictly greater values, keeping identical items in order",
+    "optionC": "It becomes unstable only on large capacities",
+    "optionD": "It is stable only when sorting character letters",
+    "correct": "It is stable because it only shifts elements past strictly greater values, keeping identical items in order"
+  },
+  {
+    "question": "What is the worst-case time complexity of Shell Sort when implemented using basic gap progressions?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the baseline operational mechanism behind standard partitioning in Quick Sort?",
+    "optionA": "Using index markers to swap elements into smaller and larger sections around a pivot",
+    "optionB": "Using a single pointer scanning elements linearly without swapping",
+    "optionC": "Creating secondary array lists continuously",
+    "optionD": "Sorting adjacent pairs via a flat bubble sequence",
+    "correct": "Using index markers to swap elements into smaller and larger sections around a pivot"
+  },
+  {
+    "question": "What is the time complexity required to find the single largest element in an unsorted array of size N?",
+    "optionA": "O(1)",
+    "optionB": "O(log n)",
+    "optionC": "O(n)",
+    "optionD": "O(n log n)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "Which of these sorting routines does NOT require recursive function setups or divide-and-conquer logic to execute?",
+    "optionA": "Merge Sort",
+    "optionB": "Quick Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "None of these can run without recursion",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What happens during the heapify down (sink) operation in a Max-Heap?",
+    "optionA": "A node is pushed upwards until it is smaller than its parent node",
+    "optionB": "A node is compared with its child nodes and swapped with the larger child if it violates the heap rule",
+    "optionC": "The root element is permanently deleted from system memory maps",
+    "optionD": "The tree is balanced symmetrically",
+    "correct": "A node is compared with its child nodes and swapped with the larger child if it violates the heap rule"
+  },
+  {
+    "question": "Which sorting routine works exceptionally well for small lists or arrays that are already mostly sorted, outperforming heavy log-linear alternatives?",
+    "optionA": "Selection Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What does a complete pass of standard Shell Sort with a gap size of K do?",
+    "optionA": "It fully sorts the entire array instantly",
+    "optionB": "It creates K interleaved sub-lists, each independently sorted using Insertion Sort logic",
+    "optionC": "It removes all identical elements from the database",
+    "optionD": "It shifts only the single smallest value to index 0",
+    "correct": "It creates K interleaved sub-lists, each independently sorted using Insertion Sort logic"
+  },
+  {
+    "question": "What is the average-case time complexity of Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which baseline sorting technique explicitly relies on a double nested loop structure where side-by-side items are continuously compared?",
+    "optionA": "Merge Sort",
+    "optionB": "Quick Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In an optimized Bubble Sort, if the inner loop finishes a full pass without making any swaps, what does it mean?",
+    "optionA": "The array has zero values",
+    "optionB": "The array is completely sorted, so the algorithm can safely stop early",
+    "optionC": "The pivot value was chosen poorly",
+    "optionD": "An index overflow error has occurred",
+    "correct": "The array is completely sorted, so the algorithm can safely stop early"
+  },
+  {
+    "question": "What is the guaranteed runtime performance of Heap Sort across best, average, and worst cases?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "What occurs during a standard inner loop sweep of Bubble Sort?",
+    "optionA": "The lowest overall item is isolated",
+    "optionB": "Adjacent elements are compared and swapped if they are out of order",
+    "optionC": "Subarrays are broken down via pivots",
+    "optionD": "Elements are grouped based on prime indices",
+    "correct": "Adjacent elements are compared and swapped if they are out of order"
+  },
+  {
+    "question": "In Selection Sort, after finding the absolute minimum value in the remaining unsorted range, what operation is executed?",
+    "optionA": "It is inserted by shifting elements one by one",
+    "optionB": "It is swapped directly with the element at the front of that unsorted range",
+    "optionC": "It is moved onto an active external system stack layer",
+    "optionD": "It is dropped from loop tracks",
+    "correct": "It is swapped directly with the element at the front of that unsorted range"
+  },
+  {
+    "question": "What is the average-case time complexity of Insertion Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In Quick Sort, what does the recursive space complexity on the stack represent?",
+    "optionA": "The temporary array storage size",
+    "optionB": "The memory consumption of the recursive function call stack layers",
+    "optionC": "The overhead of pivot tracks",
+    "optionD": "The system heap size",
+    "correct": "The memory consumption of the recursive function call stack layers"
+  },
+  {
+    "question": "Which statement best describes what standard Selection Sort does?",
+    "optionA": "Repeatedly scans the unsorted range to find the lowest value and swaps it to its proper index",
+    "optionB": "Dividing elements via a structural pivot element",
+    "optionC": "Weaving separate sorted halves back linearly",
+    "optionD": "Sinking elements down complete binary tree structures",
+    "correct": "Repeatedly scans the unsorted range to find the lowest value and swaps it to its proper index"
+  },
+  {
+    "question": "In Bubble Sort, what is the maximum number of passes required to sort an array of N elements in the absolute worst case?",
+    "optionA": "N",
+    "optionB": "N - 1",
+    "optionC": "N / 2",
+    "optionD": "Log N",
+    "correct": "N - 1"
+  },
+  {
+    "question": "What structural condition must a binary tree meet to be considered a valid heap?",
+    "optionA": "It must be a full BST layout",
+    "optionB": "It must be a complete binary tree where parent nodes satisfy the heap relation relative to their children",
+    "optionC": "It can only have 3 levels maximum",
+    "optionD": "All leaf nodes must have negative keys",
+    "correct": "It must be a complete binary tree where parent nodes satisfy the heap relation relative to their children"
+  },
+  {
+    "question": "What is the main drawback of always choosing the very first element as a pivot in Quick Sort?",
+    "optionA": "It causes high memory fragmentation leaks",
+    "optionB": "It results in worst-case O(n²) performance if the input data is already sorted",
+    "optionC": "It makes the algorithm complex to code",
+    "optionD": "It slows down simple array swaps",
+    "correct": "It results in worst-case O(n²) performance if the input data is already sorted"
+  },
+  {
+    "question": "Which sorting mechanism minimizes memory overwrites, keeping array swaps bounded to at most a linear scale?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Insertion Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What is the best-case behavior of standard Insertion Sort?",
+    "optionA": "It checks every element once without shifting, completing in linear O(n) time",
+    "optionB": "It divides the data in log time steps",
+    "optionC": "It runs in quadratic O(n²) time regardless of structure",
+    "optionD": "It cannot execute if data is sorted",
+    "correct": "It checks every element once without shifting, completing in linear O(n) time"
+  },
+  {
+    "question": "What is the total number of questions included across this specific JSON chunk?",
+    "optionA": "50",
+    "optionB": "100",
+    "optionC": "150",
+    "optionD": "200",
+    "correct": "100"
+  }
+,
+{
+    "question": "Which sorting algorithm is often called the slowest because it makes too many side-by-side swaps?",
+    "optionA": "Merge Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Selection Sort, after finding the minimum element, we swap it with the element at the _____ of the unsorted part.",
+    "optionA": "End",
+    "optionB": "Front",
+    "optionC": "Middle",
+    "optionD": "Random position",
+    "correct": "Front"
+  },
+  {
+    "question": "Which sorting algorithm processes elements one by one, shifting larger items to make a gap for the current item?",
+    "optionA": "Bubble Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "Merge Sort splits the original array into halves until the size of each piece becomes:",
+    "optionA": "0",
+    "optionB": "1",
+    "optionC": "2",
+    "optionD": "Half of N",
+    "correct": "1"
+  },
+  {
+    "question": "What is the primary goal of the partitioning process in Quick Sort?",
+    "optionA": "To sort the entire array in one step",
+    "optionB": "To place the pivot in its correct position and separate smaller and larger numbers",
+    "optionC": "To find the square root of the array size",
+    "optionD": "To delete zero values",
+    "correct": "To place the pivot in its correct position and separate smaller and larger numbers"
+  },
+  {
+    "question": "In a Max-Heap tree structure, any parent node must be _____ its child nodes.",
+    "optionA": "Smaller than",
+    "optionB": "Greater than or equal to",
+    "optionC": "Exactly half of",
+    "optionD": "Completely equal to",
+    "correct": "Greater than or equal to"
+  },
+  {
+    "question": "What parameter does Shell Sort change dynamically after each sorting pass?",
+    "optionA": "The pivot element",
+    "optionB": "The gap size (or increment)",
+    "optionC": "The array length",
+    "optionD": "The tree depth",
+    "correct": "The gap size (or increment)"
+  },
+  {
+    "question": "An algorithm that modifies the array items directly without using extra temporary storage arrays is called:",
+    "optionA": "Out-of-place",
+    "optionB": "In-place",
+    "optionC": "External",
+    "optionD": "Recursive",
+    "correct": "In-place"
+  },
+  {
+    "question": "If an optimized Bubble Sort finishes an entire outer loop pass with zero swaps, it means the array is:",
+    "optionA": "Empty",
+    "optionB": "Already fully sorted",
+    "optionC": "Reversed",
+    "optionD": "Broken",
+    "correct": "Already fully sorted"
+  },
+  {
+    "question": "Which strategy describes breaking a large problem down into smaller identical sub-problems, like in Merge Sort?",
+    "optionA": "Greedy Search",
+    "optionB": "Divide and Conquer",
+    "optionC": "Brute Force",
+    "optionD": "Backtracking",
+    "correct": "Divide and Conquer"
+  },
+  {
+    "question": "In Insertion Sort, what happens to elements that are strictly smaller than the current key element?",
+    "optionA": "They are deleted",
+    "optionB": "They stay in their positions because they are already on the correct side",
+    "optionC": "They are multiplied by two",
+    "optionD": "They move to the end of the array",
+    "correct": "They stay in their positions because they are already on the correct side"
+  },
+  {
+    "question": "What is the typical time complexity notation for the worst-case scenario in Bubble Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which algorithm can be described as a more advanced version of Insertion Sort that allows comparisons of distant elements?",
+    "optionA": "Bubble Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Selection Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "Heap Sort turns a linear array into what conceptual data structure format first?",
+    "optionA": "A Hash Map",
+    "optionB": "A Complete Binary Tree",
+    "optionC": "A Stack",
+    "optionD": "A Circular Linked List",
+    "correct": "A Complete Binary Tree"
+  },
+  {
+    "question": "What special element is picked at the start of Quick Sort to organize the data partitioning?",
+    "optionA": "Root",
+    "optionB": "Pivot",
+    "optionC": "Gap",
+    "optionD": "Node",
+    "correct": "Pivot"
+  },
+  {
+    "question": "What is the time complexity of standard Merge Sort across all cases (best, average, and worst)?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which of these sorting routines does not make any element swaps until it finds the absolute lowest value in that pass?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Merge Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "In a Min-Heap structure, the very top root node always holds:",
+    "optionA": "The largest number",
+    "optionB": "The smallest number",
+    "optionC": "The number zero",
+    "optionD": "A random value",
+    "correct": "The smallest number"
+  },
+  {
+    "question": "If a sorting algorithm keeps the relative order of duplicate items exactly the same as the input, it is:",
+    "optionA": "Unstable",
+    "optionB": "Stable",
+    "optionC": "In-place",
+    "optionD": "External",
+    "correct": "Stable"
+  },
+  {
+    "question": "Which algorithm copies sorted sub-lists into a fresh temporary array to weave them back into a single list?",
+    "optionA": "Selection Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "What is the absolute final gap value used to finish the sorting sweeps in Shell Sort?",
+    "optionA": "0",
+    "optionB": "1",
+    "optionC": "2",
+    "optionD": "N",
+    "correct": "1"
+  },
+  {
+    "question": "What is the process of adjusting tree node indices downward to fix a broken heap called?",
+    "optionA": "Splitting",
+    "optionB": "Heapify",
+    "optionC": "Merging",
+    "optionD": "Partitioning",
+    "correct": "Heapify"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In Quick Sort, where do numbers that are strictly smaller than the pivot get shifted?",
+    "optionA": "To the right side of the pivot",
+    "optionB": "To the left side of the pivot",
+    "optionC": "They are removed from the list",
+    "optionD": "They go to the last index position",
+    "correct": "To the left side of the pivot"
+  },
+  {
+    "question": "Which sorting routine works effectively in real-time as elements are added dynamically one by one?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the best-case time complexity of Selection Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n log n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which phase of Merge Sort involves recursively dividing the collection into smaller pieces?",
+    "optionA": "Conquer Phase",
+    "optionB": "Divide Phase",
+    "optionC": "Combine Phase",
+    "optionD": "Greedy Phase",
+    "correct": "Divide Phase"
+  },
+  {
+    "question": "In an array-backed binary tree, if a parent node is located at index 'i', its left child sits at index:",
+    "optionA": "i + 1",
+    "optionB": "2i + 1",
+    "optionC": "2i + 2",
+    "optionD": "i / 2",
+    "correct": "2i + 1"
+  },
+  {
+    "question": "What memory advantage does Heap Sort have when compared directly to standard Merge Sort?",
+    "optionA": "Heap Sort requires O(N) extra staging memory",
+    "optionB": "Heap Sort works in-place (O(1) auxiliary space), requiring no massive secondary array",
+    "optionC": "Heap Sort uses zero comparisons",
+    "optionD": "Heap Sort doesn't run loops",
+    "correct": "Heap Sort works in-place (O(1) auxiliary space), requiring no massive secondary array"
+  },
+  {
+    "question": "What is the basic time complexity required to swap two array elements using a temporary variable?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "Which sorting algorithm is heavily known for repeatedly 'bubbling' the highest values to the end of the collection?",
+    "optionA": "Insertion Sort",
+    "optionB": "Bubble Sort",
+    "optionC": "Selection Sort",
+    "optionD": "Merge Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In Selection Sort, what is the maximum number of times the swap operation is called per outer loop pass?",
+    "optionA": "N times",
+    "optionB": "At most 1 time",
+    "optionC": "N² times",
+    "optionD": "Zero times",
+    "correct": "At most 1 time"
+  },
+  {
+    "question": "What is the best-case time complexity of standard Insertion Sort when given an already sorted array?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "In an array representation of a binary heap, what is the fixed index position of the top-most root node?",
+    "optionA": "Index 0",
+    "optionB": "The last index position",
+    "optionC": "The middle index position",
+    "optionD": "It changes randomly every cycle",
+    "correct": "Index 0"
+  },
+  {
+    "question": "Is Quick Sort structurally considered a stable sorting algorithm by default?",
+    "optionA": "Yes, always",
+    "optionB": "No, it is unstable by default design",
+    "optionC": "Only when numbers are small",
+    "optionD": "Only on pre-sorted arrays",
+    "correct": "No, it is unstable by default design"
+  },
+  {
+    "question": "What is the average-case time complexity of standard Quick Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting algorithm works by applying an internal insertion pass across varying index distances called gaps?",
+    "optionA": "Bubble Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Selection Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "In standard Merge Sort, the array splitting step breaks a collection down into how many sub-arrays at a time?",
+    "optionA": "Three parts",
+    "optionB": "Two equal halves",
+    "optionC": "Four parts",
+    "optionD": "A random number of pieces",
+    "correct": "Two equal halves"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for Insertion Sort?",
+    "optionA": "O(1)",
+    "optionB": "O(n)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "What is the average-case time complexity notation for Bubble Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In a structurally sound Min-Heap tree, parent nodes are always:",
+    "optionA": "Greater than their child nodes",
+    "optionB": "Smaller than or equal to their child nodes",
+    "optionC": "Equal to the sum of their children",
+    "optionD": "Zero",
+    "correct": "Smaller than or equal to their child nodes"
+  },
+  {
+    "question": "Which analogy perfectly captures the mechanic of Insertion Sort?",
+    "optionA": "Sinking stones in water",
+    "optionB": "Sorting a handful of playing cards by inserting them one by one",
+    "optionC": "Splitting a deck of cards perfectly into equal piles",
+    "optionD": "Picking the absolute highest item from a table",
+    "correct": "Sorting a handful of playing cards by inserting them one by one"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for standard Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "In an array-backed binary tree, if a parent node is located at index 'i', its right child sits at index:",
+    "optionA": "2i + 1",
+    "optionB": "2i + 2",
+    "optionC": "i + 2",
+    "optionD": "2i",
+    "correct": "2i + 2"
+  },
+  {
+    "question": "Which sorting routine is categorized as 'out-of-place' due to its strict requirement for extra helper array buffers to combine data?",
+    "optionA": "Bubble Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "In Quick Sort, once the pivot element settles into its absolute final sorted spot, what happens next?",
+    "optionA": "The algorithm terminates completely",
+    "optionB": "The exact same partitioning step runs recursively on the left and right sub-arrays",
+    "optionC": "The pivot is deleted to free memory",
+    "optionD": "All remaining elements are shuffled",
+    "correct": "The exact same partitioning step runs recursively on the left and right sub-arrays"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for standard Shell Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(1)",
+    "optionC": "O(log n)",
+    "optionD": "O(n²)",
+    "correct": "O(1)"
+  },
+  {
+    "question": "In an optimized Bubble Sort routine, what type of variable tracks whether a swap happened during an array pass?",
+    "optionA": "A boolean swap flag",
+    "optionB": "A floating point matrix counter",
+    "optionC": "A secondary string array",
+    "optionD": "A hardware hardware pointer",
+    "correct": "A boolean swap flag"
+  },
+  {
+    "question": "Which basic sorting algorithm employs a double nested loop layout specifically to scan for and isolate the lowest value item?",
+    "optionA": "Merge Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Heap Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for standard Insertion Sort?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the primary action performed during the combination phase of Merge Sort?",
+    "optionA": "Isolating items using a pivot element",
+    "optionB": "Merging two separate sorted sub-arrays into a single sorted array unit",
+    "optionC": "Sinking a value downward through tree levels",
+    "optionD": "Swapping adjacent items at random intervals",
+    "correct": "Merging two separate sorted sub-arrays into a single sorted array unit"
+  },
+  {
+    "question": "Which sorting algorithm minimizes memory writes, capping array swaps to a maximum scale of O(n)?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Merge Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "In an array-backed complete binary heap layout, if a child node sits at index 'i', what formula tracks its parent node index?",
+    "optionA": "2i",
+    "optionB": "(i - 1) / 2 using integer division",
+    "optionC": "2i + 1",
+    "optionD": "i - 2",
+    "correct": "(i - 1) / 2 using integer division"
+  },
+  {
+    "question": "When does standard Quick Sort perform at its worst O(n²) efficiency?",
+    "optionA": "When the input values are totally randomized",
+    "optionB": "When the input array is already fully sorted or reverse sorted",
+    "optionC": "When the dataset size is tiny",
+    "optionD": "When all array keys are prime integers",
+    "correct": "When the input array is already fully sorted or reverse sorted"
+  },
+  {
+    "question": "What occurs during the initial build phase of Heap Sort?",
+    "optionA": "The array is completely sorted in reverse alignment",
+    "optionB": "The raw array elements are systematically rearranged into a valid binary heap structure",
+    "optionC": "The collection is cut cleanly into independent halves",
+    "optionD": "Pivots are mapped across random index ranges",
+    "correct": "The raw array elements are systematically rearranged into a valid binary heap structure"
+  },
+  {
+    "question": "What does a single complete pass of standard Bubble Sort guarantee?",
+    "optionA": "The entire array becomes perfectly sorted instantly",
+    "optionB": "The single largest unsorted element settles into its correct final index position at the end",
+    "optionC": "The array splits directly into equal halves",
+    "optionD": "The minimum element moves straight to index position 0",
+    "correct": "The single largest unsorted element settles into its correct final index position at the end"
+  },
+  {
+    "question": "Which sorting routine operates like a multi-stage bubble check running across specific gap parameters?",
+    "optionA": "Insertion Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Shell Sort",
+    "optionD": "Selection Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity notation for standard Merge Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting routine relies on splitting a collection into smaller halves, sorting them independently, and weaving them back?",
+    "optionA": "Quick Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Shell Sort",
+    "optionD": "Heap Sort",
+    "correct": "Merge Sort"
+  },
+  {
+    "question": "In Bubble Sort, if the left adjacent element is larger than the right adjacent element, what happens?",
+    "optionA": "The left element is purged from the collection",
+    "optionB": "They are immediately swapped with each other",
+    "optionC": "The right element value doubles",
+    "optionD": "No operation is triggered",
+    "correct": "They are immediately swapped with each other"
+  },
+  {
+    "question": "What happens during a standard operational pass of Selection Sort?",
+    "optionA": "Adjacent keys are continually swapped in pairs",
+    "optionB": "The lowest value item in the unsorted range is found and moved to its proper position",
+    "optionC": "Data groups are assembled according to fixed increment gaps",
+    "optionD": "A pivot element sits squarely at the absolute center index",
+    "correct": "The lowest value item in the unsorted range is found and moved to its proper position"
+  },
+  {
+    "question": "In standard Merge Sort, if the incoming array slice size is 1, what does the recursive function do?",
+    "optionA": "Splits it into smaller empty units",
+    "optionB": "Returns immediately because an array of size 1 is already implicitly sorted",
+    "optionC": "Fires a fallback Bubble Sort sweep",
+    "optionD": "Logs a memory overflow crash",
+    "correct": "Returns immediately because an array of size 1 is already implicitly sorted"
+  },
+  {
+    "question": "Which algorithm features a pivot value used to separate smaller elements to the left and larger elements to the right?",
+    "optionA": "Selection Sort",
+    "optionB": "Insertion Sort",
+    "optionC": "Quick Sort",
+    "optionD": "Merge Sort",
+    "correct": "Quick Sort"
+  },
+  {
+    "question": "What is the worst-case time complexity of standard Selection Sort when processed on a perfectly pre-sorted collection?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "During the extraction step of Heap Sort, where is each pulled root node placed?",
+    "optionA": "In a separate external array collection buffer",
+    "optionB": "At the end of the array, systematically shrinking the active heap boundary by one each time",
+    "optionC": "Permanently locked at index position 0",
+    "optionD": "Inside a floating temporary system tracker loop",
+    "correct": "At the end of the array, systematically shrinking the active heap boundary by one each time"
+  },
+  {
+    "question": "What is the best-case time complexity of a basic Bubble Sort that does not employ any early termination swap trackers?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "Which algorithm matches the description of Insertion Sort upgraded to allow quick element jumps via index step-intervals?",
+    "optionA": "Selection Sort",
+    "optionB": "Shell Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Quick Sort",
+    "correct": "Shell Sort"
+  },
+  {
+    "question": "If we want to configure Heap Sort to organize numbers in descending layout (highest to lowest), which variant of the heap structure must we build?",
+    "optionA": "Max-Heap",
+    "optionB": "Min-Heap",
+    "optionC": "Binary Search Tree",
+    "optionD": "Flat memory stack segment",
+    "correct": "Min-Heap"
+  },
+  {
+    "question": "What is the auxiliary space complexity notation for a standard Merge Sort implementation?",
+    "optionA": "O(1)",
+    "optionB": "O(log n)",
+    "optionC": "O(n)",
+    "optionD": "O(n²)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "Which sorting routine segregates data into sorted and unsorted sectors, physically shifting items to drop the active key into place?",
+    "optionA": "Insertion Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Quick Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What is the total number of comparisons made by standard Selection Sort when sorting a collection of size N?",
+    "optionA": "N",
+    "optionB": "N²",
+    "optionC": "N(N-1)/2",
+    "optionD": "Log N",
+    "correct": "N(N-1)/2"
+  },
+  {
+    "question": "In Quick Sort, if we happen to select the absolute ideal median value as our pivot at every recursive step, what is the resulting time complexity?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Why is standard Bubble Sort highly inefficient when deployed on large, reverse-sorted inputs?",
+    "optionA": "It triggers index boundary violations",
+    "optionB": "It requires O(n²) comparisons and O(n²) slow adjacent swaps, shifting data at a very slow pace",
+    "optionC": "It can only process positive single digit numbers",
+    "optionD": "It runs internal multithreaded processes",
+    "correct": "It requires O(n²) comparisons and O(n²) slow adjacent swaps, shifting data at a very slow pace"
+  },
+  {
+    "question": "What occurs during the recursive 'Conquer' stage of a standard Merge Sort routine?",
+    "optionA": "The individual sub-arrays are independently sorted via recursive calls",
+    "optionB": "The collection is completely wiped from active system stack frames",
+    "optionC": "Pivots are mapped across data elements",
+    "optionD": "Duplicate indices are removed from loops",
+    "correct": "The individual sub-arrays are independently sorted via recursive calls"
+  },
+  {
+    "question": "In an array-backed binary heap tree layout, if a parent node sits at index position 4, what are the exact indices of its children?",
+    "optionA": "5 and 6",
+    "optionB": "8 and 9",
+    "optionC": "9 and 10",
+    "optionD": "7 and 8",
+    "correct": "9 and 10"
+  },
+  {
+    "question": "Which statement accurately describes the stability trait of standard Insertion Sort?",
+    "optionA": "It is inherently unstable across all datasets",
+    "optionB": "It is stable because it only shifts elements past values that are strictly greater, leaving identical items in their relative order",
+    "optionC": "It becomes unstable when processed on huge data volumes",
+    "optionD": "It is stable exclusively when processing alphabetic strings",
+    "correct": "It is stable because it only shifts elements past values that are strictly greater, leaving identical items in their relative order"
+  },
+  {
+    "question": "What is the worst-case time complexity of Shell Sort when initialized with basic, traditional gap sequences?",
+    "optionA": "O(n log n)",
+    "optionB": "O(n²)",
+    "optionC": "O(n)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "What is the structural mechanic underlying standard partitioning routines in Quick Sort?",
+    "optionA": "Using index pointers to swap elements into smaller and larger sectors around a central pivot element",
+    "optionB": "Scanning data linearly with a single cursor without executing swaps",
+    "optionC": "Creating secondary array buffer lists at every loop cycle",
+    "optionD": "Sorting side-by-side elements via flat bubble checks",
+    "correct": "Using index pointers to swap elements into smaller and larger sectors around a central pivot element"
+  },
+  {
+    "question": "What is the minimum time complexity required to search for and extract the single largest item from an unsorted array of size N?",
+    "optionA": "O(1)",
+    "optionB": "O(log n)",
+    "optionC": "O(n)",
+    "optionD": "O(n log n)",
+    "correct": "O(n)"
+  },
+  {
+    "question": "Which of these sorting workflows can run seamlessly without requiring any recursive function stacks or divide-and-conquer logic?",
+    "optionA": "Merge Sort",
+    "optionB": "Quick Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "None of these can execute without recursion loops",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What happens during a standard 'heapify down' (sink) cycle in a Max-Heap structure?",
+    "optionA": "A node moves upward until it is smaller than its parent node",
+    "optionB": "A node is compared with its children and swapped with the larger child if it violates the heap rule",
+    "optionC": "The root node is immediately purged from system memory records",
+    "optionD": "The tree levels are balanced symmetrically",
+    "correct": "A node is compared with its children and swapped with the larger child if it violates the heap rule"
+  },
+  {
+    "question": "Which sorting routine is highly efficient for small arrays or lists that are already nearly sorted, beating out complex log-linear options?",
+    "optionA": "Selection Sort",
+    "optionB": "Merge Sort",
+    "optionC": "Insertion Sort",
+    "optionD": "Heap Sort",
+    "correct": "Insertion Sort"
+  },
+  {
+    "question": "What does a single pass of standard Shell Sort with a gap setting of K do?",
+    "optionA": "It fully sorts the entire array in one step",
+    "optionB": "It structures K interleaved sub-lists, where each independent list is sorted using Insertion Sort logic",
+    "optionC": "It removes duplicate keys from the collection database",
+    "optionD": "It pushes only the single lowest value item straight to index position 0",
+    "correct": "It structures K interleaved sub-lists, where each independent list is sorted using Insertion Sort logic"
+  },
+  {
+    "question": "What is the average-case time complexity notation for standard Heap Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "Which sorting workflow explicitly relies on a double nested loop layout where side-by-side elements are constantly evaluated?",
+    "optionA": "Merge Sort",
+    "optionB": "Quick Sort",
+    "optionC": "Bubble Sort",
+    "optionD": "Heap Sort",
+    "correct": "Bubble Sort"
+  },
+  {
+    "question": "In an optimized Bubble Sort, if the inner loop finishes an entire sweep without triggering any swaps, what does it indicate?",
+    "optionA": "The array contains zero data elements",
+    "optionB": "The array is completely sorted, meaning the algorithm can safely exit early",
+    "optionC": "The pivot value was chosen poorly",
+    "optionD": "An index out-of-bounds error occurred",
+    "correct": "The array is completely sorted, meaning the algorithm can safely exit early"
+  },
+  {
+    "question": "What is the guaranteed runtime efficiency of Heap Sort across its best, average, and worst-case scenarios?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(log n)",
+    "correct": "O(n log n)"
+  },
+  {
+    "question": "What occurs during a standard inner loop pass of Bubble Sort?",
+    "optionA": "The single lowest item is isolated and shifted",
+    "optionB": "Adjacent keys are evaluated in pairs and swapped if they are out of order",
+    "optionC": "Sub-arrays are separated via structural pivot elements",
+    "optionD": "Elements are grouped based on prime index boundaries",
+    "correct": "Adjacent keys are evaluated in pairs and swapped if they are out of order"
+  },
+  {
+    "question": "In Selection Sort, once the absolute minimum value in the unsorted range is found, what action is taken?",
+    "optionA": "It is inserted by shifting remaining elements one position to the right",
+    "optionB": "It is swapped directly with the element currently sitting at the front of that unsorted range",
+    "optionC": "It is moved onto an active system stack memory layer",
+    "optionD": "It is skipped completely in subsequent iterations",
+    "correct": "It is swapped directly with the element currently sitting at the front of that unsorted range"
+  },
+  {
+    "question": "What is the average-case time complexity notation for Insertion Sort?",
+    "optionA": "O(n)",
+    "optionB": "O(n log n)",
+    "optionC": "O(n²)",
+    "optionD": "O(1)",
+    "correct": "O(n²)"
+  },
+  {
+    "question": "In Quick Sort, what does the recursive space complexity on the stack represent?",
+    "optionA": "The memory used by temporary staging arrays",
+    "optionB": "The memory consumed by active recursive function layers on the system call stack",
+    "optionC": "The storage overhead of tracking pivot elements",
+    "optionD": "The system heap allocation metrics",
+    "correct": "The memory consumed by active recursive function layers on the system call stack"
+  },
+  {
+    "question": "Which statement cleanly defines the operational pattern of standard Selection Sort?",
+    "optionA": "Repeatedly scans the unsorted array range to isolate the lowest value item and swaps it to its proper index",
+    "optionB": "Splitting array elements via a structural pivot element",
+    "optionC": "Weaving independent sorted halves back together linearly",
+    "optionD": "Sinking elements down a complete binary tree mapping structure",
+    "correct": "Repeatedly scans the unsorted array range to isolate the lowest value item and swaps it to its proper index"
+  },
+  {
+    "question": "In Bubble Sort, what is the maximum number of outer loop passes needed to sort an array of N elements in the worst case?",
+    "optionA": "N",
+    "optionB": "N - 1",
+    "optionC": "N / 2",
+    "optionD": "Log N",
+    "correct": "N - 1"
+  },
+  {
+    "question": "What structural condition must a binary tree satisfy to be considered a valid heap?",
+    "optionA": "It must be configured as a standard full BST layout",
+    "optionB": "It must be a complete binary tree where parent nodes satisfy the heap relation relative to their children",
+    "optionC": "It can contain a maximum of 3 structural levels",
+    "optionD": "All leaf nodes must hold negative keys",
+    "correct": "It must be a complete binary tree where parent nodes satisfy the heap relation relative to their children"
+  },
+  {
+    "question": "What is the primary risk of always selecting the first element as a pivot in Quick Sort?",
+    "optionA": "It leads to heavy memory fragmentation leaks",
+    "optionB": "It causes worst-case O(n²) performance if the input data happens to be already sorted",
+    "optionC": "It makes the algorithm highly complex to implement",
+    "optionD": "It slows down simple array item swaps",
+    "correct": "It causes worst-case O(n²) performance if the input data happens to be already sorted"
+  },
+  {
+    "question": "Which sorting mechanism minimizes memory overwrites, keeping array swaps strictly bounded to at most a linear O(n) scale?",
+    "optionA": "Bubble Sort",
+    "optionB": "Selection Sort",
+    "optionC": "Merge Sort",
+    "optionD": "Insertion Sort",
+    "correct": "Selection Sort"
+  },
+  {
+    "question": "What is the best-case behavior of standard Insertion Sort?",
+    "optionA": "It evaluates every element once without shifting, completing in linear O(n) time",
+    "optionB": "It breaks down data across log time steps",
+    "optionC": "It runs in quadratic O(n²) time regardless of the data layout",
+    "optionD": "It fails to execute if the array is already sorted",
+    "correct": "It evaluates every element once without shifting, completing in linear O(n) time"
+  },
+  {
+    "question": "What is the total number of questions included in this specific JSON chunk?",
+    "optionA": "50",
+    "optionB": "100",
+    "optionC": "150",
+    "optionD": "200",
+    "correct": "100"
+  }
+]
