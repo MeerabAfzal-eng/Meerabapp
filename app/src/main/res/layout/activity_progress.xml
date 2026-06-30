@@ -28,4 +28,13 @@
         android:layout_width="match_parent"
         android:layout_height="300dp" />
 
+    <TextView
+        android:id="@+id/tv_user_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="#001F3F"
+        android:layout_margin="16dp"
+        android:text="User Info" />
 </LinearLayout>
