@@ -12,40 +12,54 @@
         android:layout_height="wrap_content"
         android:text="Your Profile"
         android:textColor="#001F3F"
-        android:textSize="28sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:layout_marginBottom="40dp"/>
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Enter Your Name"
-        android:textColorHint="#555555"
-        android:textColor="#000000"
-        android:paddingLeft="15dp"
+        android:layout_height="60dp"
+        android:hint="Name"
+        android:textColor="#001F3F"
+        android:textColorHint="#001F3F"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:background="@android:drawable/edit_text"
         android:layout_marginBottom="20dp" />
 
     <EditText
         android:id="@+id/etID"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Enter Your ID"
-        android:textColorHint="#555555"
-        android:textColor="#000000"
-        android:paddingLeft="15dp"
+        android:layout_height="60dp"
+        android:hint="Student ID"
+        android:textColor="#001F3F"
+        android:textColorHint="#001F3F"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:background="@android:drawable/edit_text"
         android:layout_marginBottom="40dp" />
 
     <Button
         android:id="@+id/btnSubmitProfile"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:text="Submit"
         android:backgroundTint="#001F3F"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip to Main   ➔"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="#64748B"
+        android:textSize="16sp"
+        android:padding="10dp" />
 
 </LinearLayout>
