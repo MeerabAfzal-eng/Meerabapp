@@ -1,6 +1,7 @@
 package com.example.meerabapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -20,13 +21,24 @@ public class MainActivity extends AppCompatActivity {
     private androidx.appcompat.widget.AppCompatButton btnCompareScreen, btnTakeQuiz, btnViewProgress;
     private Spinner spinnerAlgorithm;
     private EditText etInputNumber;
-
-    // ✅ List of Strings to handle '+' and '-' signs correctly
     private ArrayList<String> rawInputList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // ✅ 1. Profile check logic: Kya user pehle se registered hai?
+        SharedPreferences pref = getSharedPreferences("UserProfile", MODE_PRIVATE);
+        boolean isRegistered = pref.getBoolean("is_profile_set", false);
+
+        if (!isRegistered) {
+            // Agar registered nahi hai, to Profile screen par bhej dein
+            startActivity(new Intent(this, ProfileActivity.class));
+            finish();
+            return;
+        }
+
+        // Agar registered hai, to main layout load karein
         setContentView(R.layout.activity_main);
 
         // UI Mapping
@@ -55,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         };
         spinnerAlgorithm.setAdapter(adapter);
 
-        // 1. Add Value Logic
+        // 2. Add Value Logic
         btnValueAdd.setOnClickListener(v -> {
             String valStr = etInputNumber.getText().toString().trim();
             if (valStr.isEmpty() || valStr.equals("+") || valStr.equals("-")) {
@@ -65,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 long inputVal = Long.parseLong(valStr);
                 if (inputVal > 1000000000L || inputVal < -1000000000L) {
-                    Toast.makeText(this, "Value must be between -1 and +1 Arab!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Range: -1 Arab to +1 Arab", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (rawInputList.size() >= 30) {
-                    Toast.makeText(this, "Max 30 numbers allowed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Max 30 items!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 rawInputList.add(valStr);
@@ -80,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 2. Remove Last Logic
+        // 3. Remove Logic
         btnValueRemove.setOnClickListener(v -> {
             if (!rawInputList.isEmpty()) {
                 rawInputList.remove(rawInputList.size() - 1);
@@ -88,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 3. Sort Now Logic
+        // 4. Sort Logic
         btnSortNow.setOnClickListener(v -> {
             if (spinnerAlgorithm.getSelectedItemPosition() == 0 || rawInputList.isEmpty()) {
-                Toast.makeText(this, "Select Algorithm and add numbers!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Select Algo and add numbers!", Toast.LENGTH_SHORT).show();
                 return;
             }
             Intent intent = new Intent(MainActivity.this, VisualizationActivity.class);
@@ -102,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 4. Compare Screen Logic
+        // 5. Compare Logic
         btnCompareScreen.setOnClickListener(v -> {
             if (rawInputList.size() < 2) {
                 Toast.makeText(this, "Add at least 2 numbers!", Toast.LENGTH_SHORT).show();
@@ -115,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 5. Navigation
+        // 6. Navigation
         btnTakeQuiz.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_quiz.class)));
         btnViewProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
     }
