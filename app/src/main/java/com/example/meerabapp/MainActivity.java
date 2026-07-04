@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 long inputVal = Long.parseLong(valStr);
                 if (inputVal > 1000000000L || inputVal < -1000000000L) {
-                    Toast.makeText(this, "Range: -1 Arab to +1 Arab", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Range:enter a value less than 1 Billion", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (rawInputList.size() >= 30) {
