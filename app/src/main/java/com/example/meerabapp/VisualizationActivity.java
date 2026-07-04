@@ -1,750 +1,721 @@
 
 package com.example.meerabapp;
-
-
-
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.graphics.Canvas;
 import android.graphics.Color;
-
-import android.graphics.Typeface;
-
-import android.graphics.drawable.GradientDrawable;
-
-import android.media.AudioAttributes;
-
-import android.media.AudioManager;
-
-import android.media.ToneGenerator;
-
-import android.os.Build;
-
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
-
-import android.os.SystemClock;
-
-import android.view.Gravity;
-
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Button;
 import android.widget.LinearLayout;
-
-import android.widget.ScrollView;
-
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
-
-import java.util.Collections;
-
-import java.util.HashSet;
-
-
-
+import java.util.Locale;
+import android.util.Log;
 public class VisualizationActivity extends AppCompatActivity {
+    TextView txtAlgoName, txtSwapCounter, txtTimer, txtComplexity, txtExplanation;
+    LinearLayout visualContainer;
+    Button btnAsc, btnDesc, btnRestart, btnReset;
+    AnimatedBarsView barsView;
+    ArrayList<Integer> arr = new ArrayList<>();
+    ArrayList<Integer> originalArr = new ArrayList<>();
+    ArrayList<Step> steps = new ArrayList<>();
+    Handler handler = new Handler(Looper.getMainLooper());
+    int stepIndex = 0;
+    int swaps = 0;
+    boolean ascending = true;
+    long startTime;
+    String algorithm = "Bubble Sort";
+    static final int STEP_DELAY = 80;
 
+    static class Step {
+        String type, message;
+        int i, j, value;
 
-
-    private class SortingStep {
-
-        ArrayList<Integer> state;
-
-        int active1, active2;
-
-        HashSet<Integer> sortedIndices;
-
-        int swaps;
-
-        String logEntry;
-
-
-
-        SortingStep(ArrayList<Integer> s, int a1, int a2, HashSet<Integer> si, int sw, String l) {
-
-            this.state = new ArrayList<>(s);
-
-            this.active1 = a1; this.active2 = a2;
-
-            this.sortedIndices = new HashSet<>(si);
-
-            this.swaps = sw; this.logEntry = l;
-
+        Step(String type, int i, int j, int value, String message) {
+            this.type = type;
+            this.i = i;
+            this.j = j;
+            this.value = value;
+            this.message = message;
         }
-
     }
-
-
-
-    private ArrayList<SortingStep> recordedSteps = new ArrayList<>();
-
-    private ArrayList<Integer> numbers, originalNumbers;
-
-    private HashSet<Integer> currentSortedIndices = new HashSet<>();
-
-    private String selectedAlgo;
-
-    private int swapCount = 0;
-
-    private boolean isAscending = true;
-
-    private ToneGenerator toneGen;
-
-    private LinearLayout containerBars, arrowContainer;
-
-    private TextView txtComplexity, txtTimer, txtAlgoName, txtSwaps, txtStepLog;
-
-    private ScrollView logScroll;
-
-    private Thread sortingThread;
-
-    private StringBuilder fullLog = new StringBuilder();
-
-
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_visualization);
-
-
-
-// --- Sound Initialization Fixed ---
-
-        try {
-
-// Using a standard stream type (STREAM_MUSIC is common for apps)
-
-            toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-// Fallback or disable sound if initialization fails
-
-        }
-
-
-
-        containerBars = findViewById(R.id.containerBars);
-
-        arrowContainer = findViewById(R.id.arrowContainer);
-
-        txtComplexity = findViewById(R.id.txtComplexity);
-
-        txtTimer = findViewById(R.id.txtTimer);
-
         txtAlgoName = findViewById(R.id.txtAlgoName);
-
-        txtSwaps = findViewById(R.id.txtSwaps);
-
-        txtStepLog = findViewById(R.id.txtStepLog);
-
-        logScroll = findViewById(R.id.logScroll);
-
-
-
-        ArrayList<Integer> received = getIntent().getIntegerArrayListExtra("numbers");
-
-        selectedAlgo = getIntent().getStringExtra("algorithm");
-
-
-
-        if (received != null) {
-
-            originalNumbers = new ArrayList<>(received);
-
-            if (originalNumbers.size() > 30) originalNumbers = new ArrayList<>(originalNumbers.subList(0, 30));
-
+        txtSwapCounter = findViewById(R.id.txtSwapCounter);
+        txtTimer = findViewById(R.id.txtTimer);
+        txtComplexity = findViewById(R.id.txtComplexity);
+        txtExplanation = findViewById(R.id.txtExplanation);
+        visualContainer = findViewById(R.id.visualContainer);
+        btnAsc = findViewById(R.id.btnAsc);
+        btnDesc = findViewById(R.id.btnDesc);
+        btnRestart = findViewById(R.id.btnRestart);
+        btnReset = findViewById(R.id.btnReset);
+        String receivedAlgo = getIntent().getStringExtra("algorithm");
+        if (receivedAlgo != null) {
+            algorithm = receivedAlgo;
         }
-
-
-
-        txtAlgoName.setText(selectedAlgo);
-
-        txtComplexity.setText(getComplexity(selectedAlgo));
-
-
-
-        findViewById(R.id.btnAsc).setOnClickListener(v -> { isAscending = true; startRecording(); });
-
-        findViewById(R.id.btnDesc).setOnClickListener(v -> { isAscending = false; startRecording(); });
-
-        findViewById(R.id.btnRestart).setOnClickListener(v -> startRecording());
-
-        findViewById(R.id.btnReset).setOnClickListener(v -> finish());
-
-
-
-        startRecording();
-
-    }
-
-
-
-    private void startRecording() {
-
-        if (sortingThread != null && sortingThread.isAlive()) sortingThread.interrupt();
-
-
-
-        sortingThread = new Thread(() -> {
-
-            recordedSteps.clear();
-
-            currentSortedIndices.clear();
-
-            fullLog.setLength(0);
-
-            numbers = new ArrayList<>(originalNumbers);
-
-            swapCount = 0;
-
-
-
-            String algo = (selectedAlgo != null) ? selectedAlgo.toLowerCase() : "";
-
-
-
-            if (algo.contains("bubble")) bubbleSort();
-
-            else if (algo.contains("selection")) selectionSort();
-
-            else if (algo.contains("insertion")) insertionSort();
-
-            else if (algo.contains("quick")) quickSort(0, numbers.size() - 1);
-
-            else if (algo.contains("merge")) mergeSort(0, numbers.size() - 1);
-
-            else if (algo.contains("heap")) heapSort();
-
-            else if (algo.contains("shell")) shellSort();
-
-
-
-// Final Step: Mark all Teal
-
-            for(int i=0; i<numbers.size(); i++) currentSortedIndices.add(i);
-
-            record(-1, -1, "Sorting Complete!");
-
-
-
-// Playback
-
-            long uiStartTime = SystemClock.elapsedRealtime();
-
-            for (int i = 0; i < recordedSteps.size(); i++) {
-
-                if (Thread.interrupted()) return;
-
-                final SortingStep step = recordedSteps.get(i);
-
-                final long currentTime = SystemClock.elapsedRealtime() - uiStartTime;
-
-
-
-// --- Updated UI Playback (Beep is played in updateUI now) ---
-
-                runOnUiThread(() -> {
-
-                    updateUI(step, currentTime);
-
-// Standard Beep on comparison/swap (except start/end)
-
-                    if (step.active1 != -1 && step.active2 != -1) {
-
-                        playTone(ToneGenerator.TONE_PROP_BEEP, 70); // Slightly longer beep
-
-                    }
-
-                });
-
-
-
-// --- Dynamic Speed: Faster updates, slower swaps ---
-
-                try {
-
-                    if (step.logEntry.startsWith("Swapping") || step.logEntry.startsWith("Inserted")) {
-
-                        Thread.sleep(600); // Wait longer on swaps
-
-                    } else {
-
-                        Thread.sleep(300); // Normal speed
-
-                    }
-
-                } catch (InterruptedException e) { return; }
-
-            }
-
+        ArrayList<Integer> receivedValues = getIntent().getIntegerArrayListExtra("numbers");
+        if (receivedValues != null && receivedValues.size() > 0) {
+            originalArr.addAll(receivedValues);
+        } else {
+            addDefaultValues();
+        }
+        barsView = new AnimatedBarsView(this);
+        visualContainer.removeAllViews();
+        visualContainer.addView(
+                barsView,
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                )
+        );
+        resetArray();
+        btnAsc.setOnClickListener(v -> {
+            ascending = true;
+            startSorting();
         });
+        btnDesc.setOnClickListener(v -> {
+            ascending = false;
+            startSorting();
+        });
+        btnRestart.setOnClickListener(v -> {
+            handler.removeCallbacksAndMessages(null);
+            resetArray();
+            startSorting();
+        });
+        btnReset.setOnClickListener(v -> {
+            handler.removeCallbacksAndMessages(null);
+            finish();
+        });
+    }
 
-        sortingThread.start();
+    void addDefaultValues() {
+        originalArr.add(45);
+        originalArr.add(20);
+        originalArr.add(70);
+        originalArr.add(10);
+        originalArr.add(90);
+        originalArr.add(35);
+        originalArr.add(60);
+        originalArr.add(15);
+        originalArr.add(80);
+        originalArr.add(50);
+    }
 
+    void resetArray() {
+        arr.clear();
+        arr.addAll(originalArr);
+        steps.clear();
+        stepIndex = 0;
+        swaps = 0;
+        // Yahan fix: Sorted status ko naye sire se clear karein
+
+        if (barsView != null) {
+
+            barsView.sortedStatus = new boolean[arr.size()];
+
+            barsView.sortedMode = false;
+
+            barsView.invalidate();
+
+        }
+        txtSwapCounter.setText("Swaps: 0");
+        txtTimer.setText("00:00");
+        txtExplanation.setText("Sorting steps will appear here...");
+
+        updateHeader();
+        barsView.setData(arr);
+    }
+
+    void updateHeader() {
+        txtAlgoName.setText("Algorithm: " + algorithm);
+        if (algorithm.equals("Quick Sort")) {
+            txtComplexity.setText("Avg O(n log n)");
+
+        } else if (algorithm.equals("Merge Sort") || algorithm.equals("Heap Sort") || algorithm.equals("Shell Sort")) {
+            txtComplexity.setText("O(n log n)");
+        } else {
+            txtComplexity.setText("O(n²)");
+        }
+    }
+
+    void startSorting() {
+        handler.removeCallbacksAndMessages(null);
+        arr.clear();
+        arr.addAll(originalArr);
+        steps.clear();
+        stepIndex = 0;
+        swaps = 0;
+        startTime = System.currentTimeMillis();
+        txtSwapCounter.setText("Swaps: 0");
+        txtTimer.setText("00:00");
+        txtExplanation.setText("");
+        barsView.setData(arr);
+        int[] copy = toIntArray(arr);
+        if (algorithm.equals("Bubble Sort")) bubbleSort(copy);
+        else if (algorithm.equals("Insertion Sort")) insertionSort(copy);
+        else if (algorithm.equals("Selection Sort")) selectionSort(copy);
+        else if (algorithm.equals("Quick Sort")) quickSort(copy, 0, copy.length - 1);
+        else if (algorithm.equals("Merge Sort")) mergeSort(copy, 0, copy.length - 1);
+        else if (algorithm.equals("Heap Sort")) heapSort(copy);
+        else if (algorithm.equals("Shell Sort")) shellSort(copy);
+        // Yahan check karein
+        Log.d("DEBUG_SORT", "Steps generated: " + steps.size());
+        playStep();
     }
 
 
+    void playStep() {
+        updateTimer();
+        if (stepIndex >= steps.size()) {
+            barsView.showSorted();
+            txtExplanation.append("\nSorting completed.");
+            return;
+        }
+        Step step = steps.get(stepIndex++);
+        // Log add karein taaki pata chale kaunsa step chal raha hai
+        Log.d("DEBUG_SORT", "Step Type: " + step.type + " Message: " + step.message);
+        if (step.type.equals("compare")) {
+            barsView.animateCompare(step.i, step.j, () -> {
+                txtExplanation.append("\n" + step.message);
+                handler.postDelayed(this::playStep, STEP_DELAY);
+            });
+        } else if (step.type.equals("swap")) {
+            barsView.animateSwap(step.i, step.j, () -> {
+                int temp = arr.get(step.i);
+                arr.set(step.i, arr.get(step.j));
+                arr.set(step.j, temp);
+                swaps++;
+                txtSwapCounter.setText("Swaps: " + swaps);
+                txtExplanation.append("\n" + step.message);
+                handler.postDelayed(this::playStep, STEP_DELAY);
 
-// (Sorting Algorithm logic - same as before, no changes needed here)
-
-    private void bubbleSort() {
-
-        int n = numbers.size();
-
-        for (int i = 0; i < n - 1; i++) {
-
-            for (int j = 0; j < n - i - 1; j++) {
-
-                record(j, j + 1, "Comparing neighbors: " + numbers.get(j) + " & " + numbers.get(j+1));
-
-                if (isAscending ? (numbers.get(j) > numbers.get(j + 1)) : (numbers.get(j) < numbers.get(j + 1))) {
-
-                    Collections.swap(numbers, j, j + 1);
-
-                    swapCount++;
-
-                    record(j, j + 1, "Swapping " + numbers.get(j+1) + " and " + numbers.get(j));
-
+            });
+             if (step.type.equals("set")) {
+                barsView.animateWrite(step.i, step.value, () -> {
+                    // Yahan view ka data update karein
+                    barsView.updateData(step.i, step.value);
+                    arr.set(step.i, step.value);
+                    swaps++;
+                    txtSwapCounter.setText("Moves: " + swaps);
+                    handler.postDelayed(this::playStep, STEP_DELAY);
+                });
+            }
+        } else if (step.type.equals("set")) {
+            // Shift waala check
+            if (step.message.contains("Shift")) {
+                if (step.i + 1 < arr.size()) {
+                    barsView.animateShift(step.i, step.i + 1, () -> {
+                        arr.set(step.i + 1, step.value);
+                        barsView.invalidate();
+                        swaps++;
+                        txtSwapCounter.setText("Moves: " + swaps);
+                        txtExplanation.append("\n" + step.message);
+                        handler.postDelayed(this::playStep, STEP_DELAY);
+                    });
+                } else {
+                    handler.postDelayed(this::playStep, 0);
                 }
-
             }
-
-            currentSortedIndices.add(n - i - 1);
-
+            // Yahan 'else' sahi jagah band ho raha hai
+            else {
+                barsView.animateWrite(step.i, step.value, () -> {
+                    arr.set(step.i, step.value);
+                    barsView.invalidate();
+                    swaps++;
+                    txtSwapCounter.setText("Moves: " + swaps);
+                    txtExplanation.append("\n" + step.message);
+                    handler.postDelayed(this::playStep, STEP_DELAY);
+                });
+            }
+        } else if (step.type.equals("mark")) {
+            barsView.markSorted(step.i);
+            barsView.invalidate();
+            playStep();
         }
 
     }
 
-
-
-    private void selectionSort() {
-
-        int n = numbers.size();
-
-        for (int i = 0; i < n; i++) {
-
-            int minIdx = i;
-
-            for (int j = i + 1; j < n; j++) {
-
-                record(minIdx, j, "Searching for minimum element...");
-
-                if (isAscending ? (numbers.get(j) < numbers.get(minIdx)) : (numbers.get(j) > numbers.get(minIdx))) minIdx = j;
-
-            }
-
-            Collections.swap(numbers, i, minIdx);
-
-            if(i != minIdx) swapCount++;
-
-            currentSortedIndices.add(i);
-
-            record(i, minIdx, "Found minimum. Swapping to index " + i);
+    int[] toIntArray(ArrayList<Integer> list) {
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i);
 
         }
+        return result;
+
+    }
+
+    int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density);
+    }
+
+    void updateTimer() {
+        long seconds = (System.currentTimeMillis() - startTime) / 1000;
+        txtTimer.setText(String.format(Locale.US, "%02d:%02d", seconds / 60, seconds % 60));
+    }
+
+
+    boolean wrongOrder(int a, int b) {
+        return ascending ? a > b : a < b;
+    }
+
+
+    boolean correctOrEqual(int a, int b) {
+        return ascending ? a <= b : a >= b;
+    }
+
+
+    void swap(int[] a, int i, int j) {
+        if (i == j) return;
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+    }
+
+    void bubbleSort(int[] a) {
+        for (int i = 0; i < a.length - 1; i++) {
+            for (int j = 0; j < a.length - i - 1; j++) {
+                steps.add(new Step("compare", j, j + 1, 0,
+                        "Compare " + a[j] + " and " + a[j + 1]));
+                if (wrongOrder(a[j], a[j + 1])) {
+                    steps.add(new Step("swap", j, j + 1, 0,
+                            "Swap " + a[j] + " and " + a[j + 1]));
+                    swap(a, j, j + 1);
+                }
+            }
+            // Yahan par ek naya step add karein jo bataye ki ye element fix ho gaya
+            steps.add(new Step("mark", a.length - 1 - i, -1, 0, "Fixed position"));
+        }
+        // Aakhri element bach jata hai, usay bhi mark karein
+        steps.add(new Step("mark", 0, -1, 0, "Sorted!"));
 
     }
 
 
-
-    private void insertionSort() {
-
-        int n = numbers.size();
-
-        for (int i = 1; i < n; i++) {
-
-            int key = numbers.get(i);
-
+    void insertionSort(int[] a) {
+        steps.add(new Step("mark", 0, -1, 0, "Initial element"));
+        for (int i = 1; i < a.length; i++) {
+            int key = a[i];
             int j = i - 1;
 
-            record(i, j, "Picking " + key + " and comparing with " + numbers.get(j));
-
-            while (j >= 0 && (isAscending ? (numbers.get(j) > key) : (numbers.get(j) < key))) {
-
-                numbers.set(j + 1, numbers.get(j));
-
-                record(j, j + 1, "Shifting " + numbers.get(j) + " to the right");
-
+            // Jab tak wrong position par hai
+            while (j >= 0 && (ascending ? a[j] > key : a[j] < key)) {
+                // Shift animation ke liye "set" type
+                steps.add(new Step("set", j + 1, -1, a[j], "Shifting " + a[j]));
+                a[j + 1] = a[j];
                 j--;
-
-                swapCount++;
-
             }
+            steps.add(new Step("set", j + 1, -1, key, "Inserting " + key));
+            a[j + 1] = key;
 
-            numbers.set(j + 1, key);
-
-            for(int k=0; k<=i; k++) currentSortedIndices.add(k);
-
-            record(j + 1, -1, "Inserted " + key + " in sorted portion");
-
+            // Mark sorted section
+            for(int k = 0; k <= i; k++) {
+                steps.add(new Step("mark", k, -1, 0, "Sorted"));
+            }
         }
-
+    }
+    void selectionSort(int[] a) {
+        for (int i = 0; i < a.length - 1; i++) {
+            int selected = i;
+            for (int j = i + 1; j < a.length; j++) {
+                steps.add(new Step("compare", selected, j, 0, "Finding minimum"));
+                if (wrongOrder(a[selected], a[j])) selected = j;
+            }
+            if (selected != i) {
+                steps.add(new Step("swap", i, selected, 0, "Swap"));
+                swap(a, i, selected);
+            }
+            // Yahan mark karein
+            steps.add(new Step("mark", i, -1, 0, "Fixed position"));
+        }
+        steps.add(new Step("mark", a.length - 1, -1, 0, "Sorted!"));
     }
 
-
-
-    private void quickSort(int low, int high) {
-
+    void quickSort(int[] a, int low, int high) {
         if (low < high) {
-
-            int pi = partition(low, high);
-
-            quickSort(low, pi - 1);
-
-            quickSort(pi + 1, high);
-
+            int pivot = partition(a, low, high);
+            quickSort(a, low, pivot - 1);
+            quickSort(a, pivot + 1, high);
         }
-
     }
 
-
-
-    private int partition(int low, int high) {
-
-        int pivot = numbers.get(high);
-
-        int i = (low - 1);
-
-        record(-1, high, "Pivot selected: " + pivot);
-
+    int partition(int[] a, int low, int high) {
+        int pivotValue = a[high];
+        int i = low - 1;
         for (int j = low; j < high; j++) {
-
-            record(j, high, "Comparing " + numbers.get(j) + " with Pivot");
-
-            if (isAscending ? (numbers.get(j) < pivot) : (numbers.get(j) > pivot)) {
-
+            steps.add(new Step("compare", j, high, 0, "Compare"));
+            boolean move = ascending ? a[j] < pivotValue : a[j] > pivotValue;
+            if (move) {
                 i++;
-
-                Collections.swap(numbers, i, j);
-
-                swapCount++;
-
-                record(i, j, "Swapping around pivot");
-
+                steps.add(new Step("swap", i, j, 0, "Swap"));
+                swap(a, i, j);
             }
-
         }
-
-        Collections.swap(numbers, i + 1, high);
-
-        record(i + 1, high, "Placing Pivot in final position");
-
-        currentSortedIndices.add(i + 1);
-
+        steps.add(new Step("swap", i + 1, high, 0, "Pivot in place"));
+        swap(a, i + 1, high);
+        // Pivot ko mark karein
+        steps.add(new Step("mark", i + 1, -1, 0, "Pivot fixed"));
         return i + 1;
 
     }
 
 
-
-    private void mergeSort(int l, int r) {
-
-        if (l < r) {
-
-            int m = l + (r - l) / 2;
-
-            mergeSort(l, m);
-
-            mergeSort(m + 1, r);
-
-            merge(l, m, r);
-
-        }
-
+    void mergeSort(int[] a, int left, int right) {
+        if (left >= right) return;
+        int mid = (left + right) / 2;
+        mergeSort(a, left, mid);
+        mergeSort(a, mid + 1, right);
+        merge(a, left, mid, right);
     }
 
+    void merge(int[] a, int left, int mid, int right) {
+        int[] temp = new int[right - left + 1];
+        int i = left, j = mid + 1, k = 0;
 
-
-    private void merge(int l, int m, int r) {
-
-        record(l, r, "Merging segments [" + l + " to " + m + "] and [" + (m+1) + " to " + r + "]");
-
-        ArrayList<Integer> left = new ArrayList<>(numbers.subList(l, m + 1));
-
-        ArrayList<Integer> right = new ArrayList<>(numbers.subList(m + 1, r + 1));
-
-        int i = 0, j = 0, k = l;
-
-        while (i < left.size() && j < right.size()) {
-
-            if (isAscending ? (left.get(i) <= right.get(j)) : (left.get(i) >= right.get(j))) numbers.set(k++, left.get(i++));
-
-            else numbers.set(k++, right.get(j++));
-
-            record(k - 1, -1, "Combining sub-arrays...");
-
+        // 1. Comparison logic (Purple animation)
+        while (i <= mid && j <= right) {
+            steps.add(new Step("compare", i, j, 0, "Compare " + a[i] + " and " + a[j]));
+            if (correctOrEqual(a[i], a[j])) {
+                temp[k++] = a[i++];
+            } else {
+                temp[k++] = a[j++];
+            }
         }
 
-        while (i < left.size()) numbers.set(k++, left.get(i++));
+        while (i <= mid) temp[k++] = a[i++];
+        while (j <= right) temp[k++] = a[j++];
 
-        while (j < right.size()) numbers.set(k++, right.get(j++));
+        // 2. Writing logic (Move/Update bars)
+        for (int x = 0; x < temp.length; x++) {
+            // "set" type trigger karega animateWrite()
+            steps.add(new Step("set", left + x, -1, temp[x], "Place " + temp[x]));
+            a[left + x] = temp[x];
+        }
 
+        // 3. Mark logic (Teal color)
+        for (int x = left; x <= right; x++) {
+            steps.add(new Step("mark", x, -1, 0, "Fixed"));
+        }
     }
 
-
-
-    private void heapSort() {
-
-        int n = numbers.size();
-
-        for (int i = n / 2 - 1; i >= 0; i--) heapify(n, i);
-
+    void heapSort(int[] a) {
+        int n = a.length;
+        for (int i = n / 2 - 1; i >= 0; i--) heapify(a, n, i);
         for (int i = n - 1; i > 0; i--) {
-
-            Collections.swap(numbers, 0, i);
-
-            record(0, i, "Swapping root with last element");
-
-            currentSortedIndices.add(i);
-
-            heapify(i, 0);
-
+            steps.add(new Step("swap", 0, i, 0, "Swap root"));
+            swap(a, 0, i);
+            // Swap hone ke baad i index fix ho gaya
+            steps.add(new Step("mark", i, -1, 0, "Fixed position"));
+            heapify(a, i, 0);
         }
-
+        steps.add(new Step("mark", 0, -1, 0, "Sorted!"));
     }
 
-
-
-    private void heapify(int n, int i) {
-
-        int largest = i;
-
-        int l = 2 * i + 1;
-
-        int r = 2 * i + 2;
-
-        record(i, -1, "Heapifying subtree at root " + numbers.get(i));
-
-        if (l < n && (isAscending ? (numbers.get(l) > numbers.get(largest)) : (numbers.get(l) < numbers.get(largest)))) largest = l;
-
-        if (r < n && (isAscending ? (numbers.get(r) > numbers.get(largest)) : (numbers.get(r) < numbers.get(largest)))) largest = r;
-
-        if (largest != i) {
-
-            Collections.swap(numbers, i, largest);
-
-            swapCount++;
-
-            record(i, largest, "Adjusting Heap structure...");
-
-            heapify(n, largest);
-
+    void heapify(int[] a, int n, int root) {
+        int best = root;
+        int left = 2 * root + 1;
+        int right = 2 * root + 2;
+        if (left < n) {
+            steps.add(new Step("compare", left, best, 0,
+                    "Compare left child with root"));
+            if (wrongOrder(a[best], a[left])) {
+                best = left;
+            }
         }
-
+        if (right < n) {
+            steps.add(new Step("compare", right, best, 0,
+                    "Compare right child with current best"));
+            if (wrongOrder(a[best], a[right])) {
+                best = right;
+            }
+        }
+        if (best != root) {
+            steps.add(new Step("swap", root, best, 0,
+                    "Restore heap order"));
+            swap(a, root, best);
+            heapify(a, n, best);
+        }
     }
 
+    void shellSort(int[] a) {
+        for (int gap = a.length / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < a.length; i++) {
+                int temp = a[i];
+                int j = i;
+                while (j >= gap) {
+                    steps.add(new Step("compare", j - gap, j, 0,
+                            "Compare gap " + gap));
+                    if (correctOrEqual(a[j - gap], temp)) break;
+                    steps.add(new Step("set", j, -1, a[j - gap],
+                            "Shift " + a[j - gap] + " by gap " + gap));
+                    a[j] = a[j - gap];
+                    j -= gap;
+                }
+                steps.add(new Step("set", j, -1, temp,
+                        "Place " + temp + " after gap comparison"));
+                a[j] = temp;
+            }
+        }
+        // Shell Sort khatam hone ke baad saare elements ko Teal (mark) kar dein
+        for (int i = 0; i < a.length; i++) {
+            steps.add(new Step("mark", i, -1, 0, "Sorted position"));
+        }
+    }
 
+    public class AnimatedBarsView extends android.view.View {
+        ArrayList<Integer> data = new ArrayList<>();
+        boolean[] isSorted;
 
-    private void shellSort() {
+        boolean[] sortedStatus;
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        int compareA = -1;
+        int compareB = -1;
+        int writeIndex = -1;
+        int writeValue = -1;
+        boolean sortedMode = false;
+        float compareProgress = 0f;
+        float swapProgress = 0f;
+        int swapA = -1;
+        int swapB = -1;
+        float swapLift = 0f;
 
-        int n = numbers.size();
+        void markSorted(int index) {
+            if (sortedStatus != null && index >= 0 && index < sortedStatus.length) {
+                sortedStatus[index] = true;
+                invalidate();
+            }
+        }
 
-        for (int gap = n / 2; gap > 0; gap /= 2) {
+        // AnimatedBarsView ke variables mein ye update karein
+        int unsortedColor = Color.rgb(33, 150, 243); // Blue
+        int compareColor = Color.rgb(128, 0, 128);   // Purple
+        int sortedColor = Color.rgb(0, 128, 128);    // Teal
+        int writeColor = Color.rgb(255, 193, 7);     // Yellow (Write/Set ke liye)
 
-            record(-1, -1, "Current Gap: " + gap);
+        public AnimatedBarsView(android.content.Context context) {
 
-            for (int i = gap; i < n; i++) {
+            super(context);
+            setMinimumWidth(dp(650));
+        }
 
-                int temp = numbers.get(i);
+        float smoothMove(float t) {
+            return (float) (t * t * (3 - 2 * t));
+        }
 
-                int j;
+        void setData(ArrayList<Integer> values) {
+            data.clear();
+            data.addAll(values);
+            this.sortedStatus = new boolean[values.size()]; // Naya array yahan initialize hoga
+            compareA = -1;
+            compareB = -1;
+            writeIndex = -1;
+            writeValue = -1;
+            swapA = -1;
+            swapB = -1;
+            compareProgress = 0f;
+            swapProgress = 0f;
+            sortedMode = false;
+            requestLayout();
+            invalidate();
+        }
 
-                for (j = i; j >= gap && (isAscending ? (numbers.get(j - gap) > temp) : (numbers.get(j - gap) < temp)); j -= gap) {
+        void showSorted() {
+            sortedMode = true;
+            compareA = -1;
+            compareB = -1;
+            writeIndex = -1;
+            invalidate();
+        }
+        // AnimatedBarsView ke andar
+        void updateData(int index, int value) {
+            if (index >= 0 && index < data.size()) {
+                data.set(index, value);
+                invalidate();
+            }
+        }
 
-                    record(j, j - gap, "Comparing elements with gap " + gap);
+        void animateCompare(int i, int j, Runnable action) {
+            compareA = i;
+            compareB = j;
+            writeIndex = -1;
+            sortedMode = false;
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.setDuration(220);
+            animator.addUpdateListener(a -> {
+                compareProgress = (float) a.getAnimatedValue();
+                invalidate();
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    compareProgress = 0f;
+                    compareA = -1;
+                    compareB = -1;
+                    invalidate();
+                    action.run();
+                }
+            });
+            animator.start();
+        }
 
-                    numbers.set(j, numbers.get(j - gap));
+        void animateSwap(int i, int j, Runnable action) {
+            swapA = i;
+            swapB = j;
+            compareA = i;
+            compareB = j;
+            writeIndex = -1;
+            sortedMode = false;
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.setDuration(850);
+            animator.addUpdateListener(a -> {
+                swapProgress = (float) a.getAnimatedValue();
+                swapLift = (float) Math.sin(swapProgress * Math.PI);
+                invalidate();
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    int temp = data.get(i);
+                    data.set(i, data.get(j));
+                    data.set(j, temp);
+                    swapA = -1;
+                    swapB = -1;
+                    compareA = -1;
+                    compareB = -1;
+                    swapProgress = 0f;
+                    swapLift = 0f;
+                    invalidate();
+                    action.run();
+                }
+            });
+            animator.start();
+        }
 
-                    swapCount++;
+        void animateShift(int fromIndex, int toIndex, Runnable action) {
+            swapA = fromIndex;
+            swapB = toIndex;
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.setDuration(300); // Shifting speed
+            animator.addUpdateListener(a -> {
+                swapProgress = (float) a.getAnimatedValue();
+                invalidate();
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    swapA = -1;
+                    swapB = -1;
+                    swapProgress = 0f;
+                    action.run();
+                }
+            });
+            animator.start();
+        }
 
+        void animateWrite(int index, int value, Runnable action) {
+            writeIndex = index;
+            writeValue = value;
+            compareA = -1;
+            compareB = -1;
+            sortedMode = false;
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.setDuration(260);
+            animator.addUpdateListener(a -> invalidate());
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    writeIndex = -1;
+                    writeValue = -1;
+                    invalidate();
+                    action.run();
+                }
+            });
+            animator.start();
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int width = Math.max(dp(58 * Math.max(data.size(), 8)), MeasureSpec.getSize(widthMeasureSpec));
+            int height = MeasureSpec.getSize(heightMeasureSpec);
+            setMeasuredDimension(width, height);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            if (data.size() == 0) return;
+
+            float gap = dp(10);
+            float barWidth = dp(42);
+            float barHeight = dp(62);
+            float baseY = getHeight() - dp(18);
+
+            for (int i = 0; i < data.size(); i++) {
+                int shownValue = data.get(i);
+                if (i == writeIndex && writeValue > 0) {
+                    shownValue = writeValue;
                 }
 
-                numbers.set(j, temp);
+                // Color Determine karein
+                int color;
+                if (sortedStatus != null && i < sortedStatus.length && sortedStatus[i]) {
+                    color = Color.rgb(0, 128, 128); // Teal for sorted
+                } else if (i == compareA || i == compareB) {
+                    color = Color.rgb(128, 0, 128); // Purple for comparing
+                } else {
+                    color = Color.rgb(33, 150, 243); // Blue for normal
+                }
 
-                record(j, -1, "Placing element after gap comparisons");
+                float x = gap + i * (barWidth + gap);
+                float top = baseY - barHeight;
 
+                // Animation logic (Swap aur Compare ka movement)
+                if (i == swapA && swapB >= 0) {
+                    float startX = gap + swapA * (barWidth + gap);
+                    float targetX = gap + swapB * (barWidth + gap);
+                    float move = smoothMove(swapProgress);
+                    x = startX + (targetX - startX) * move;
+                    top -= dp(45) * swapLift;
+                } else if (i == swapB && swapA >= 0) {
+                    float startX = gap + swapB * (barWidth + gap);
+                    float targetX = gap + swapA * (barWidth + gap);
+                    float move = smoothMove(swapProgress);
+                    x = startX + (targetX - startX) * move;
+                    top += dp(22) * swapLift;
+                }
+                if (i == compareA || i == compareB) {
+                    top -= dp(12) * (float) Math.sin(compareProgress * Math.PI);
+                }
+
+                // Drawing
+                paint.setColor(color);
+                // Shadow
+                RectF shadowRect = new RectF(x + dp(3), top + dp(4), x + barWidth + dp(3), baseY + dp(4));
+                canvas.drawRoundRect(shadowRect, dp(8), dp(8), paint);
+
+                // Bar
+                RectF rect = new RectF(x, top, x + barWidth, baseY);
+                canvas.drawRoundRect(rect, dp(8), dp(8), paint);
+
+                // Text
+                paint.setColor(Color.WHITE);
+                paint.setTextSize(dp(13));
+                paint.setTextAlign(Paint.Align.CENTER);
+                paint.setFakeBoldText(true);
+                canvas.drawText(String.valueOf(shownValue), x + barWidth / 2, top + barHeight / 2 + dp(5), paint);
+                paint.setFakeBoldText(false);
             }
-
         }
-
     }
-
-
-
-    private void record(int a1, int a2, String log) {
-
-        recordedSteps.add(new SortingStep(numbers, a1, a2, currentSortedIndices, swapCount, log));
-
-    }
-
-
-
-    private void updateUI(SortingStep step, long elapsedMs) {
-
-        txtTimer.setText(String.format("%.2f s", elapsedMs / 1000.0));
-
-        txtSwaps.setText("Swaps: " + step.swaps);
-
-        fullLog.append("> ").append(step.logEntry).append("\n");
-
-        txtStepLog.setText(fullLog.toString());
-
-        logScroll.post(() -> logScroll.fullScroll(ScrollView.FOCUS_DOWN));
-
-
-
-        containerBars.removeAllViews();
-
-        arrowContainer.removeAllViews();
-
-
-
-        for (int k = 0; k < step.state.size(); k++) {
-
-// --- Updated Arrows: Bigger, Bold, and Clear Pointer ---
-
-            TextView arrow = new TextView(this);
-
-// Use '⬇' for standard look, adding "i" or "j" labels for clarity.
-
-            if (k == step.active1) {
-
-                arrow.setText("i\n⬇");
-
-                arrow.setTextColor(Color.parseColor("#7B1FA2")); // Purple matching the box
-
-            } else if (k == step.active2) {
-
-                arrow.setText("j\n⬇");
-
-                arrow.setTextColor(Color.parseColor("#7B1FA2")); // Purple matching the box
-
-            } else {
-
-                arrow.setText("");
-
-            }
-
-            arrow.setGravity(Gravity.CENTER);
-
-            arrow.setTextSize(16f); // --- Increased from 12f ---
-
-            arrow.setTypeface(null, Typeface.BOLD); // --- Made Bold ---
-
-
-
-// Layout params (Adjust width slightly if labels make them tight)
-
-            LinearLayout.LayoutParams aP = new LinearLayout.LayoutParams(70, 100); // More height for labels
-
-            arrowContainer.addView(arrow, aP);
-
-
-
-// Boxes
-
-            TextView box = new TextView(this);
-
-            box.setText(String.valueOf(step.state.get(k)));
-
-            box.setGravity(Gravity.CENTER); box.setTextColor(Color.WHITE); box.setTextSize(11f);
-
-
-
-            GradientDrawable gd = new GradientDrawable();
-
-            gd.setCornerRadius(8f);
-
-
-
-            if (k == step.active1 || k == step.active2) {
-
-                gd.setColor(Color.parseColor("#7B1FA2")); // Purple for comparing
-
-            } else if (step.sortedIndices.contains(k)) {
-
-                gd.setColor(Color.parseColor("#008080")); // Teal for sorted
-
-            } else {
-
-                gd.setColor(Color.parseColor("#1E88E5")); // Blue for unsorted
-
-            }
-
-
-
-            box.setBackground(gd);
-
-            LinearLayout.LayoutParams bP = new LinearLayout.LayoutParams(70, 75);
-
-            bP.setMargins(4, 4, 4, 4);
-
-            containerBars.addView(box, bP);
-
-        }
-
-    }
-
-
-
-// --- Enhanced playTone function ---
-
-    private void playTone(int type, int dur) {
-
-        if (toneGen != null) {
-
-
-
-            try {
-
-// Ensure music volume isn't muted
-
-                toneGen.startTone(type, dur);
-
-            } catch (Exception ignored) {}
-
-        }
-
-    }
-
-
-
-    private String getComplexity(String algo) {
-
-        if (algo == null) return "Complexity: N/A";
-
-        String a = algo.toLowerCase();
-
-        if (a.contains("bubble") || a.contains("selection") || a.contains("insertion")) return "Complexity: O(n²)";
-
-        if (a.contains("shell")) return "Complexity: O(n log² n)";
-
-        return "Complexity: O(n log n)";
-
-    }
-
-
-
-    @Override
-
-    protected void onDestroy() {
-
-        super.onDestroy();
-
-// --- Release ToneGenerator properly ---
-
-        if (toneGen != null) {
-
-            toneGen.release();
-
-            toneGen = null;
-
-        }
-
-    }
-
 }
