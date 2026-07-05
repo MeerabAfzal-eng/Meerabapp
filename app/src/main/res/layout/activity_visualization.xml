@@ -1,88 +1,175 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
+
     android:orientation="vertical"
+
     android:padding="16dp">
 
+
+
     <TextView android:id="@+id/txtAlgoName"
+
         android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
+
         android:text="Algorithm: Bubble Sort"
+
         android:textSize="20sp"
+
         android:textStyle="bold"
+
         android:gravity="center"
+
         android:paddingBottom="10dp"/>
 
+
+
     <HorizontalScrollView
+
         android:layout_width="match_parent"
+
         android:layout_height="200dp"
+
         android:background="#F0F0F0"
+
         android:fillViewport="true"
+
         android:layout_marginTop="5dp">
+
+
 
         <LinearLayout
+
             android:id="@+id/visualContainer"
+
             android:layout_width="wrap_content"
+
             android:layout_height="match_parent"
+
             android:gravity="center_vertical"
+
             android:orientation="horizontal"
+
             android:padding="5dp"/>
+
     </HorizontalScrollView>
 
+
+
     <LinearLayout
+
         android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
+
         android:orientation="horizontal"
+
         android:padding="8dp"
+
         android:layout_marginTop="10dp"
+
         android:background="#DDDDDD">
 
+
+
         <TextView android:id="@+id/txtSwapCounter"
+
             android:layout_width="0dp"
+
             android:layout_height="wrap_content"
+
             android:layout_weight="1"
+
             android:text="Swaps: 0"
+
             android:gravity="center"
+
             android:textStyle="bold" />
+
+
 
         <TextView
+
             android:id="@+id/txtTimer"
+
             android:layout_width="155dp"
+
             android:layout_height="wrap_content"
+
             android:layout_weight="1"
+
             android:gravity="center"
+
             android:text="00:00"
+
             android:textStyle="bold" />
+
+
 
         <TextView android:id="@+id/txtComplexity"
+
             android:layout_width="0dp"
+
             android:layout_height="wrap_content"
+
             android:layout_weight="1"
+
             android:text="O(n²)"
+
             android:gravity="center"
+
             android:textStyle="bold" />
+
     </LinearLayout>
 
+
+
     <ScrollView
+
         android:layout_width="match_parent"
+
         android:layout_height="0dp"
+
         android:layout_weight="1"
+
         android:background="#E0E0E0"
+
         android:padding="10dp"
+
         android:layout_marginTop="5dp">
+
         <TextView android:id="@+id/txtExplanation"
+
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
+
             android:text="Sorting steps will appear here..." />
+
     </ScrollView>
 
+
+
     <GridLayout android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
+
         android:columnCount="2"
+
         android:layout_marginTop="10dp">
+
         <Button android:id="@+id/btnAsc" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Ascending" />
+
         <Button android:id="@+id/btnDesc" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Descending" />
+
         <Button android:id="@+id/btnRestart" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Restart" />
+
         <Button android:id="@+id/btnReset" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Reset" />
+
     </GridLayout>
+
 </LinearLayout>

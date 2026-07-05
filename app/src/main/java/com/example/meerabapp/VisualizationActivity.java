@@ -174,7 +174,6 @@ public class VisualizationActivity extends AppCompatActivity {
         playStep();
     }
 
-
     void playStep() {
         updateTimer();
         if (stepIndex >= steps.size()) {
@@ -182,9 +181,11 @@ public class VisualizationActivity extends AppCompatActivity {
             txtExplanation.append("\nSorting completed.");
             return;
         }
+
         Step step = steps.get(stepIndex++);
-        // Log add karein taaki pata chale kaunsa step chal raha hai
-        Log.d("DEBUG_SORT", "Step Type: " + step.type + " Message: " + step.message);
+// playStep ke andar
+        Log.d("SORT_DEBUG", "Processing step: " + step.type + " at Index: " + step.i + " Value: " + step.value);
+
         if (step.type.equals("compare")) {
             barsView.animateCompare(step.i, step.j, () -> {
                 txtExplanation.append("\n" + step.message);
@@ -199,52 +200,49 @@ public class VisualizationActivity extends AppCompatActivity {
                 txtSwapCounter.setText("Swaps: " + swaps);
                 txtExplanation.append("\n" + step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
-
             });
-             if (step.type.equals("set")) {
-                barsView.animateWrite(step.i, step.value, () -> {
-                    // Yahan view ka data update karein
-                    barsView.updateData(step.i, step.value);
-                    arr.set(step.i, step.value);
-                    swaps++;
-                    txtSwapCounter.setText("Moves: " + swaps);
-                    handler.postDelayed(this::playStep, STEP_DELAY);
-                });
-            }
         } else if (step.type.equals("set")) {
             // Shift waala check
             if (step.message.contains("Shift")) {
-                if (step.i + 1 < arr.size()) {
-                    barsView.animateShift(step.i, step.i + 1, () -> {
-                        arr.set(step.i + 1, step.value);
-                        barsView.invalidate();
-                        swaps++;
-                        txtSwapCounter.setText("Moves: " + swaps);
-                        txtExplanation.append("\n" + step.message);
-                        handler.postDelayed(this::playStep, STEP_DELAY);
-                    });
-                } else {
-                    handler.postDelayed(this::playStep, 0);
-                }
-            }
-            // Yahan 'else' sahi jagah band ho raha hai
-            else {
+                // ... aapka shift wala logic ...
+                barsView.animateShift(step.i, step.i + 1, () -> { /* ... */ handler.postDelayed(this::playStep, STEP_DELAY); });
+            } else {
+                // Merge Sort yahan se sahi chalega
                 barsView.animateWrite(step.i, step.value, () -> {
                     arr.set(step.i, step.value);
-                    barsView.invalidate();
+                    barsView.updateData(step.i, step.value); // Yahan sync ho raha hai
                     swaps++;
                     txtSwapCounter.setText("Moves: " + swaps);
-                    txtExplanation.append("\n" + step.message);
                     handler.postDelayed(this::playStep, STEP_DELAY);
+
                 });
             }
+            // ... inside playStep ...
+        } else if (step.type.equals("shift")) {
+            // This handles the bar moving to the right to make space
+            barsView.animateShift(step.i, step.j, () -> {
+                int val = arr.get(step.i);
+                arr.set(step.j, val); // Move value to new position
+                swaps++;
+                txtSwapCounter.setText("Moves: " + swaps);
+                txtExplanation.append("\n" + step.message);
+                handler.postDelayed(this::playStep, STEP_DELAY);
+            });
+        } else if (step.type.equals("insert")) {
+            // This handles placing the "key" into the gap
+            barsView.animateWrite(step.i, step.value, () -> {
+                arr.set(step.i, step.value);
+                txtExplanation.append("\n" + step.message);
+                handler.postDelayed(this::playStep, STEP_DELAY);
+            });
+
+        // ... rest of your code
         } else if (step.type.equals("mark")) {
             barsView.markSorted(step.i);
-            barsView.invalidate();
-            playStep();
+            playStep(); // Mark ke liye delay ki zaroorat nahi
         }
-
     }
+
 
     int[] toIntArray(ArrayList<Integer> list) {
         int[] result = new int[list.size()];
@@ -304,19 +302,22 @@ public class VisualizationActivity extends AppCompatActivity {
 
 
     void insertionSort(int[] a) {
-        steps.add(new Step("mark", 0, -1, 0, "Initial element"));
+        steps.add(new Step("mark", 0, -1, 0, "Initial element is sorted"));
         for (int i = 1; i < a.length; i++) {
             int key = a[i];
             int j = i - 1;
 
+            // Animate selection of the "key" (optional: raise the bar)
+            steps.add(new Step("select", i, -1, 0, "Select " + key));
+
             // Jab tak wrong position par hai
             while (j >= 0 && (ascending ? a[j] > key : a[j] < key)) {
                 // Shift animation ke liye "set" type
-                steps.add(new Step("set", j + 1, -1, a[j], "Shifting " + a[j]));
+                steps.add(new Step("shift", j, j + 1, 0, "Shift " + a[j] + " to right"));
                 a[j + 1] = a[j];
                 j--;
             }
-            steps.add(new Step("set", j + 1, -1, key, "Inserting " + key));
+            steps.add(new Step("insert", j + 1, -1, key, "Insert " + key));
             a[j + 1] = key;
 
             // Mark sorted section
@@ -398,10 +399,12 @@ public class VisualizationActivity extends AppCompatActivity {
 
         // 2. Writing logic (Move/Update bars)
         for (int x = 0; x < temp.length; x++) {
+            a[left + x] = temp[x];
             // "set" type trigger karega animateWrite()
             steps.add(new Step("set", left + x, -1, temp[x], "Place " + temp[x]));
-            a[left + x] = temp[x];
+
         }
+
 
         // 3. Mark logic (Teal color)
         for (int x = left; x <= right; x++) {
@@ -489,6 +492,9 @@ public class VisualizationActivity extends AppCompatActivity {
         int swapA = -1;
         int swapB = -1;
         float swapLift = 0f;
+        int moveFrom = -1;
+        int moveTo = -1;
+        float moveProgress = 0f;
 
         void markSorted(int index) {
             if (sortedStatus != null && index >= 0 && index < sortedStatus.length) {
@@ -570,6 +576,7 @@ public class VisualizationActivity extends AppCompatActivity {
         }
 
         void animateSwap(int i, int j, Runnable action) {
+
             swapA = i;
             swapB = j;
             compareA = i;
@@ -601,21 +608,44 @@ public class VisualizationActivity extends AppCompatActivity {
             });
             animator.start();
         }
-
-        void animateShift(int fromIndex, int toIndex, Runnable action) {
-            swapA = fromIndex;
-            swapB = toIndex;
+        void animateMove(int fromIndex, int toIndex, Runnable action) {
+            // This is similar to animateShift, but handles the transition smoothly
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-            animator.setDuration(300); // Shifting speed
+            animator.setDuration(400); // Increased duration for visibility
             animator.addUpdateListener(a -> {
-                swapProgress = (float) a.getAnimatedValue();
+                // Here you would interpolate the X position of the bar
                 invalidate();
             });
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    swapA = -1;
-                    swapB = -1;
+                    moveFrom = -1;
+                    moveTo = -1;
+                    moveProgress = 0f;
+                    action.run();
+                }
+            });
+            animator.start();
+        }
+        // Add these variables
+        int shiftFrom = -1;
+        int shiftTo = -1;
+
+        // Update animateShift
+        void animateShift(int fromIndex, int toIndex, Runnable action) {
+            shiftFrom = fromIndex;
+            shiftTo = toIndex;
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.setDuration(300);
+            animator.addUpdateListener(a -> {
+                swapProgress = (float) a.getAnimatedValue(); // You can keep using swapProgress
+                invalidate();
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    shiftFrom = -1;
+                    shiftTo = -1;
                     swapProgress = 0f;
                     action.run();
                 }
@@ -638,7 +668,7 @@ public class VisualizationActivity extends AppCompatActivity {
                     writeIndex = -1;
                     writeValue = -1;
                     invalidate();
-                    action.run();
+                    if (action != null)action.run();
                 }
             });
             animator.start();
@@ -681,7 +711,13 @@ public class VisualizationActivity extends AppCompatActivity {
                 float top = baseY - barHeight;
 
                 // Animation logic (Swap aur Compare ka movement)
-                if (i == swapA && swapB >= 0) {
+                // Inside onDraw loop, replace the animation logic with this:
+                if (i == shiftFrom) {
+                    float startX = gap + shiftFrom * (barWidth + gap);
+                    float targetX = gap + shiftTo * (barWidth + gap);
+                    x = startX + (targetX - startX) * smoothMove(swapProgress);
+                    // Note: No "top" modification here, so it slides horizontally without jumping!
+                } else if (i == swapA && swapB >= 0) {
                     float startX = gap + swapA * (barWidth + gap);
                     float targetX = gap + swapB * (barWidth + gap);
                     float move = smoothMove(swapProgress);
@@ -693,9 +729,15 @@ public class VisualizationActivity extends AppCompatActivity {
                     float move = smoothMove(swapProgress);
                     x = startX + (targetX - startX) * move;
                     top += dp(22) * swapLift;
+
+
                 }
-                if (i == compareA || i == compareB) {
-                    top -= dp(12) * (float) Math.sin(compareProgress * Math.PI);
+                // Agar move ho raha hai
+                if (i == moveFrom) {
+                    float startX = gap + moveFrom * (barWidth + gap);
+                    float targetX = gap + moveTo * (barWidth + gap);
+                    x = startX + (targetX - startX) * smoothMove(moveProgress);
+                    top -= dp(30); // Thoda upar uthayein (lift effect)
                 }
 
                 // Drawing
