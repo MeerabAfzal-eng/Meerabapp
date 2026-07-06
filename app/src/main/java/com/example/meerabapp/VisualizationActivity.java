@@ -17,6 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Locale;
 import android.util.Log;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+
+
 public class VisualizationActivity extends AppCompatActivity {
     TextView txtAlgoName, txtSwapCounter, txtTimer, txtComplexity, txtExplanation;
     LinearLayout visualContainer;
@@ -26,12 +30,13 @@ public class VisualizationActivity extends AppCompatActivity {
     ArrayList<Integer> originalArr = new ArrayList<>();
     ArrayList<Step> steps = new ArrayList<>();
     Handler handler = new Handler(Looper.getMainLooper());
+    ToneGenerator toneGen;
     int stepIndex = 0;
     int swaps = 0;
     boolean ascending = true;
     long startTime;
     String algorithm = "Bubble Sort";
-    static final int STEP_DELAY = 80;
+    static final int STEP_DELAY = 400;
 
     static class Step {
         String type, message;
@@ -43,6 +48,7 @@ public class VisualizationActivity extends AppCompatActivity {
             this.j = j;
             this.value = value;
             this.message = message;
+
         }
     }
 
@@ -50,6 +56,7 @@ public class VisualizationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualization);
+        toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
         txtAlgoName = findViewById(R.id.txtAlgoName);
         txtSwapCounter = findViewById(R.id.txtSwapCounter);
         txtTimer = findViewById(R.id.txtTimer);
@@ -139,6 +146,8 @@ public class VisualizationActivity extends AppCompatActivity {
 
     void updateHeader() {
         txtAlgoName.setText("Algorithm: " + algorithm);
+        txtExplanation.setText(getExplanation(algorithm));
+
         if (algorithm.equals("Quick Sort")) {
             txtComplexity.setText("Avg O(n log n)");
 
@@ -149,17 +158,41 @@ public class VisualizationActivity extends AppCompatActivity {
         }
     }
 
+    String getExplanation(String algo) {
+        switch (algo) {
+            case "Bubble Sort":
+                return "Bubble Sort: This algorithm repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.";
+            case "Merge Sort":
+                return "Merge Sort: A divide-and-conquer algorithm that divides the array into smaller sub-arrays, sorts them, and then merges them back together.";
+            case "Insertion Sort":
+                return "Insertion Sort: Builds the final sorted array one item at a time by taking elements from the unsorted part and inserting them into their correct position.";
+            case "Selection Sort":
+                return "Selection Sort: Repeatedly finds the minimum element from the unsorted part and puts it at the beginning of the list.";
+            case "Quick Sort":
+                return "Quick Sort: A highly efficient divide-and-conquer algorithm that picks a 'pivot' element and partitions the array around it.";
+            case "Heap Sort":
+                return "Heap Sort: A comparison-based sorting technique based on a Binary Heap data structure. It builds a heap and then repeatedly extracts the maximum/minimum element.";
+            case "Shell Sort":
+                return "Shell Sort: An optimization of Insertion Sort that allows the exchange of items that are far apart, gradually reducing the gap between them.";
+            default:
+                return "Algorithm selected: " + algo + ". Click 'Ascending' or 'Descending' to start the visualization.";
+        }
+    }
+
     void startSorting() {
+        Log.d("ORDER_DEBUG", "Sorting in Ascending mode: " + ascending);
         handler.removeCallbacksAndMessages(null);
         arr.clear();
         arr.addAll(originalArr);
         steps.clear();
         stepIndex = 0;
         swaps = 0;
+
+        txtExplanation.setText(getExplanation(algorithm) + "\n\n--- Sorting Steps ---");
         startTime = System.currentTimeMillis();
         txtSwapCounter.setText("Swaps: 0");
         txtTimer.setText("00:00");
-        txtExplanation.setText("");
+
         barsView.setData(arr);
         int[] copy = toIntArray(arr);
         if (algorithm.equals("Bubble Sort")) bubbleSort(copy);
@@ -172,6 +205,7 @@ public class VisualizationActivity extends AppCompatActivity {
         // Yahan check karein
         Log.d("DEBUG_SORT", "Steps generated: " + steps.size());
         playStep();
+
     }
 
 
@@ -179,6 +213,9 @@ public class VisualizationActivity extends AppCompatActivity {
         updateTimer();
         if (stepIndex >= steps.size()) {
             barsView.showSorted();
+            if (toneGen != null) {
+                toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 500);
+            }
             txtExplanation.append("\nSorting completed.");
             return;
         }
@@ -202,33 +239,31 @@ public class VisualizationActivity extends AppCompatActivity {
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
         } else if (step.type.equals("set")) {
-            // Merge Sort ya general set operation
             barsView.animateWrite(step.i, step.value, () -> {
                 arr.set(step.i, step.value);
-                barsView.updateData(step.i, step.value);
-                swaps++;
-                txtSwapCounter.setText("Moves: " + swaps);
+                barsView.updateData(step.i, step.value); // UI refresh (smooth)
+                txtExplanation.append("\n" + step.message); // Explanation update
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
+
         } else if (step.type.equals("shift")) {
             barsView.animateShift(step.i, step.j, () -> {
-                // 1. Pehle activity ki main list (arr) update karein
                 int val = arr.get(step.i);
                 arr.set(step.j, val);
 
-// --- YEH CODE ADD KAREIN: Status ko shift karein ---
+                // Status ko shift karein
                 if (barsView.sortedStatus != null) {
-                    barsView.sortedStatus[step.j] = barsView.sortedStatus[step.i];
+                    boolean tempStatus = barsView.sortedStatus[step.i];
+                    barsView.sortedStatus[step.j] = tempStatus;
                     barsView.sortedStatus[step.i] = false;
                 }
-                // 2. Phir View ko batayein ke kahan update karna hai
-                // Agar yahan error hai, to confirm karein ke barsView instance accessible hai
-                barsView.updateData(step.j, val);
 
+                barsView.updateData(step.j, val);
                 txtExplanation.append("\n" + step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
-        } else if (step.type.equals("insert")) {
+        }
+        else if (step.type.equals("insert")) {
             barsView.animateWrite(step.i, step.value, () -> {
                 arr.set(step.i, step.value);
                 barsView.setData(arr);
@@ -239,9 +274,11 @@ public class VisualizationActivity extends AppCompatActivity {
             });
         } else if (step.type.equals("mark")) {
             barsView.markSorted(step.i);
-            playStep(); // Delay ki zaroorat nahi
+            toneGen.startTone(ToneGenerator.TONE_CDMA_PIP, 100);
+            playStep();
         }
     }
+
 
     int[] toIntArray(ArrayList<Integer> list) {
         int[] result = new int[list.size()];
@@ -264,12 +301,15 @@ public class VisualizationActivity extends AppCompatActivity {
 
 
     boolean wrongOrder(int a, int b) {
-        return ascending ? a > b : a < b;
+        // Agar Ascending true hai: a > b wrong hai (e.g., 5 > 2)
+        // Agar Ascending false (Descending) hai: a < b wrong hai (e.g., 2 < 5)
+        return ascending ? (a > b) : (a < b);
     }
 
-
     boolean correctOrEqual(int a, int b) {
-        return ascending ? a <= b : a >= b;
+        // Ascending: a <= b sahi hai
+        // Descending: a >= b sahi hai
+        return ascending ? (a <= b) : (a >= b);
     }
 
 
@@ -284,10 +324,10 @@ public class VisualizationActivity extends AppCompatActivity {
         for (int i = 0; i < a.length - 1; i++) {
             for (int j = 0; j < a.length - i - 1; j++) {
                 steps.add(new Step("compare", j, j + 1, 0,
-                        "Compare " + a[j] + " and " + a[j + 1]));
+                        "comparing " + a[j] + " and " + a[j + 1] +"."));
                 if (wrongOrder(a[j], a[j + 1])) {
                     steps.add(new Step("swap", j, j + 1, 0,
-                            "Swap " + a[j] + " and " + a[j + 1]));
+                            "Items " + a[j] + " and " + a[j + 1] + " because they are out of order. Swapping them."));
                     swap(a, j, j + 1);
                 }
             }
@@ -295,7 +335,7 @@ public class VisualizationActivity extends AppCompatActivity {
             steps.add(new Step("mark", a.length - 1 - i, -1, 0, "Fixed position"));
         }
         // Aakhri element bach jata hai, usay bhi mark karein
-        steps.add(new Step("mark", 0, -1, 0, "Sorted!"));
+        steps.add(new Step("mark", 0, -1, 0, " Array Sorted!"));
 
     }
 
@@ -305,19 +345,17 @@ public class VisualizationActivity extends AppCompatActivity {
             int key = a[i];
             int j = i - 1;
 
-
-            // Jab tak wrong position par hai
             while (j >= 0 && (ascending ? a[j] > key : a[j] < key)) {
-                steps.add(new Step("shift", j, j + 1, a[j], "Shift " + a[j] + " to right"));
+                steps.add(new Step("shift", j, j + 1, a[j], "Shifting " + a[j] + " to  the right"));
                 a[j + 1] = a[j];
                 j--;
             }
             a[j + 1] = key;
-            steps.add(new Step("insert", j + 1, -1, key, "Insert " + key));
+            steps.add(new Step("insert", j + 1, -1, key, "Inserting " + key + " into its correct sorted position."));
 
+            // Yahan fix: i tak ka poora hissa sorted hai, isliye 0 se i tak mark karein
             for (int k = 0; k <= i; k++) {
-                steps.add(new Step("mark", j + 1, -1, 0, "Fixed position"));
-
+                steps.add(new Step("mark", k, -1, 0, "Fixed position"));
             }
         }
     }
@@ -326,11 +364,11 @@ public class VisualizationActivity extends AppCompatActivity {
         for (int i = 0; i < a.length - 1; i++) {
             int selected = i;
             for (int j = i + 1; j < a.length; j++) {
-                steps.add(new Step("compare", selected, j, 0, "Finding minimum"));
+                steps.add(new Step("compare", selected, j, 0, "Searching for the  minimum :comparing"));
                 if (wrongOrder(a[selected], a[j])) selected = j;
             }
             if (selected != i) {
-                steps.add(new Step("swap", i, selected, 0, "Swap"));
+                steps.add(new Step("swap", i, selected, 0, "Swaping"+ " with the smallest element " + a[selected]));
                 swap(a, i, selected);
             }
             // Yahan mark karein
@@ -351,15 +389,15 @@ public class VisualizationActivity extends AppCompatActivity {
         int pivotValue = a[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {
-            steps.add(new Step("compare", j, high, 0, "Compare"));
+            steps.add(new Step("compare", j, high, 0, "Compareing element at index " + j + " with pivot " + a[high]));
             boolean move = ascending ? a[j] < pivotValue : a[j] > pivotValue;
             if (move) {
                 i++;
-                steps.add(new Step("swap", i, j, 0, "Swap"));
+                steps.add(new Step("swap", i, j, 0,"Moving smaller element "+ a[j] + " to the left side of the pivot."));
                 swap(a, i, j);
             }
         }
-        steps.add(new Step("swap", i + 1, high, 0, "Pivot in place"));
+        steps.add(new Step("swap", i + 1, high, 0, "Placing pivot " + a[high] + " in its final sorted position."));
         swap(a, i + 1, high);
         // Pivot ko mark karein
         steps.add(new Step("mark", i + 1, -1, 0, "Pivot fixed"));
@@ -371,18 +409,24 @@ public class VisualizationActivity extends AppCompatActivity {
     void mergeSort(int[] a, int left, int right) {
         if (left >= right) return;
         int mid = (left + right) / 2;
+
         mergeSort(a, left, mid);
         mergeSort(a, mid + 1, right);
         merge(a, left, mid, right);
+
+        for (int k = left; k <= right; k++) {
+            steps.add(new Step("mark", k, -1, 0, "Segment " + left + "-" + right + " is now sorted and fixed."));
+        }
     }
 
     void merge(int[] a, int left, int mid, int right) {
         int[] temp = new int[right - left + 1];
         int i = left, j = mid + 1, k = 0;
 
+
         // 1. Comparison logic (Purple animation)
         while (i <= mid && j <= right) {
-            steps.add(new Step("compare", i, j, 0, "Compare " + a[i] + " and " + a[j]));
+            steps.add(new Step("compare", i, j, 0, "Comparing" + a[i] + " and " + a[j]+ " to merge in  order."));
             if (correctOrEqual(a[i], a[j])) {
                 temp[k++] = a[i++];
             } else {
@@ -397,14 +441,8 @@ public class VisualizationActivity extends AppCompatActivity {
         for (int x = 0; x < temp.length; x++) {
             a[left + x] = temp[x];
             // "set" type trigger karega animateWrite()
-            steps.add(new Step("set", left + x, -1, temp[x], "Place " + temp[x]));
+            steps.add(new Step("set", left + x, -1, temp[x], "Merging" + temp[x] + " back into the main array." + (left + x) + "."));
 
-        }
-
-
-        // 3. Mark logic (Teal color)
-        for (int x = left; x <= right; x++) {
-            steps.add(new Step("mark", x, -1, 0, "Fixed"));
         }
     }
 
@@ -428,20 +466,23 @@ public class VisualizationActivity extends AppCompatActivity {
         if (left < n) {
             steps.add(new Step("compare", left, best, 0,
                     "Compare left child with root"));
-            if (wrongOrder(a[best], a[left])) {
+            // Agar ascending hai to a[left] > a[best] check karo, warna a[left] < a[best]
+            boolean shouldSwap = ascending ? (a[left] > a[best]) : (a[left] < a[best]);
+            if (shouldSwap) {
                 best = left;
             }
         }
         if (right < n) {
             steps.add(new Step("compare", right, best, 0,
-                    "Compare right child with current best"));
-            if (wrongOrder(a[best], a[right])) {
+                    "Compare right child with parent to maintain heap property. "));
+            boolean shouldSwap = ascending ? (a[right] > a[best]) : (a[right] < a[best]);
+            if (shouldSwap) {
                 best = right;
             }
         }
         if (best != root) {
             steps.add(new Step("swap", root, best, 0,
-                    "Restore heap order"));
+                    "Swapping to maintain max_heap sructure."));
             swap(a, root, best);
             heapify(a, n, best);
         }
@@ -452,17 +493,18 @@ public class VisualizationActivity extends AppCompatActivity {
             for (int i = gap; i < a.length; i++) {
                 int temp = a[i];
                 int j = i;
-                while (j >= gap) {
-                    steps.add(new Step("compare", j - gap, j, 0,
-                            "Compare gap " + gap));
-                    if (correctOrEqual(a[j - gap], temp)) break;
-                    steps.add(new Step("set", j, -1, a[j - gap],
-                            "Shift " + a[j - gap] + " by gap " + gap));
+                // Yahan comparison ke liye compare step add karein (taake Purple ho)
+                while (j >= gap && (ascending ? a[j - gap] > temp : a[j - gap] < temp)) {
+                    steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of" + gap));
+
+                    // Yahan "set" ki jagah "shift" use karein
+                    steps.add(new Step("shift", j - gap, j, a[j - gap], "Shifting element " + a[j - gap]+ " to fill the gap." ));
+
                     a[j] = a[j - gap];
                     j -= gap;
                 }
                 steps.add(new Step("set", j, -1, temp,
-                        "Place " + temp + " after gap comparison"));
+                        "Placing element " + temp + " after gap comparison"));
                 a[j] = temp;
             }
         }
@@ -471,6 +513,7 @@ public class VisualizationActivity extends AppCompatActivity {
             steps.add(new Step("mark", i, -1, 0, "Sorted position"));
         }
     }
+
 
     public class AnimatedBarsView extends android.view.View {
         ArrayList<Integer> data = new ArrayList<>();
@@ -504,7 +547,7 @@ public class VisualizationActivity extends AppCompatActivity {
         int unsortedColor = Color.rgb(33, 150, 243); // Blue
         int compareColor = Color.rgb(128, 0, 128);   // Purple
         int sortedColor = Color.rgb(0, 128, 128);    // Teal
-        int writeColor = Color.rgb(255, 193, 7);     // Yellow (Write/Set ke liye)
+
 
         public AnimatedBarsView(android.content.Context context) {
 
@@ -607,10 +650,11 @@ public class VisualizationActivity extends AppCompatActivity {
             animator.start();
         }
 
+
         void animateMove(int fromIndex, int toIndex, Runnable action) {
             // This is similar to animateShift, but handles the transition smoothly
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-            animator.setDuration(400); // Increased duration for visibility
+            animator.setDuration(350); // Increased duration for visibility
             animator.addUpdateListener(a -> {
                 // Here you would interpolate the X position of the bar
                 invalidate();
@@ -636,7 +680,7 @@ public class VisualizationActivity extends AppCompatActivity {
             shiftFrom = fromIndex;
             shiftTo = toIndex;
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-            animator.setDuration(300);
+            animator.setDuration(400);
             animator.addUpdateListener(a -> {
                 swapProgress = (float) a.getAnimatedValue(); // You can keep using swapProgress
                 invalidate();
@@ -696,21 +740,21 @@ public class VisualizationActivity extends AppCompatActivity {
                 if (i == writeIndex && writeValue > 0) {
                     shownValue = writeValue;
                 }
+                // inside onDraw() for loop
+                int color;
 
-                    int color;
-                    // 1. Sabse pehli priority: Agar element already sorted (fixed) hai, to Teal (0, 128, 128)
-                    if (sortedStatus != null && i < sortedStatus.length && sortedStatus[i]) {
-                        color = Color.rgb(0, 128, 128);
-                    }
-                    // 2. Doosri priority: Agar abhi compare ho raha hai, to Purple (128, 0, 128)
-                    else if (i == compareA || i == compareB) {
-                        color = Color.rgb(128, 0, 128);
-                    }
-                    // 3. Last priority: Default Unsorted state, to Blue (33, 150, 243)
-                    else {
-                        color = Color.rgb(33, 150, 243);
-                    }
-
+// 1. Priority: Fixed/Sorted elements (Teal)
+                if (sortedStatus != null && i < sortedStatus.length && sortedStatus[i]) {
+                    color = Color.rgb(0, 128, 128); // Teal (Sorted)
+                }
+// 2. Priority: Currently Comparing/Shifting (Purple)
+                else if (i == compareA || i == compareB || i == shiftFrom || i == shiftTo) {
+                    color = Color.rgb(128, 0, 128); // Purple (comparing)
+                }
+// 3. Priority: Default (Blue)
+                else {
+                    color = Color.rgb(33, 150, 243); // Blue (deault)
+                }
 
                     float x = gap + i * (barWidth + gap);
                     float top = baseY - barHeight;
@@ -765,5 +809,18 @@ public class VisualizationActivity extends AppCompatActivity {
                 }
             }
         }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (toneGen != null) {
+            toneGen.release();
+            toneGen = null;
+        }
+
+        handler.removeCallbacksAndMessages(null);
     }
+}
+
+
 
