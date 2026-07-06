@@ -1,175 +1,116 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
 
-    android:orientation="vertical"
-
-    android:padding="16dp">
-
-
-
-    <TextView android:id="@+id/txtAlgoName"
-
-        android:layout_width="match_parent"
-
+    <!-- Title -->
+    <TextView
+        android:id="@+id/txtAlgoName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:text="Algorithm: Bubble Sort"
-
+        android:text="Algorithm: Shell Sort"
         android:textSize="20sp"
-
         android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        android:gravity="center"
-
-        android:paddingBottom="10dp"/>
-
-
-
+    <!-- Visualization Area (Upar shift kar diya) -->
     <HorizontalScrollView
-
+        android:id="@+id/scrollVisual"
         android:layout_width="match_parent"
-
-        android:layout_height="200dp"
-
+        android:layout_height="220dp"
+        android:layout_marginTop="16dp"
         android:background="#F0F0F0"
-
-        android:fillViewport="true"
-
-        android:layout_marginTop="5dp">
-
-
+        app:layout_constraintTop_toBottomOf="@id/txtAlgoName">
 
         <LinearLayout
-
             android:id="@+id/visualContainer"
-
             android:layout_width="wrap_content"
-
             android:layout_height="match_parent"
-
-            android:gravity="center_vertical"
-
+            android:gravity="bottom|center_horizontal"
             android:orientation="horizontal"
-
-            android:padding="5dp"/>
-
+            android:padding="10dp" />
     </HorizontalScrollView>
 
-
-
+    <!-- Stats Bar -->
     <LinearLayout
-
+        android:id="@+id/statsLayout"
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content"
-
+        android:layout_marginTop="12dp"
         android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/scrollVisual">
 
-        android:padding="8dp"
-
-        android:layout_marginTop="10dp"
-
-        android:background="#DDDDDD">
-
-
-
-        <TextView android:id="@+id/txtSwapCounter"
-
-            android:layout_width="0dp"
-
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-
-            android:text="Swaps: 0"
-
-            android:gravity="center"
-
-            android:textStyle="bold" />
-
-
-
-        <TextView
-
-            android:id="@+id/txtTimer"
-
-            android:layout_width="155dp"
-
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-
-            android:gravity="center"
-
-            android:text="00:00"
-
-            android:textStyle="bold" />
-
-
-
-        <TextView android:id="@+id/txtComplexity"
-
-            android:layout_width="0dp"
-
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-
-            android:text="O(n²)"
-
-            android:gravity="center"
-
-            android:textStyle="bold" />
-
+        <TextView android:id="@+id/txtSwapCounter" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Swaps: 0" android:gravity="center" android:textColor="#333333" android:textStyle="bold"/>
+        <TextView android:id="@+id/txtTimer" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="00:00" android:gravity="center" android:textColor="#333333" android:textStyle="bold"/>
+        <TextView android:id="@+id/txtComplexity" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="O(n log n)" android:gravity="center" android:textColor="#333333" android:textStyle="bold"/>
     </LinearLayout>
 
-
-
+    <!-- Steps Area (Bech mein fix jagah) -->
     <ScrollView
-
+        android:id="@+id/scrollExplanation"
         android:layout_width="match_parent"
-
         android:layout_height="0dp"
-
-        android:layout_weight="1"
-
-        android:background="#E0E0E0"
-
-        android:padding="10dp"
-
-        android:layout_marginTop="5dp">
-
-        <TextView android:id="@+id/txtExplanation"
-
-            android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-
-            android:text="Sorting steps will appear here..." />
-
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="#F0F0F0"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/statsLayout"
+        app:layout_constraintBottom_toTopOf="@+id/btnGrid">
+        <TextView android:id="@+id/txtExplanation" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Steps will appear here..." android:textColor="#555555"/>
     </ScrollView>
 
-
-
-    <GridLayout android:layout_width="match_parent"
-
+    <!-- Buttons at the Bottom -->
+    <!-- Buttons at the Bottom (Updated Colors) -->
+    <GridLayout
+        android:id="@+id/btnGrid"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:columnCount="2"
+        android:alignmentMode="alignMargins"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        android:layout_marginTop="10dp">
+        <Button
+            android:id="@+id/btnAsc"
+            android:layout_width="0dp"
+            android:layout_columnWeight="1"
+            android:text="Ascending"
+            android:layout_margin="4dp"
+            android:backgroundTint="#001F3F"
+            android:textColor="#FFFFFF"/>
 
-        <Button android:id="@+id/btnAsc" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Ascending" />
+        <Button
+            android:id="@+id/btnDesc"
+            android:layout_width="0dp"
+            android:layout_columnWeight="1"
+            android:text="Descending"
+            android:layout_margin="4dp"
+            android:backgroundTint="#001F3F"
+            android:textColor="#FFFFFF"/>
 
-        <Button android:id="@+id/btnDesc" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Descending" />
+        <Button
+            android:id="@+id/btnRestart"
+            android:layout_width="0dp"
+            android:layout_columnWeight="1"
+            android:text="Restart"
+            android:layout_margin="4dp"
+            android:backgroundTint="#001F3F"
+            android:textColor="#FFFFFF"/>
 
-        <Button android:id="@+id/btnRestart" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Restart" />
-
-        <Button android:id="@+id/btnReset" android:layout_width="0dp" android:layout_columnWeight="1" android:text="Reset" />
-
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="0dp"
+            android:layout_columnWeight="1"
+            android:text="Reset"
+            android:layout_margin="4dp"
+            android:backgroundTint="#001F3F"
+            android:textColor="#FFFFFF"/>
     </GridLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
