@@ -250,6 +250,8 @@ public class VisualizationActivity extends AppCompatActivity {
             barsView.animateShift(step.i, step.j, () -> {
                 int val = arr.get(step.i);
                 arr.set(step.j, val);
+                swaps++;
+                txtSwapCounter.setText("Swaps:" + swaps);
 
                 // Status ko shift karein
                 if (barsView.sortedStatus != null) {
@@ -756,59 +758,59 @@ public class VisualizationActivity extends AppCompatActivity {
                     color = Color.rgb(33, 150, 243); // Blue (deault)
                 }
 
-                    float x = gap + i * (barWidth + gap);
-                    float top = baseY - barHeight;
+                float x = gap + i * (barWidth + gap);
+                float top = baseY - barHeight;
 
-                    // Animation logic (Swap aur Compare ka movement)
-                    // Inside onDraw loop, replace the animation logic with this:
-                    if (i == shiftFrom) {
-                        float startX = gap + shiftFrom * (barWidth + gap);
-                        float targetX = gap + shiftTo * (barWidth + gap);
-                        x = startX + (targetX - startX) * smoothMove(swapProgress);
-                        // Note: No "top" modification here, so it slides horizontally without jumping!
-                    } else if (i == swapA && swapB >= 0) {
-                        float startX = gap + swapA * (barWidth + gap);
-                        float targetX = gap + swapB * (barWidth + gap);
-                        float move = smoothMove(swapProgress);
-                        x = startX + (targetX - startX) * move;
-                        top -= dp(45) * swapLift;
-                    } else if (i == swapB && swapA >= 0) {
-                        float startX = gap + swapB * (barWidth + gap);
-                        float targetX = gap + swapA * (barWidth + gap);
-                        float move = smoothMove(swapProgress);
-                        x = startX + (targetX - startX) * move;
-                        top += dp(22) * swapLift;
+                // Animation logic (Swap aur Compare ka movement)
+                // Inside onDraw loop, replace the animation logic with this:
+                if (i == shiftFrom) {
+                    float startX = gap + shiftFrom * (barWidth + gap);
+                    float targetX = gap + shiftTo * (barWidth + gap);
+                    x = startX + (targetX - startX) * smoothMove(swapProgress);
+                    // Note: No "top" modification here, so it slides horizontally without jumping!
+                } else if (i == swapA && swapB >= 0) {
+                    float startX = gap + swapA * (barWidth + gap);
+                    float targetX = gap + swapB * (barWidth + gap);
+                    float move = smoothMove(swapProgress);
+                    x = startX + (targetX - startX) * move;
+                    top -= dp(45) * swapLift;
+                } else if (i == swapB && swapA >= 0) {
+                    float startX = gap + swapB * (barWidth + gap);
+                    float targetX = gap + swapA * (barWidth + gap);
+                    float move = smoothMove(swapProgress);
+                    x = startX + (targetX - startX) * move;
+                    top += dp(22) * swapLift;
 
 
-                    }
-                    // Agar move ho raha hai
-                    if (i == moveFrom) {
-                        float startX = gap + moveFrom * (barWidth + gap);
-                        float targetX = gap + moveTo * (barWidth + gap);
-                        x = startX + (targetX - startX) * smoothMove(moveProgress);
-                        top -= dp(30); // Thoda upar uthayein (lift effect)
-                    }
-
-                    // Drawing
-                    paint.setColor(color);
-                    // Shadow
-                    RectF shadowRect = new RectF(x + dp(3), top + dp(4), x + barWidth + dp(3), baseY + dp(4));
-                    canvas.drawRoundRect(shadowRect, dp(8), dp(8), paint);
-
-                    // Bar
-                    RectF rect = new RectF(x, top, x + barWidth, baseY);
-                    canvas.drawRoundRect(rect, dp(8), dp(8), paint);
-
-                    // Text
-                    paint.setColor(Color.WHITE);
-                    paint.setTextSize(dp(13));
-                    paint.setTextAlign(Paint.Align.CENTER);
-                    paint.setFakeBoldText(true);
-                    canvas.drawText(String.valueOf(shownValue), x + barWidth / 2, top + barHeight / 2 + dp(5), paint);
-                    paint.setFakeBoldText(false);
                 }
+                // Agar move ho raha hai
+                if (i == moveFrom) {
+                    float startX = gap + moveFrom * (barWidth + gap);
+                    float targetX = gap + moveTo * (barWidth + gap);
+                    x = startX + (targetX - startX) * smoothMove(moveProgress);
+                    top -= dp(30); // Thoda upar uthayein (lift effect)
+                }
+
+                // Drawing
+                paint.setColor(color);
+                // Shadow
+                RectF shadowRect = new RectF(x + dp(3), top + dp(4), x + barWidth + dp(3), baseY + dp(4));
+                canvas.drawRoundRect(shadowRect, dp(8), dp(8), paint);
+
+                // Bar
+                RectF rect = new RectF(x, top, x + barWidth, baseY);
+                canvas.drawRoundRect(rect, dp(8), dp(8), paint);
+
+                // Text
+                paint.setColor(Color.WHITE);
+                paint.setTextSize(dp(13));
+                paint.setTextAlign(Paint.Align.CENTER);
+                paint.setFakeBoldText(true);
+                canvas.drawText(String.valueOf(shownValue), x + barWidth / 2, top + barHeight / 2 + dp(5), paint);
+                paint.setFakeBoldText(false);
             }
         }
+    }
 
     @Override
     protected void onDestroy() {
@@ -821,6 +823,3 @@ public class VisualizationActivity extends AppCompatActivity {
         handler.removeCallbacksAndMessages(null);
     }
 }
-
-
-
