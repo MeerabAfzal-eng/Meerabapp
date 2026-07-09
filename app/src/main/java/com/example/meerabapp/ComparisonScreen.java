@@ -1,12 +1,16 @@
 package com.example.meerabapp;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -15,9 +19,22 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class ComparisonScreen extends AppCompatActivity {
+
+    // A small pointer label like "i", "j", "j+1", "pivot" that gets drawn above
+    // a specific bar index while an algorithm is running, mirroring how most
+    // textbook / reference sorting visualizers show the loop variables.
+    private static class PointerLabel {
+        int index;
+        String text;
+        PointerLabel(int index, String text) {
+            this.index = index;
+            this.text = text;
+        }
+    }
 
     private static class CompareStep {
         ArrayList<Integer> stateA;
@@ -27,11 +44,16 @@ public class ComparisonScreen extends AppCompatActivity {
         HashSet<Integer> sortedA;
         HashSet<Integer> sortedB;
         int swapsA, swapsB;
+        int comparisonsA, comparisonsB;
         boolean isFinishedA;
         boolean isFinishedB;
+        ArrayList<PointerLabel> labelsA;
+        ArrayList<PointerLabel> labelsB;
 
         CompareStep(ArrayList<Integer> sA, ArrayList<Integer> sB, int aA1, int aA2, int aB1, int aB2,
-                    HashSet<Integer> sDA, HashSet<Integer> sDB, int swA, int swB, boolean fA, boolean fB) {
+                    HashSet<Integer> sDA, HashSet<Integer> sDB, int swA, int swB,
+                    int cmpA, int cmpB, boolean fA, boolean fB,
+                    ArrayList<PointerLabel> lblA, ArrayList<PointerLabel> lblB) {
             this.stateA = new ArrayList<>(sA);
             this.stateB = new ArrayList<>(sB);
             this.activeA1 = aA1; this.activeA2 = aA2;
@@ -39,8 +61,11 @@ public class ComparisonScreen extends AppCompatActivity {
             this.sortedA = new HashSet<>(sDA);
             this.sortedB = new HashSet<>(sDB);
             this.swapsA = swA; this.swapsB = swB;
+            this.comparisonsA = cmpA; this.comparisonsB = cmpB;
             this.isFinishedA = fA;
             this.isFinishedB = fB;
+            this.labelsA = lblA != null ? new ArrayList<>(lblA) : new ArrayList<>();
+            this.labelsB = lblB != null ? new ArrayList<>(lblB) : new ArrayList<>();
         }
     }
 
@@ -57,17 +82,33 @@ public class ComparisonScreen extends AppCompatActivity {
 
     private int finalTotalSwapsA = 0;
     private int finalTotalSwapsB = 0;
+    private int finalTotalComparisonsA = 0;
+    private int finalTotalComparisonsB = 0;
 
     private long finalDurationA = 0;
     private long finalDurationB = 0;
+
+    // NEW: same canvas bar-view style as VisualizationActivity, one per side
+    private AnimatedBarsView barsViewA, barsViewB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comparison_screen);
 
-        processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85);
-        successToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        // FIX: ToneGenerator constructor can throw a RuntimeException on some devices/emulators
+        // (no audio output available). Wrapping in try/catch stops that from crashing the whole
+        // screen -- worst case, we just silently lose the click sound.
+        try {
+            processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85);
+        } catch (RuntimeException e) {
+            processToneGenerator = null;
+        }
+        try {
+            successToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        } catch (RuntimeException e) {
+            successToneGenerator = null;
+        }
 
         spinnerAlgoA = findViewById(R.id.spinnerAlgoA);
         spinnerAlgoB = findViewById(R.id.spinnerAlgoB);
@@ -80,7 +121,30 @@ public class ComparisonScreen extends AppCompatActivity {
         containerBarsA = findViewById(R.id.containerBarsA);
         containerBarsB = findViewById(R.id.containerBarsB);
 
+        // FIX: was cast to (LinearLayout.LayoutParams), which throws ClassCastException if
+        // containerBarsA/B's PARENT in the XML is not a LinearLayout (e.g. HorizontalScrollView,
+        // ConstraintLayout, FrameLayout, etc). Using the generic ViewGroup.LayoutParams works
+        // no matter what the parent container type is.
+        ViewGroup.LayoutParams containerParamsA = containerBarsA.getLayoutParams();
+        containerParamsA.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        containerBarsA.setLayoutParams(containerParamsA);
+
+        ViewGroup.LayoutParams containerParamsB = containerBarsB.getLayoutParams();
+        containerParamsB.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        containerBarsB.setLayoutParams(containerParamsB);
+
+        barsViewA = new AnimatedBarsView(this);
+        containerBarsA.removeAllViews();
+        containerBarsA.addView(barsViewA, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        barsViewB = new AnimatedBarsView(this);
+        containerBarsB.removeAllViews();
+        containerBarsB.addView(barsViewB, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
         String[] targetedAlgorithms = {
+                "-- Select Algorithm --",
                 "Bubble Sort", "Insertion Sort", "Selection Sort",
                 "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"
         };
@@ -90,9 +154,9 @@ public class ComparisonScreen extends AppCompatActivity {
 
         spinnerAlgoA.setAdapter(spinnerAdapter);
         spinnerAlgoB.setAdapter(spinnerAdapter);
-
-        spinnerAlgoA.setSelection(0);
-        spinnerAlgoB.setSelection(1);
+        // NOTE: no setSelection() here on purpose -- both spinners start on the
+        // "-- Select Algorithm --" placeholder. The user must actively pick both
+        // algorithms themselves before a comparison can start.
 
         ArrayList<Integer> incomingNumbers = getIntent().getIntegerArrayListExtra("numbers");
         if (incomingNumbers != null) {
@@ -111,13 +175,19 @@ public class ComparisonScreen extends AppCompatActivity {
         findViewById(R.id.btnResetCompare).setOnClickListener(v -> resetComparisonUI());
     }
 
+    // A spinner sitting on position 0 means the placeholder ("-- Select Algorithm --")
+    // is still selected, i.e. the user hasn't chosen an algorithm for that side yet.
+    private boolean isPlaceholderSelected(Spinner spinner) {
+        return spinner.getSelectedItemPosition() == 0;
+    }
+
     private void resetComparisonUI() {
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
 
-        lblAlgoA.setText(spinnerAlgoA.getSelectedItem().toString());
-        lblAlgoB.setText(spinnerAlgoB.getSelectedItem().toString());
-        txtSwapsA.setText("Swaps: 0");
-        txtSwapsB.setText("Swaps: 0");
+        lblAlgoA.setText(isPlaceholderSelected(spinnerAlgoA) ? "Algorithm A" : spinnerAlgoA.getSelectedItem().toString());
+        lblAlgoB.setText(isPlaceholderSelected(spinnerAlgoB) ? "Algorithm B" : spinnerAlgoB.getSelectedItem().toString());
+        txtSwapsA.setText("Swaps: 0   Comparisons: 0");
+        txtSwapsB.setText("Swaps: 0   Comparisons: 0");
         txtTimerA.setText("0.00s");
         txtTimerB.setText("0.00s");
 
@@ -125,33 +195,24 @@ public class ComparisonScreen extends AppCompatActivity {
         finalDurationB = 0;
         finalTotalSwapsA = 0;
         finalTotalSwapsB = 0;
+        finalTotalComparisonsA = 0;
+        finalTotalComparisonsB = 0;
 
-        renderBaseState(containerBarsA, initialNumbers);
-        renderBaseState(containerBarsB, initialNumbers);
+        renderBaseState(barsViewA, initialNumbers);
+        renderBaseState(barsViewB, initialNumbers);
     }
 
-    private void renderBaseState(LinearLayout container, ArrayList<Integer> list) {
-        container.removeAllViews();
-        for (int item : list) {
-            TextView bar = new TextView(this);
-            bar.setText(String.valueOf(item));
-            bar.setGravity(Gravity.CENTER);
-            bar.setTextColor(Color.WHITE);
-            bar.setTextSize(11f);
-            bar.setSingleLine(true);
-
-            GradientDrawable design = new GradientDrawable();
-            design.setCornerRadius(10f);
-            design.setColor(Color.parseColor("#0040FF")); // Bright Blue
-            bar.setBackground(design);
-
-            LinearLayout.LayoutParams space = new LinearLayout.LayoutParams(110, 100);
-            space.setMargins(6, 6, 6, 6);
-            container.addView(bar, space);
-        }
+    // CHANGED: was building TextView cells; now just pushes data into the canvas view
+    private void renderBaseState(AnimatedBarsView view, ArrayList<Integer> list) {
+        view.setData(list);
     }
 
     private void executeTargetedRace() {
+        if (isPlaceholderSelected(spinnerAlgoA) || isPlaceholderSelected(spinnerAlgoB)) {
+            Toast.makeText(this, "Please select an algorithm for both A and B first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
 
         String selectedA = spinnerAlgoA.getSelectedItem().toString();
@@ -171,12 +232,16 @@ public class ComparisonScreen extends AppCompatActivity {
 
             int[] swapCounterA = new int[]{0};
             int[] swapCounterB = new int[]{0};
+            int[] comparisonCounterA = new int[]{0};
+            int[] comparisonCounterB = new int[]{0};
 
-            ArrayList<CompareStep> algorithmASteps = generateStepsForAlgo(workingA, selectedA, true, swapCounterA);
-            ArrayList<CompareStep> algorithmBSteps = generateStepsForAlgo(workingB, selectedB, false, swapCounterB);
+            ArrayList<CompareStep> algorithmASteps = generateStepsForAlgo(workingA, selectedA, true, swapCounterA, comparisonCounterA);
+            ArrayList<CompareStep> algorithmBSteps = generateStepsForAlgo(workingB, selectedB, false, swapCounterB, comparisonCounterB);
 
             finalTotalSwapsA = swapCounterA[0];
             finalTotalSwapsB = swapCounterB[0];
+            finalTotalComparisonsA = comparisonCounterA[0];
+            finalTotalComparisonsB = comparisonCounterB[0];
 
             int totalFrames = Math.max(algorithmASteps.size(), algorithmBSteps.size());
 
@@ -194,7 +259,11 @@ public class ComparisonScreen extends AppCompatActivity {
                         stepDataA.sortedA, stepDataB.sortedB,
                         isOverA ? finalTotalSwapsA : stepDataA.swapsA,
                         isOverB ? finalTotalSwapsB : stepDataB.swapsB,
-                        isOverA, isOverB
+                        isOverA ? finalTotalComparisonsA : stepDataA.comparisonsA,
+                        isOverB ? finalTotalComparisonsB : stepDataB.comparisonsB,
+                        isOverA, isOverB,
+                        isOverA ? new ArrayList<>() : stepDataA.labelsA,
+                        isOverB ? new ArrayList<>() : stepDataB.labelsB
                 ));
             }
 
@@ -204,14 +273,15 @@ public class ComparisonScreen extends AppCompatActivity {
                 CompareStep activeFrame = timelineSteps.get(t);
                 long currentDuration = SystemClock.elapsedRealtime() - tickerStart;
 
-                // 🎵 ✅ AWESOME CHANGE 1: Jab sorting chal rhi ho to pyari si crisp click/tinkle sound aye gi
+                // 🎵 Jab sorting chal rhi ho to pyari si crisp click/tinkle sound aye gi
                 if ((!activeFrame.isFinishedA && (activeFrame.activeA1 != -1)) ||
                         (!activeFrame.isFinishedB && (activeFrame.activeB1 != -1))) {
-                    try {
-                        processToneGenerator.stopTone();
-                        // TONE_DTMF_1 se ek short aur pyari high-pitch game sound baje gi
-                        processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
-                    } catch (Exception ignored) {}
+                    if (processToneGenerator != null) {
+                        try {
+                            processToneGenerator.stopTone();
+                            processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
+                        } catch (Exception ignored) {}
+                    }
                 }
 
                 runOnUiThread(() -> refreshDynamicDisplay(activeFrame, currentDuration));
@@ -221,31 +291,79 @@ public class ComparisonScreen extends AppCompatActivity {
                 } catch (InterruptedException e) { return; }
             }
 
-
-            try {
-                successToneGenerator.stopTone();
-                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150);
-                SystemClock.sleep(100);
-                successToneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 200);
-            } catch (Exception ignored) {}
+            if (successToneGenerator != null) {
+                try {
+                    successToneGenerator.stopTone();
+                    successToneGenerator.startTone(ToneGenerator.TONE_DTMF_D, 150);
+                    SystemClock.sleep(100);
+                    successToneGenerator.startTone(ToneGenerator.TONE_DTMF_0, 200);
+                } catch (Exception ignored) {}
+            }
 
             runOnUiThread(() -> {
+                // Decide the winner using ALL three metrics: comparisons + swaps as the
+                // primary "total operations" score (the standard measure of algorithmic
+                // work), and execution time as a tie-breaker when operations are equal.
+                long totalOpsA = (long) finalTotalSwapsA + finalTotalComparisonsA;
+                long totalOpsB = (long) finalTotalSwapsB + finalTotalComparisonsB;
+
+                String statsLine = "\nComparisons: " + finalTotalComparisonsA + " vs " + finalTotalComparisonsB +
+                        "\nSwaps: " + finalTotalSwapsA + " vs " + finalTotalSwapsB +
+                        "\nTime: " + String.format("%.2f", finalDurationA / 1000.0) + "s vs " +
+                        String.format("%.2f", finalDurationB / 1000.0) + "s";
+
                 String finalResult;
-                if (finalTotalSwapsA < finalTotalSwapsB) {
-                    finalResult = "🏆 " + selectedA + " is more efficient! \n(Swaps: " + finalTotalSwapsA + " vs " + finalTotalSwapsB + ")";
-                } else if (finalTotalSwapsB < finalTotalSwapsA) {
-                    finalResult = "🏆 " + selectedB + " is more efficient! \n(Swaps: " + finalTotalSwapsB + " vs " + finalTotalSwapsA + ")";
+                String titleText;
+                if (totalOpsA < totalOpsB) {
+                    titleText = "🏆 " + selectedA + " Wins!";
+                    finalResult = selectedA + " is more efficient." + statsLine;
+                } else if (totalOpsB < totalOpsA) {
+                    titleText = "🏆 " + selectedB + " Wins!";
+                    finalResult = selectedB + " is more efficient." + statsLine;
+                } else if (finalDurationA < finalDurationB) {
+                    titleText = "🏆 " + selectedA + " Wins!";
+                    finalResult = selectedA + " is faster (tied on operations)." + statsLine;
+                } else if (finalDurationB < finalDurationA) {
+                    titleText = "🏆 " + selectedB + " Wins!";
+                    finalResult = selectedB + " is faster (tied on operations)." + statsLine;
                 } else {
-                    finalResult = "🤝 It's a structural tie! Both took " + finalTotalSwapsA + " operations.";
+                    titleText = "🤝 It's a Tie!";
+                    finalResult = "Both algorithms performed identically." + statsLine;
                 }
-                Toast.makeText(this, finalResult, Toast.LENGTH_LONG).show();
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle(titleText)
+                        .setMessage(finalResult)
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                        .show();
             });
         });
 
         raceThread.start();
     }
 
-    private ArrayList<CompareStep> generateStepsForAlgo(ArrayList<Integer> array, String name, boolean isPanelA, int[] counter) {
+    // ------------- Algorithm step generation -------------
+    // Each algorithm now also tracks a separate "comparisons" counter (every value
+    // comparison, whether or not it leads to a swap/shift), and attaches PointerLabels
+    // (i, j, j+1, pivot, etc.) to each step so the bars view can show them, like a
+    // typical textbook sorting visualizer.
+    //
+    // IMPORTANT (teal/sorted timing): an index is only added to `sorted` once the
+    // algorithm's own invariant GUARANTEES it will never change again.
+    // - Bubble/Selection/Quick/Heap Sort: correct as-is, their invariants really do
+    //   lock a position in permanently at that point.
+    // - Insertion/Shell Sort: previously marked the whole growing prefix as sorted
+    //   after every outer step, but that prefix can still be shifted again by a
+    //   later insertion -- so that marking was premature and has been removed here.
+    //   Only the trailing full-array marking (after the whole sort truly finishes)
+    //   applies now.
+    // - Merge Sort: previously marked positions sorted as soon as they were written
+    //   during a low-level merge, but a higher-level merge further up the recursion
+    //   can still move that exact value to a different index -- so that marking was
+    //   also premature and has been removed. Only the final full-array marking
+    //   (after the top-level merge truly finishes) applies now.
+
+    private ArrayList<CompareStep> generateStepsForAlgo(ArrayList<Integer> array, String name, boolean isPanelA, int[] counter, int[] compCounter) {
         ArrayList<CompareStep> steps = new ArrayList<>();
         HashSet<Integer> sorted = new HashSet<>();
         int n = array.size();
@@ -253,22 +371,26 @@ public class ComparisonScreen extends AppCompatActivity {
         if (name.equalsIgnoreCase("Bubble Sort")) {
             for (int i = 0; i < n - 1; i++) {
                 for (int j = 0; j < n - i - 1; j++) {
+                    compCounter[0]++;
                     if (array.get(j) > array.get(j + 1)) {
                         Collections.swap(array, j, j + 1);
                         counter[0]++;
                     }
-                    steps.add(createFrame(array, j, j + 1, sorted, counter[0], isPanelA));
+                    steps.add(createFrame(array, j, j + 1, sorted, counter[0], compCounter[0], isPanelA,
+                            new PointerLabel(n - i - 1, "i"), new PointerLabel(j, "j"), new PointerLabel(j + 1, "j+1")));
                 }
                 sorted.add(n - i - 1);
             }
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Selection Sort")) {
             for (int i = 0; i < n; i++) {
                 int minIdx = i;
                 for (int j = i + 1; j < n; j++) {
-                    steps.add(createFrame(array, minIdx, j, sorted, counter[0], isPanelA));
+                    compCounter[0]++;
+                    steps.add(createFrame(array, minIdx, j, sorted, counter[0], compCounter[0], isPanelA,
+                            new PointerLabel(i, "i"), new PointerLabel(minIdx, "min"), new PointerLabel(j, "j")));
                     if (array.get(j) < array.get(minIdx)) minIdx = j;
                 }
                 if (minIdx != i) {
@@ -276,157 +398,216 @@ public class ComparisonScreen extends AppCompatActivity {
                     counter[0]++;
                 }
                 sorted.add(i);
-                steps.add(createFrame(array, i, minIdx, sorted, counter[0], isPanelA));
+                steps.add(createFrame(array, i, minIdx, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(i, "i"), new PointerLabel(minIdx, "min")));
             }
         }
         else if (name.equalsIgnoreCase("Insertion Sort")) {
-            sorted.add(0);
             for (int i = 1; i < n; i++) {
                 int key = array.get(i);
                 int j = i - 1;
-                while (j >= 0 && array.get(j) > key) {
-                    array.set(j + 1, array.get(j));
-                    counter[0]++;
-                    steps.add(createFrame(array, j, j + 1, sorted, counter[0], isPanelA));
-                    j--;
+                while (j >= 0) {
+                    compCounter[0]++;
+                    if (array.get(j) > key) {
+                        array.set(j + 1, array.get(j));
+                        counter[0]++;
+                        steps.add(createFrame(array, j, j + 1, sorted, counter[0], compCounter[0], isPanelA,
+                                new PointerLabel(i, "i"), new PointerLabel(j, "j"), new PointerLabel(j + 1, "j+1")));
+                        j--;
+                    } else break;
                 }
                 array.set(j + 1, key);
-                for(int k = 0; k <= i; k++) sorted.add(k);
-                steps.add(createFrame(array, j + 1, i, sorted, counter[0], isPanelA));
+                steps.add(createFrame(array, j + 1, i, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(i, "i"), new PointerLabel(j + 1, "j+1")));
             }
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Shell Sort")) {
             for (int gap = n / 2; gap > 0; gap /= 2) {
                 for (int i = gap; i < n; i++) {
                     int temp = array.get(i);
-                    int j;
-                    for (j = i; j >= gap && array.get(j - gap) > temp; j -= gap) {
-                        array.set(j, array.get(j - gap));
-                        counter[0]++;
-                        steps.add(createFrame(array, j, j - gap, sorted, counter[0], isPanelA));
+                    int j = i;
+                    while (j >= gap) {
+                        compCounter[0]++;
+                        if (array.get(j - gap) > temp) {
+                            array.set(j, array.get(j - gap));
+                            counter[0]++;
+                            steps.add(createFrame(array, j, j - gap, sorted, counter[0], compCounter[0], isPanelA,
+                                    new PointerLabel(i, "i"), new PointerLabel(j, "j"), new PointerLabel(j - gap, "j-gap")));
+                            j -= gap;
+                        } else break;
                     }
                     array.set(j, temp);
-                    if (gap == 1) {
-                        for(int k = 0; k <= i; k++) sorted.add(k);
-                    }
-                    steps.add(createFrame(array, j, -1, sorted, counter[0], isPanelA));
+                    steps.add(createFrame(array, j, -1, sorted, counter[0], compCounter[0], isPanelA,
+                            new PointerLabel(i, "i"), new PointerLabel(j, "j")));
                 }
             }
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Heap Sort")) {
             for (int i = n / 2 - 1; i >= 0; i--) {
-                runHeapifySimulation(array, n, i, steps, sorted, counter, isPanelA);
+                runHeapifySimulation(array, n, i, steps, sorted, counter, compCounter, isPanelA);
             }
             for (int i = n - 1; i > 0; i--) {
                 Collections.swap(array, 0, i);
                 counter[0]++;
                 sorted.add(i);
-                steps.add(createFrame(array, 0, i, sorted, counter[0], isPanelA));
-                runHeapifySimulation(array, i, 0, steps, sorted, counter, isPanelA);
+                steps.add(createFrame(array, 0, i, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(0, "max"), new PointerLabel(i, "i")));
+                runHeapifySimulation(array, i, 0, steps, sorted, counter, compCounter, isPanelA);
             }
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Quick Sort")) {
-            runQuickSortSimulation(array, 0, n - 1, steps, sorted, counter, isPanelA);
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            runQuickSortSimulation(array, 0, n - 1, steps, sorted, counter, compCounter, isPanelA);
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
         else if (name.equalsIgnoreCase("Merge Sort")) {
-            runMergeSortSimulation(array, 0, n - 1, steps, sorted, counter, isPanelA);
-            for(int k=0; k<n; k++) sorted.add(k);
-            steps.add(createFrame(array, -1, -1, sorted, counter[0], isPanelA));
+            runMergeSortSimulation(array, 0, n - 1, steps, sorted, counter, compCounter, isPanelA);
+            for (int k = 0; k < n; k++) sorted.add(k);
+            steps.add(createFrame(array, -1, -1, sorted, counter[0], compCounter[0], isPanelA));
         }
 
         return steps;
     }
 
-    private void runHeapifySimulation(ArrayList<Integer> arr, int size, int root, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
+    private void runHeapifySimulation(ArrayList<Integer> arr, int size, int root, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, int[] compCounter, boolean isPanelA) {
         int largest = root;
         int l = 2 * root + 1;
         int r = 2 * root + 2;
 
-        if (l < size && arr.get(l) > arr.get(largest)) largest = l;
-        if (r < size && arr.get(r) > arr.get(largest)) largest = r;
+        if (l < size) {
+            compCounter[0]++;
+            if (arr.get(l) > arr.get(largest)) largest = l;
+        }
+        if (r < size) {
+            compCounter[0]++;
+            if (arr.get(r) > arr.get(largest)) largest = r;
+        }
 
         if (largest != root) {
             Collections.swap(arr, root, largest);
             counter[0]++;
-            steps.add(createFrame(arr, root, largest, sorted, counter[0], isPanelA));
-            runHeapifySimulation(arr, size, largest, steps, sorted, counter, isPanelA);
+            steps.add(createFrame(arr, root, largest, sorted, counter[0], compCounter[0], isPanelA,
+                    new PointerLabel(root, "root"), new PointerLabel(largest, "largest")));
+            runHeapifySimulation(arr, size, largest, steps, sorted, counter, compCounter, isPanelA);
         }
     }
 
-    private void runQuickSortSimulation(ArrayList<Integer> arr, int low, int high, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
+    private void runQuickSortSimulation(ArrayList<Integer> arr, int low, int high, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, int[] compCounter, boolean isPanelA) {
         if (low < high) {
             int pivot = arr.get(high);
             int i = (low - 1);
             for (int j = low; j < high; j++) {
-                steps.add(createFrame(arr, j, high, sorted, counter[0], isPanelA));
+                compCounter[0]++;
+                steps.add(createFrame(arr, j, high, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(low, "low"), new PointerLabel(high, "pivot"), new PointerLabel(j, "j")));
                 if (arr.get(j) < pivot) {
                     i++;
                     Collections.swap(arr, i, j);
                     counter[0]++;
-                    steps.add(createFrame(arr, i, j, sorted, counter[0], isPanelA));
+                    steps.add(createFrame(arr, i, j, sorted, counter[0], compCounter[0], isPanelA,
+                            new PointerLabel(i, "i"), new PointerLabel(j, "j")));
                 }
             }
             Collections.swap(arr, i + 1, high);
             counter[0]++;
             sorted.add(i + 1);
-            steps.add(createFrame(arr, i + 1, high, sorted, counter[0], isPanelA));
+            steps.add(createFrame(arr, i + 1, high, sorted, counter[0], compCounter[0], isPanelA,
+                    new PointerLabel(i + 1, "pivot")));
 
-            runQuickSortSimulation(arr, low, i - 1, steps, sorted, counter, isPanelA);
-            runQuickSortSimulation(arr, i + 1, high, steps, sorted, counter, isPanelA);
+            runQuickSortSimulation(arr, low, i - 1, steps, sorted, counter, compCounter, isPanelA);
+            runQuickSortSimulation(arr, i + 1, high, steps, sorted, counter, compCounter, isPanelA);
         } else if (low == high) {
             sorted.add(low);
         }
     }
 
-    private void runMergeSortSimulation(ArrayList<Integer> arr, int l, int r, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, boolean isPanelA) {
+    private void runMergeSortSimulation(ArrayList<Integer> arr, int l, int r, ArrayList<CompareStep> steps, HashSet<Integer> sorted, int[] counter, int[] compCounter, boolean isPanelA) {
         if (l < r) {
             int m = l + (r - l) / 2;
-            runMergeSortSimulation(arr, l, m, steps, sorted, counter, isPanelA);
-            runMergeSortSimulation(arr, m + 1, r, steps, sorted, counter, isPanelA);
+            runMergeSortSimulation(arr, l, m, steps, sorted, counter, compCounter, isPanelA);
+            runMergeSortSimulation(arr, m + 1, r, steps, sorted, counter, compCounter, isPanelA);
 
             ArrayList<Integer> leftList = new ArrayList<>(arr.subList(l, m + 1));
             ArrayList<Integer> rightList = new ArrayList<>(arr.subList(m + 1, r + 1));
             int i = 0, j = 0, k = l;
             while (i < leftList.size() && j < rightList.size()) {
+                compCounter[0]++;
+                // FIX: track exactly which original index this value is coming from
+                // (its position in the pre-merge array) so the bars view can animate
+                // it sliding/shifting from that index into its new slot k.
+                int fromIdx;
                 if (leftList.get(i) <= rightList.get(j)) {
-                    arr.set(k++, leftList.get(i++));
+                    fromIdx = l + i;
+                    arr.set(k, leftList.get(i));
+                    i++;
                 } else {
-                    arr.set(k++, rightList.get(j++));
+                    fromIdx = m + 1 + j;
+                    arr.set(k, rightList.get(j));
+                    j++;
                 }
                 counter[0]++;
-                sorted.add(k - 1);
-                steps.add(createFrame(arr, k - 1, -1, sorted, counter[0], isPanelA));
+                // NOTE: no sorted.add(k) here on purpose -- a higher-level merge further
+                // up the recursion can still move this exact value to a different index,
+                // so this position is NOT permanently locked in yet.
+                // SAFETY: if fromIdx has already been overwritten earlier in this same
+                // merge pass (fromIdx < k), we can no longer trust what's visually sitting
+                // there -- animating from it would show the wrong number sliding. In that
+                // case fall back to no source (-1), which just recolors instead of sliding.
+                int safeFromIdx = (fromIdx < k) ? -1 : fromIdx;
+                steps.add(createFrame(arr, k, safeFromIdx, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(k, "k")));
+                k++;
             }
+            // FIX: these leftover copies previously had NO frame added at all, so they
+            // just silently appeared with no visible movement. Now each one gets its
+            // own frame with a real (destination, source) pair too.
             while (i < leftList.size()) {
-                arr.set(k, leftList.get(i++));
-                sorted.add(k);
+                int fromIdx = l + i;
+                arr.set(k, leftList.get(i));
+                int safeFromIdx = (fromIdx < k) ? -1 : fromIdx;
+                steps.add(createFrame(arr, k, safeFromIdx, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(k, "k")));
+                i++;
                 k++;
             }
             while (j < rightList.size()) {
-                arr.set(k, rightList.get(j++));
-                sorted.add(k);
+                int fromIdx = m + 1 + j;
+                arr.set(k, rightList.get(j));
+                int safeFromIdx = (fromIdx < k) ? -1 : fromIdx;
+                steps.add(createFrame(arr, k, safeFromIdx, sorted, counter[0], compCounter[0], isPanelA,
+                        new PointerLabel(k, "k")));
+                j++;
                 k++;
             }
         } else if (l == r) {
-            sorted.add(l);
+            // NOTE: no sorted.add(l) here either -- this single-element "subarray" can
+            // still be relocated when merged with its sibling at a higher recursion level.
         }
     }
 
-    private CompareStep createFrame(ArrayList<Integer> arr, int act1, int act2, HashSet<Integer> srtd, int ops, boolean isPanelA) {
+    private CompareStep createFrame(ArrayList<Integer> arr, int act1, int act2, HashSet<Integer> srtd, int ops, int compOps, boolean isPanelA, PointerLabel... labels) {
+        ArrayList<PointerLabel> labelList = new ArrayList<>();
+        if (labels != null) {
+            for (PointerLabel p : labels) {
+                if (p != null && p.index >= 0) labelList.add(p);
+            }
+        }
         if (isPanelA) {
-            return new CompareStep(arr, initialNumbers, act1, act2, -1, -1, new HashSet<>(srtd), new HashSet<>(), ops, 0, false, false);
+            return new CompareStep(arr, initialNumbers, act1, act2, -1, -1, new HashSet<>(srtd), new HashSet<>(),
+                    ops, 0, compOps, 0, false, false, labelList, new ArrayList<>());
         } else {
-            return new CompareStep(initialNumbers, arr, -1, -1, act1, act2, new HashSet<>(), new HashSet<>(srtd), 0, ops, false, false);
+            return new CompareStep(initialNumbers, arr, -1, -1, act1, act2, new HashSet<>(), new HashSet<>(srtd),
+                    0, ops, 0, compOps, false, false, new ArrayList<>(), labelList);
         }
     }
+
+    // ------------- Playback / rendering -------------
 
     private void refreshDynamicDisplay(CompareStep frame, long durationMs) {
         if (!frame.isFinishedA && finalDurationA == 0) {
@@ -443,40 +624,12 @@ public class ComparisonScreen extends AppCompatActivity {
             txtTimerB.setText(String.format("%.2f s", finalDurationB / 1000.0));
         }
 
-        txtSwapsA.setText("Swaps: " + frame.swapsA);
-        txtSwapsB.setText("Swaps: " + frame.swapsB);
+        txtSwapsA.setText("Swaps: " + frame.swapsA + "   Comparisons: " + frame.comparisonsA);
+        txtSwapsB.setText("Swaps: " + frame.swapsB + "   Comparisons: " + frame.comparisonsB);
 
-        drawActiveTimelineBars(containerBarsA, frame.stateA, frame.activeA1, frame.activeA2, frame.sortedA);
-        drawActiveTimelineBars(containerBarsB, frame.stateB, frame.activeB1, frame.activeB2, frame.sortedB);
-    }
-
-    private void drawActiveTimelineBars(LinearLayout container, ArrayList<Integer> items, int a1, int a2, HashSet<Integer> sorted) {
-        container.removeAllViews();
-        for (int m = 0; m < items.size(); m++) {
-            TextView cell = new TextView(this);
-            cell.setText(String.valueOf(items.get(m)));
-            cell.setGravity(Gravity.CENTER);
-            cell.setTextColor(Color.WHITE);
-            cell.setTextSize(11f);
-            cell.setSingleLine(true);
-
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setCornerRadius(10f);
-
-            if (m == a1 || m == a2) {
-                drawable.setColor(Color.parseColor("#9B59B6"));
-            } else if (sorted.contains(m)) {
-                drawable.setColor(Color.parseColor("#008080"));
-            } else {
-                drawable.setColor(Color.parseColor("#0040FF"));
-            }
-
-            cell.setBackground(drawable);
-
-            LinearLayout.LayoutParams rule = new LinearLayout.LayoutParams(110, 100);
-            rule.setMargins(6, 6, 6, 6);
-            container.addView(cell, rule);
-        }
+        // CHANGED: push the frame straight into the canvas bar-view instead of rebuilding TextViews
+        barsViewA.updateFrame(frame.stateA, frame.activeA1, frame.activeA2, frame.sortedA, frame.labelsA);
+        barsViewB.updateFrame(frame.stateB, frame.activeB1, frame.activeB2, frame.sortedB, frame.labelsB);
     }
 
     @Override
@@ -487,6 +640,233 @@ public class ComparisonScreen extends AppCompatActivity {
         }
         if (successToneGenerator != null) {
             successToneGenerator.release();
+        }
+        if (raceThread != null && raceThread.isAlive()) {
+            raceThread.interrupt();
+        }
+    }
+
+    // =====================================================================
+    // AnimatedBarsView — uniform-height rounded bars, Blue (default) / Purple
+    // (active, being compared or swapped) / Teal (sorted & fixed). Bars slide
+    // or cross over with a real animation whenever their positions change.
+    // Pointer labels (i, j, j+1, pivot, etc.) are drawn above the relevant bars.
+    // =====================================================================
+    private class AnimatedBarsView extends View {
+        private static final int ANIM_NONE = 0;
+        private static final int ANIM_SWAP = 1;   // two bars fully trade places
+        private static final int ANIM_SHIFT = 2;  // one bar slides into another slot
+
+        ArrayList<Integer> data = new ArrayList<>();
+        int active1 = -1, active2 = -1;
+        HashSet<Integer> sortedSet = new HashSet<>();
+        ArrayList<PointerLabel> labels = new ArrayList<>();
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        // Animation state
+        private android.animation.ValueAnimator swapAnimator;
+        private int animMode = ANIM_NONE;
+        private float animProgress = 1f;
+        // For ANIM_SWAP: value at index 'a' moves to index 'b' and vice versa
+        private int animIdxA = -1, animIdxB = -1;
+        private int animValAtA = 0, animValAtB = 0;
+        // For ANIM_SHIFT: a single value moves from animFromIdx to animToIdx
+        private int animFromIdx = -1, animToIdx = -1;
+        private int animShiftValue = 0;
+
+        AnimatedBarsView(Context context) {
+            super(context);
+            setMinimumWidth(dp(650));
+        }
+
+        int dp(int value) {
+            return (int) (value * getResources().getDisplayMetrics().density);
+        }
+
+        void setData(ArrayList<Integer> values) {
+            if (swapAnimator != null) swapAnimator.cancel();
+            animMode = ANIM_NONE;
+            animProgress = 1f;
+            data = new ArrayList<>(values);
+            active1 = -1;
+            active2 = -1;
+            sortedSet.clear();
+            labels.clear();
+            requestLayout();
+            invalidate();
+        }
+
+        void updateFrame(ArrayList<Integer> values, int a1, int a2, HashSet<Integer> sorted, ArrayList<PointerLabel> newLabels) {
+            ArrayList<Integer> oldData = data;
+            active1 = a1;
+            active2 = a2;
+            sortedSet = new HashSet<>(sorted);
+            labels = newLabels != null ? new ArrayList<>(newLabels) : new ArrayList<>();
+
+            boolean validPair = a1 != -1 && a2 != -1 && a1 != a2
+                    && oldData.size() == values.size()
+                    && a1 < oldData.size() && a2 < oldData.size()
+                    && a1 >= 0 && a2 >= 0;
+
+            data = new ArrayList<>(values);
+
+            if (swapAnimator != null) swapAnimator.cancel();
+            animMode = ANIM_NONE;
+
+            if (validPair) {
+                boolean changedA = !oldData.get(a1).equals(values.get(a1));
+                boolean changedB = !oldData.get(a2).equals(values.get(a2));
+
+                if (changedA && changedB) {
+                    // Full swap: the two bars cross over
+                    animMode = ANIM_SWAP;
+                    animIdxA = a1;
+                    animIdxB = a2;
+                    animValAtA = oldData.get(a1);
+                    animValAtB = oldData.get(a2);
+                } else if (changedB) {
+                    // Only the second slot changed -> a value shifted from a1 into a2
+                    animMode = ANIM_SHIFT;
+                    animFromIdx = a1;
+                    animToIdx = a2;
+                    animShiftValue = oldData.get(a1);
+                } else if (changedA) {
+                    // Only the first slot changed -> a value shifted from a2 into a1
+                    animMode = ANIM_SHIFT;
+                    animFromIdx = a2;
+                    animToIdx = a1;
+                    animShiftValue = oldData.get(a2);
+                }
+            }
+
+            if (animMode != ANIM_NONE) {
+                animProgress = 0f;
+                swapAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f);
+                swapAnimator.setDuration(280);
+                swapAnimator.addUpdateListener(anim -> {
+                    animProgress = (float) anim.getAnimatedValue();
+                    invalidate();
+                });
+                swapAnimator.start();
+            } else {
+                animProgress = 1f;
+                invalidate();
+            }
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int width = Math.max(dp(64 * Math.max(data.size(), 8)), MeasureSpec.getSize(widthMeasureSpec));
+            int height = MeasureSpec.getSize(heightMeasureSpec);
+            // Safety fallback: never let the bar view collapse to 0 height
+            if (height <= 0) {
+                height = dp(220);
+            }
+            setMeasuredDimension(width, height);
+        }
+
+        private float gap, barWidth, baseY, barHeight, barTop;
+
+        private float xAt(int index) {
+            return gap + index * (barWidth + gap);
+        }
+
+        private int colorForIndex(int i) {
+            if (sortedSet.contains(i)) {
+                return Color.rgb(0, 128, 128); // Teal - fixed/sorted
+            } else if (i == active1 || i == active2) {
+                return Color.rgb(128, 0, 128); // Purple - currently active
+            } else {
+                return Color.rgb(33, 150, 243); // Blue - default
+            }
+        }
+
+        private void drawBar(Canvas canvas, float x, int value, int color) {
+            paint.setColor(color);
+            RectF shadowRect = new RectF(x + dp(3), barTop + dp(4), x + barWidth + dp(3), baseY + dp(4));
+            canvas.drawRoundRect(shadowRect, dp(10), dp(10), paint);
+
+            RectF rect = new RectF(x, barTop, x + barWidth, baseY);
+            canvas.drawRoundRect(rect, dp(10), dp(10), paint);
+
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(dp(15));
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setFakeBoldText(true);
+            canvas.drawText(String.valueOf(value), x + barWidth / 2, barTop + barHeight / 2 + dp(6), paint);
+            paint.setFakeBoldText(false);
+        }
+
+        // "i" is drawn in black (outer / boundary pointer), everything else (j, j+1,
+        // min, pivot, root, largest, k, ...) is drawn in orange -- matching the
+        // reference visualizer's look.
+        private int colorForLabel(String text) {
+            if ("i".equals(text)) return Color.BLACK;
+            return Color.rgb(255, 152, 0);
+        }
+
+        private void drawPointerLabels(Canvas canvas) {
+            if (labels.isEmpty()) return;
+            HashMap<Integer, Integer> stack = new HashMap<>();
+            paint.setTextSize(dp(12));
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setFakeBoldText(true);
+            for (PointerLabel lbl : labels) {
+                if (lbl.index < 0 || lbl.index >= data.size()) continue;
+                int stackLevel = stack.getOrDefault(lbl.index, 0);
+                stack.put(lbl.index, stackLevel + 1);
+                float x = xAt(lbl.index) + barWidth / 2;
+                float y = barTop - dp(10) - stackLevel * dp(16);
+                paint.setColor(colorForLabel(lbl.text));
+                canvas.drawText(lbl.text + " \u2193", x, y, paint);
+            }
+            paint.setFakeBoldText(false);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            if (data.size() == 0) return;
+
+            gap = dp(12);
+            barWidth = dp(50);
+            float availableHeight = getHeight() - dp(60);
+            baseY = getHeight() - dp(14);
+
+            // UNIFORM HEIGHT: every bar is the same height regardless of its value.
+            // Only the number printed on the bar tells you how big it is.
+            barHeight = availableHeight * 0.78f;
+            barTop = baseY - barHeight;
+
+            boolean animating = animProgress < 1f && animMode != ANIM_NONE;
+
+            // Normal pass: skip whichever slots are currently covered by an animated bar.
+            for (int i = 0; i < data.size(); i++) {
+                if (animating) {
+                    if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
+                    if (animMode == ANIM_SHIFT && i == animToIdx) continue;
+                }
+                drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
+            }
+
+            if (animating) {
+                if (animMode == ANIM_SWAP) {
+                    float xA = lerp(xAt(animIdxA), xAt(animIdxB), animProgress);
+                    float xB = lerp(xAt(animIdxB), xAt(animIdxA), animProgress);
+                    drawBar(canvas, xA, animValAtA, Color.rgb(128, 0, 128));
+                    drawBar(canvas, xB, animValAtB, Color.rgb(128, 0, 128));
+                } else if (animMode == ANIM_SHIFT) {
+                    float x = lerp(xAt(animFromIdx), xAt(animToIdx), animProgress);
+                    drawBar(canvas, x, animShiftValue, Color.rgb(128, 0, 128));
+                }
+            }
+
+            // Pointer labels (i, j, j+1, ...) drawn above the bars, on top of everything.
+            drawPointerLabels(canvas);
+        }
+
+        private float lerp(float from, float to, float t) {
+            return from + (to - from) * t;
         }
     }
 }
