@@ -24,9 +24,6 @@ import java.util.HashSet;
 
 public class ComparisonScreen extends AppCompatActivity {
 
-    // A small pointer label like "i", "j", "j+1", "pivot" that gets drawn above
-    // a specific bar index while an algorithm is running, mirroring how most
-    // textbook / reference sorting visualizers show the loop variables.
     private static class PointerLabel {
         int index;
         String text;
@@ -88,7 +85,6 @@ public class ComparisonScreen extends AppCompatActivity {
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
-    // NEW: same canvas bar-view style as VisualizationActivity, one per side
     private AnimatedBarsView barsViewA, barsViewB;
 
     @Override
@@ -96,9 +92,6 @@ public class ComparisonScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comparison_screen);
 
-        // FIX: ToneGenerator constructor can throw a RuntimeException on some devices/emulators
-        // (no audio output available). Wrapping in try/catch stops that from crashing the whole
-        // screen -- worst case, we just silently lose the click sound.
         try {
             processToneGenerator = new ToneGenerator(AudioManager.STREAM_MUSIC, 85);
         } catch (RuntimeException e) {
@@ -121,10 +114,6 @@ public class ComparisonScreen extends AppCompatActivity {
         containerBarsA = findViewById(R.id.containerBarsA);
         containerBarsB = findViewById(R.id.containerBarsB);
 
-        // FIX: was cast to (LinearLayout.LayoutParams), which throws ClassCastException if
-        // containerBarsA/B's PARENT in the XML is not a LinearLayout (e.g. HorizontalScrollView,
-        // ConstraintLayout, FrameLayout, etc). Using the generic ViewGroup.LayoutParams works
-        // no matter what the parent container type is.
         ViewGroup.LayoutParams containerParamsA = containerBarsA.getLayoutParams();
         containerParamsA.height = ViewGroup.LayoutParams.MATCH_PARENT;
         containerBarsA.setLayoutParams(containerParamsA);
@@ -154,9 +143,6 @@ public class ComparisonScreen extends AppCompatActivity {
 
         spinnerAlgoA.setAdapter(spinnerAdapter);
         spinnerAlgoB.setAdapter(spinnerAdapter);
-        // NOTE: no setSelection() here on purpose -- both spinners start on the
-        // "-- Select Algorithm --" placeholder. The user must actively pick both
-        // algorithms themselves before a comparison can start.
 
         ArrayList<Integer> incomingNumbers = getIntent().getIntegerArrayListExtra("numbers");
         if (incomingNumbers != null) {
@@ -175,8 +161,6 @@ public class ComparisonScreen extends AppCompatActivity {
         findViewById(R.id.btnResetCompare).setOnClickListener(v -> resetComparisonUI());
     }
 
-    // A spinner sitting on position 0 means the placeholder ("-- Select Algorithm --")
-    // is still selected, i.e. the user hasn't chosen an algorithm for that side yet.
     private boolean isPlaceholderSelected(Spinner spinner) {
         return spinner.getSelectedItemPosition() == 0;
     }
@@ -202,7 +186,6 @@ public class ComparisonScreen extends AppCompatActivity {
         renderBaseState(barsViewB, initialNumbers);
     }
 
-    // CHANGED: was building TextView cells; now just pushes data into the canvas view
     private void renderBaseState(AnimatedBarsView view, ArrayList<Integer> list) {
         view.setData(list);
     }
@@ -268,21 +251,32 @@ public class ComparisonScreen extends AppCompatActivity {
             }
 
             long tickerStart = SystemClock.elapsedRealtime();
+
+            // Sound sirf tab bajta hai jab koi value VAQAI teal (sorted/fixed) hoti hai -
+            // ek chhota "ping" jab sirf ek/kuch values teal hon, aur ek alag/distinct
+            // "success" tone jab us panel ki POORI array teal ho jati hai. Purane code
+            // mein har purple/compare/swap step par sound bajta tha, jo bohat frequent
+            // aur annoying tha - ab wo hata diya gaya hai.
+            int prevSortedCountA = 0;
+            int prevSortedCountB = 0;
+            int totalN = initialNumbers.size();
+
             for (int t = 0; t < timelineSteps.size(); t++) {
                 if (Thread.interrupted()) return;
                 CompareStep activeFrame = timelineSteps.get(t);
                 long currentDuration = SystemClock.elapsedRealtime() - tickerStart;
 
-                // 🎵 Jab sorting chal rhi ho to pyari si crisp click/tinkle sound aye gi
-                if ((!activeFrame.isFinishedA && (activeFrame.activeA1 != -1)) ||
-                        (!activeFrame.isFinishedB && (activeFrame.activeB1 != -1))) {
-                    if (processToneGenerator != null) {
-                        try {
-                            processToneGenerator.stopTone();
-                            processToneGenerator.startTone(ToneGenerator.TONE_DTMF_1, 35);
-                        } catch (Exception ignored) {}
-                    }
+                int newSortedCountA = activeFrame.sortedA.size();
+                if (newSortedCountA > prevSortedCountA) {
+                    playTealSound(newSortedCountA == totalN);
                 }
+                prevSortedCountA = newSortedCountA;
+
+                int newSortedCountB = activeFrame.sortedB.size();
+                if (newSortedCountB > prevSortedCountB) {
+                    playTealSound(newSortedCountB == totalN);
+                }
+                prevSortedCountB = newSortedCountB;
 
                 runOnUiThread(() -> refreshDynamicDisplay(activeFrame, currentDuration));
 
@@ -301,9 +295,6 @@ public class ComparisonScreen extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                // Decide the winner using ALL three metrics: comparisons + swaps as the
-                // primary "total operations" score (the standard measure of algorithmic
-                // work), and execution time as a tie-breaker when operations are equal.
                 long totalOpsA = (long) finalTotalSwapsA + finalTotalComparisonsA;
                 long totalOpsB = (long) finalTotalSwapsB + finalTotalComparisonsB;
 
@@ -342,26 +333,28 @@ public class ComparisonScreen extends AppCompatActivity {
         raceThread.start();
     }
 
+    // Ek chhota "ping" bajata hai jab sirf ek (ya kuch) value(s) teal hoti hain, aur ek
+    // alag/lambi "success" tone jab us panel ki POORI array teal (mukammal sorted) ho
+    // jati hai. isFullArraySorted decide karta hai konsi tone chalani hai.
+    private void playTealSound(boolean isFullArraySorted) {
+        if (isFullArraySorted) {
+            if (successToneGenerator != null) {
+                try {
+                    successToneGenerator.stopTone();
+                    successToneGenerator.startTone(ToneGenerator.TONE_PROP_ACK, 220);
+                } catch (Exception ignored) {}
+            }
+        } else {
+            if (processToneGenerator != null) {
+                try {
+                    processToneGenerator.stopTone();
+                    processToneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP2, 60);
+                } catch (Exception ignored) {}
+            }
+        }
+    }
+
     // ------------- Algorithm step generation -------------
-    // Each algorithm now also tracks a separate "comparisons" counter (every value
-    // comparison, whether or not it leads to a swap/shift), and attaches PointerLabels
-    // (i, j, j+1, pivot, etc.) to each step so the bars view can show them, like a
-    // typical textbook sorting visualizer.
-    //
-    // IMPORTANT (teal/sorted timing): an index is only added to `sorted` once the
-    // algorithm's own invariant GUARANTEES it will never change again.
-    // - Bubble/Selection/Quick/Heap Sort: correct as-is, their invariants really do
-    //   lock a position in permanently at that point.
-    // - Insertion/Shell Sort: previously marked the whole growing prefix as sorted
-    //   after every outer step, but that prefix can still be shifted again by a
-    //   later insertion -- so that marking was premature and has been removed here.
-    //   Only the trailing full-array marking (after the whole sort truly finishes)
-    //   applies now.
-    // - Merge Sort: previously marked positions sorted as soon as they were written
-    //   during a low-level merge, but a higher-level merge further up the recursion
-    //   can still move that exact value to a different index -- so that marking was
-    //   also premature and has been removed. Only the final full-array marking
-    //   (after the top-level merge truly finishes) applies now.
 
     private ArrayList<CompareStep> generateStepsForAlgo(ArrayList<Integer> array, String name, boolean isPanelA, int[] counter, int[] compCounter) {
         ArrayList<CompareStep> steps = new ArrayList<>();
@@ -538,9 +531,6 @@ public class ComparisonScreen extends AppCompatActivity {
             int i = 0, j = 0, k = l;
             while (i < leftList.size() && j < rightList.size()) {
                 compCounter[0]++;
-                // FIX: track exactly which original index this value is coming from
-                // (its position in the pre-merge array) so the bars view can animate
-                // it sliding/shifting from that index into its new slot k.
                 int fromIdx;
                 if (leftList.get(i) <= rightList.get(j)) {
                     fromIdx = l + i;
@@ -552,21 +542,11 @@ public class ComparisonScreen extends AppCompatActivity {
                     j++;
                 }
                 counter[0]++;
-                // NOTE: no sorted.add(k) here on purpose -- a higher-level merge further
-                // up the recursion can still move this exact value to a different index,
-                // so this position is NOT permanently locked in yet.
-                // SAFETY: if fromIdx has already been overwritten earlier in this same
-                // merge pass (fromIdx < k), we can no longer trust what's visually sitting
-                // there -- animating from it would show the wrong number sliding. In that
-                // case fall back to no source (-1), which just recolors instead of sliding.
                 int safeFromIdx = (fromIdx < k) ? -1 : fromIdx;
                 steps.add(createFrame(arr, k, safeFromIdx, sorted, counter[0], compCounter[0], isPanelA,
                         new PointerLabel(k, "k")));
                 k++;
             }
-            // FIX: these leftover copies previously had NO frame added at all, so they
-            // just silently appeared with no visible movement. Now each one gets its
-            // own frame with a real (destination, source) pair too.
             while (i < leftList.size()) {
                 int fromIdx = l + i;
                 arr.set(k, leftList.get(i));
@@ -627,7 +607,6 @@ public class ComparisonScreen extends AppCompatActivity {
         txtSwapsA.setText("Swaps: " + frame.swapsA + "   Comparisons: " + frame.comparisonsA);
         txtSwapsB.setText("Swaps: " + frame.swapsB + "   Comparisons: " + frame.comparisonsB);
 
-        // CHANGED: push the frame straight into the canvas bar-view instead of rebuilding TextViews
         barsViewA.updateFrame(frame.stateA, frame.activeA1, frame.activeA2, frame.sortedA, frame.labelsA);
         barsViewB.updateFrame(frame.stateB, frame.activeB1, frame.activeB2, frame.sortedB, frame.labelsB);
     }
@@ -646,16 +625,10 @@ public class ComparisonScreen extends AppCompatActivity {
         }
     }
 
-    // =====================================================================
-    // AnimatedBarsView — uniform-height rounded bars, Blue (default) / Purple
-    // (active, being compared or swapped) / Teal (sorted & fixed). Bars slide
-    // or cross over with a real animation whenever their positions change.
-    // Pointer labels (i, j, j+1, pivot, etc.) are drawn above the relevant bars.
-    // =====================================================================
     private class AnimatedBarsView extends View {
         private static final int ANIM_NONE = 0;
-        private static final int ANIM_SWAP = 1;   // two bars fully trade places
-        private static final int ANIM_SHIFT = 2;  // one bar slides into another slot
+        private static final int ANIM_SWAP = 1;
+        private static final int ANIM_SHIFT = 2;
 
         ArrayList<Integer> data = new ArrayList<>();
         int active1 = -1, active2 = -1;
@@ -663,14 +636,11 @@ public class ComparisonScreen extends AppCompatActivity {
         ArrayList<PointerLabel> labels = new ArrayList<>();
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        // Animation state
         private android.animation.ValueAnimator swapAnimator;
         private int animMode = ANIM_NONE;
         private float animProgress = 1f;
-        // For ANIM_SWAP: value at index 'a' moves to index 'b' and vice versa
         private int animIdxA = -1, animIdxB = -1;
         private int animValAtA = 0, animValAtB = 0;
-        // For ANIM_SHIFT: a single value moves from animFromIdx to animToIdx
         private int animFromIdx = -1, animToIdx = -1;
         private int animShiftValue = 0;
 
@@ -718,20 +688,17 @@ public class ComparisonScreen extends AppCompatActivity {
                 boolean changedB = !oldData.get(a2).equals(values.get(a2));
 
                 if (changedA && changedB) {
-                    // Full swap: the two bars cross over
                     animMode = ANIM_SWAP;
                     animIdxA = a1;
                     animIdxB = a2;
                     animValAtA = oldData.get(a1);
                     animValAtB = oldData.get(a2);
                 } else if (changedB) {
-                    // Only the second slot changed -> a value shifted from a1 into a2
                     animMode = ANIM_SHIFT;
                     animFromIdx = a1;
                     animToIdx = a2;
                     animShiftValue = oldData.get(a1);
                 } else if (changedA) {
-                    // Only the first slot changed -> a value shifted from a2 into a1
                     animMode = ANIM_SHIFT;
                     animFromIdx = a2;
                     animToIdx = a1;
@@ -758,7 +725,6 @@ public class ComparisonScreen extends AppCompatActivity {
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int width = Math.max(dp(64 * Math.max(data.size(), 8)), MeasureSpec.getSize(widthMeasureSpec));
             int height = MeasureSpec.getSize(heightMeasureSpec);
-            // Safety fallback: never let the bar view collapse to 0 height
             if (height <= 0) {
                 height = dp(220);
             }
@@ -773,11 +739,11 @@ public class ComparisonScreen extends AppCompatActivity {
 
         private int colorForIndex(int i) {
             if (sortedSet.contains(i)) {
-                return Color.rgb(0, 128, 128); // Teal - fixed/sorted
+                return Color.rgb(0, 128, 128);
             } else if (i == active1 || i == active2) {
-                return Color.rgb(128, 0, 128); // Purple - currently active
+                return Color.rgb(128, 0, 128);
             } else {
-                return Color.rgb(33, 150, 243); // Blue - default
+                return Color.rgb(33, 150, 243);
             }
         }
 
@@ -797,9 +763,6 @@ public class ComparisonScreen extends AppCompatActivity {
             paint.setFakeBoldText(false);
         }
 
-        // "i" is drawn in black (outer / boundary pointer), everything else (j, j+1,
-        // min, pivot, root, largest, k, ...) is drawn in orange -- matching the
-        // reference visualizer's look.
         private int colorForLabel(String text) {
             if ("i".equals(text)) return Color.BLACK;
             return Color.rgb(255, 152, 0);
@@ -833,14 +796,11 @@ public class ComparisonScreen extends AppCompatActivity {
             float availableHeight = getHeight() - dp(60);
             baseY = getHeight() - dp(14);
 
-            // UNIFORM HEIGHT: every bar is the same height regardless of its value.
-            // Only the number printed on the bar tells you how big it is.
             barHeight = availableHeight * 0.78f;
             barTop = baseY - barHeight;
 
             boolean animating = animProgress < 1f && animMode != ANIM_NONE;
 
-            // Normal pass: skip whichever slots are currently covered by an animated bar.
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
@@ -861,7 +821,6 @@ public class ComparisonScreen extends AppCompatActivity {
                 }
             }
 
-            // Pointer labels (i, j, j+1, ...) drawn above the bars, on top of everything.
             drawPointerLabels(canvas);
         }
 
