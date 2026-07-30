@@ -9,9 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MeerabApp">
-        <activity
-            android:name=".bar_shape"
-            android:exported="false" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">
