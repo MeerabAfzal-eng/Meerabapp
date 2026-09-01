@@ -182,19 +182,19 @@ public class VisualizationActivity extends AppCompatActivity {
     String getExplanation(String algo) {
         switch (algo) {
             case "Bubble Sort":
-                return "Bubble Sort: This algorithm repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.";
+                return "Bubble Sort: Bubble Sort checks two numbers next to each other. If they are in the wrong order, it swaps them. This repeats until nothing needs swapping.";
             case "Merge Sort":
-                return "Merge Sort: A divide-and-conquer algorithm that divides the array into smaller sub-arrays, sorts them, and then merges them back together.";
+                return "Merge Sort: Merge Sort breaks the list into small pieces, sorts each piece, and then joins them back together in the correct order.";
             case "Insertion Sort":
-                return "Insertion Sort: Builds the final sorted array one item at a time by taking elements from the unsorted part and inserting them into their correct position.";
+                return "Insertion Sort:Insertion Sort takes one number at a time and places it in its correct spot among the numbers already sorted.";
             case "Selection Sort":
-                return "Selection Sort: Repeatedly finds the minimum element from the unsorted part and puts it at the beginning of the list.";
+                return "Selection Sort:Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
             case "Quick Sort":
-                return "Quick Sort: A highly efficient divide-and-conquer algorithm that picks a 'pivot' element and partitions the array around it.";
+                return "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides.";
             case "Heap Sort":
-                return "Heap Sort: A comparison-based sorting technique based on a Binary Heap data structure. It builds a heap and then repeatedly extracts the maximum/minimum element.";
+                return "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list.";
             case "Shell Sort":
-                return "Shell Sort: An optimization of Insertion Sort that allows the exchange of items that are far apart, gradually reducing the gap between them.";
+                return "Shell Sort:Shell Sort compares numbers that are far apart first, then slowly brings them closer. It is a faster version of Insertion Sort.";
             default:
                 return "Algorithm selected: " + algo + ". Click 'Ascending' or 'Descending' to start the visualization.";
         }
