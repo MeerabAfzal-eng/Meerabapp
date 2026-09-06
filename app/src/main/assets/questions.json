@@ -2352,13 +2352,6 @@
     "optionC": "It runs in quadratic O(n²) time regardless of the data layout",
     "optionD": "It fails to execute if the array is already sorted",
     "correct": "It evaluates every element once without shifting, completing in linear O(n) time"
-  },
-  {
-    "question": "What is the total number of questions included in this specific JSON chunk?",
-    "optionA": "50",
-    "optionB": "100",
-    "optionC": "150",
-    "optionD": "200",
-    "correct": "100"
   }
+
 ]
