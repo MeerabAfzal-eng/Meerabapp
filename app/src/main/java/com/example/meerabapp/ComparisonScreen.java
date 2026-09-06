@@ -723,7 +723,7 @@ public class ComparisonScreen extends AppCompatActivity {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            int width = Math.max(dp(64 * Math.max(data.size(), 8)), MeasureSpec.getSize(widthMeasureSpec));
+            int width = Math.max(dp(58 * Math.max(data.size(), 8)), MeasureSpec.getSize(widthMeasureSpec));
             int height = MeasureSpec.getSize(heightMeasureSpec);
             if (height <= 0) {
                 height = dp(220);
@@ -791,12 +791,11 @@ public class ComparisonScreen extends AppCompatActivity {
             super.onDraw(canvas);
             if (data.size() == 0) return;
 
-            gap = dp(12);
-            barWidth = dp(50);
-            float availableHeight = getHeight() - dp(60);
-            baseY = getHeight() - dp(14);
+            gap = dp(10);
+            barWidth = dp(42);
+            baseY = getHeight() - dp(18);
 
-            barHeight = availableHeight * 0.78f;
+            barHeight = dp(65);
             barTop = baseY - barHeight;
 
             boolean animating = animProgress < 1f && animMode != ANIM_NONE;

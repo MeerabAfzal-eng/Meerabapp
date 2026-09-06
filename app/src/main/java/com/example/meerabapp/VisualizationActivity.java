@@ -312,10 +312,7 @@ public class VisualizationActivity extends AppCompatActivity {
                     toneGen.startTone(ToneGenerator.TONE_PROP_BEEP2, 80);
                 } catch (Exception ignored) {}
             }
-            // FIX: pehle ye gap sirf 100ms tha - itni tez ke jab poori array ek saath
-            // (Insertion/Shell/Quick/Merge/Heap Sort ke end mein) teal hoti thi to "ek
-            // dum" jesi lagti thi. Ab har bar ke teal hone ke darmiyan zyada visible
-            // gap hai, taake ek left-se-right "wave" jesi dikhe, na ke instant flash.
+
             handler.postDelayed(this::playStep, 220);
         }
     }
@@ -422,13 +419,7 @@ public class VisualizationActivity extends AppCompatActivity {
                     .withPointers(new String[]{"i", "j+1"}, new int[]{i, j + 1}));
         }
 
-        // FIX: insertion sort ke ek element ki "final" jagah tab tak guaranteed nahi hoti
-        // jab tak POORA array process na ho jaye - kyunke koi bhi baad ki insertion is
-        // element ko aage khiska sakti hai (uski relative order sahi rehti hai, lekin
-        // uska INDEX badal sakta hai). Isi liye ab hum har pass ke baad 0..i ko turant
-        // teal nahi karte (pehle ye "ek shift ke baad hi teal ho jana" wala bug tha) -
-        // balke poori sorting mukammal hone ke baad, ek hi baar mein saari array ko
-        // teal karte hain - jaisa Shell/Quick/Merge Sort mein already hota hai.
+
         for (int k = 0; k < a.length; k++) {
             steps.add(new Step("mark", k, -1, 0, "Sorted!"));
         }
