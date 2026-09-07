@@ -1568,15 +1568,6 @@
     "optionD": "It cannot execute if data is sorted",
     "correct": "It checks every element once without shifting, completing in linear O(n) time"
   },
-  {
-    "question": "What is the total number of questions included across this specific JSON chunk?",
-    "optionA": "50",
-    "optionB": "100",
-    "optionC": "150",
-    "optionD": "200",
-    "correct": "100"
-  }
-,
 {
     "question": "Which sorting algorithm is often called the slowest because it makes too many side-by-side swaps?",
     "optionA": "Merge Sort",
