@@ -154,10 +154,14 @@ public class activity_quiz extends AppCompatActivity {
     }
 
     private void highlightCorrectAnswer() {
-        if (optionA.getText().toString().equals(correctAnswer)) optionA.setBackgroundColor(Color.parseColor("#C8E6C9"));
-        else if (optionB.getText().toString().equals(correctAnswer)) optionB.setBackgroundColor(Color.parseColor("#C8E6C9"));
-        else if (optionC.getText().toString().equals(correctAnswer)) optionC.setBackgroundColor(Color.parseColor("#C8E6C9"));
-        else if (optionD.getText().toString().equals(correctAnswer)) optionD.setBackgroundColor(Color.parseColor("#C8E6C9"));
+        if (optionA.getText().toString().equals(correctAnswer))
+            optionA.setBackgroundColor(Color.parseColor("#C8E6C9"));
+        else if (optionB.getText().toString().equals(correctAnswer))
+            optionB.setBackgroundColor(Color.parseColor("#C8E6C9"));
+        else if (optionC.getText().toString().equals(correctAnswer))
+            optionC.setBackgroundColor(Color.parseColor("#C8E6C9"));
+        else if (optionD.getText().toString().equals(correctAnswer))
+            optionD.setBackgroundColor(Color.parseColor("#C8E6C9"));
     }
 
     private void resetOptionsTemplate() {
