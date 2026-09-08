@@ -64,11 +64,13 @@ public class activity_progress extends AppCompatActivity {
         // Fix: Marker with Left/Right Edge Detection
         MarkerView mv = new MarkerView(this, R.layout.marker_layout) {
             private final TextView tvContent = findViewById(R.id.tvContent);
+
             @Override
             public void refreshContent(Entry e, Highlight highlight) {
-                tvContent.setText("Score: " + (int)e.getY());
+                tvContent.setText("Score: " + (int) e.getY());
                 super.refreshContent(e, highlight);
             }
+
             @Override
             public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
                 float markerWidth = getWidth();
@@ -76,7 +78,8 @@ public class activity_progress extends AppCompatActivity {
                 // Left edge detect
                 if (posX < markerWidth) return new MPPointF(0, -getHeight());
                 // Right edge detect
-                if (posX > chartWidth - markerWidth) return new MPPointF(-markerWidth, -getHeight());
+                if (posX > chartWidth - markerWidth)
+                    return new MPPointF(-markerWidth, -getHeight());
                 // Center
                 return new MPPointF(-(markerWidth / 2), -getHeight());
             }
