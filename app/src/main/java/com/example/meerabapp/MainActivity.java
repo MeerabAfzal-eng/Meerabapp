@@ -56,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
         String[] algorithms = {"Select Algorithm", "Bubble Sort", "Insertion Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, algorithms) {
             @Override
-            public boolean isEnabled(int position) { return position != 0; }
+            public boolean isEnabled(int position) {
+                return position != 0;
+            }
+
             @Override
             public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
