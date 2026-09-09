@@ -16,6 +16,24 @@ Sorting algorithms are a fundamental concept in computer science, but many stude
 - **Progress Tracking** — Tracks quiz scores over time and displays them as a line graph.
 - **User Profile** — Simple one-time profile setup (name and ID) saved locally.
 
+## 📸 Screenshots
+
+| Splash Screen | Welcome Screen |
+|---|---|
+| ![Splash](screenshots/splash_screen.jpeg) | ![Welcome](screenshots/welcome_screen.jpeg) |
+
+| Profile Setup | Main Screen |
+|---|---|
+| ![Profile](screenshots/profile_screen.jpeg) | ![Main](screenshots/main_screen.jpeg) |
+
+| Sorting Visualizer | Algorithm Comparison |
+|---|---|
+| ![Visualizer](screenshots/visualization_screen.jpeg) | ![Comparison](screenshots/comparison_screen.jpeg) |
+
+| Quiz | Progress Tracking |
+|---|---|
+| ![Quiz](screenshots/quiz_screen.jpeg) | ![Progress](screenshots/progress_screen.jpeg) |
+
 ## 🛠️ Built With
 
 - **Java** — Core programming language
