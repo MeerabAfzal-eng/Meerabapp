@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/edit_text_background"
-            android:hint="Enter Number"
+            android:hint="Enter Number(Max 30)"
             android:textColorHint="#94A3B8"
             android:textColor="#001F3F"
             android:inputType="numberSigned"
