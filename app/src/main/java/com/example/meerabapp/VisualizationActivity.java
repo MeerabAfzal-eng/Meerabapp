@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +32,8 @@ public class VisualizationActivity extends AppCompatActivity {
     ToneGenerator toneGen;
     int stepIndex = 0;
     int swaps = 0;
+    int comparisons = 0;
+    String currentComplexityCase = "";
     boolean ascending = true;
     long startTime;
     String algorithm = "Bubble Sort";
@@ -150,6 +151,7 @@ public class VisualizationActivity extends AppCompatActivity {
         steps.clear();
         stepIndex = 0;
         swaps = 0;
+        comparisons = 0;
 
         txtSwapCounter.setText(algorithm.equals("Merge Sort") ? "Merges: 0" : "Swaps: 0");
         txtTimer.setText("00:00");
@@ -168,15 +170,8 @@ public class VisualizationActivity extends AppCompatActivity {
     void updateHeader() {
         txtAlgoName.setText("Algorithm: " + algorithm);
         txtExplanation.setText(getExplanation(algorithm));
-
-        if (algorithm.equals("Quick Sort")) {
-            txtComplexity.setText("Avg O(n log n)");
-
-        } else if (algorithm.equals("Merge Sort") || algorithm.equals("Heap Sort") || algorithm.equals("Shell Sort")) {
-            txtComplexity.setText("O(n log n)");
-        } else {
-            txtComplexity.setText("O(n²)");
-        }
+        currentComplexityCase = detectComplexityCase(algorithm, originalArr, ascending);
+        txtComplexity.setText(currentComplexityCase);
     }
 
     String getExplanation(String algo) {
@@ -208,6 +203,9 @@ public class VisualizationActivity extends AppCompatActivity {
         steps.clear();
         stepIndex = 0;
         swaps = 0;
+        comparisons = 0;
+        currentComplexityCase = detectComplexityCase(algorithm, originalArr, ascending);
+        txtComplexity.setText(currentComplexityCase + " | Comparisons: 0");
 
         txtExplanation.setText(getExplanation(algorithm) + "\n\n--- Sorting Steps ---");
         startTime = System.currentTimeMillis();
@@ -237,6 +235,7 @@ public class VisualizationActivity extends AppCompatActivity {
             barsView.setPointers(null, null);
             barsView.showSorted();
             playSuccessChime();
+            updateComplexityLabel();
             appendExplanationLog("Sorting completed.");
             return;
         }
@@ -249,6 +248,8 @@ public class VisualizationActivity extends AppCompatActivity {
         }
 
         if (step.type.equals("compare")) {
+            comparisons++;
+            updateComplexityLabel();
             barsView.animateCompare(step.i, step.j, () -> {
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
@@ -356,6 +357,64 @@ public class VisualizationActivity extends AppCompatActivity {
         txtTimer.setText(String.format(Locale.US, "%02d:%02d", seconds / 60, seconds % 60));
     }
 
+    boolean isSortedOrder(ArrayList<Integer> array, boolean asc) {
+        for (int i = 0; i < array.size() - 1; i++) {
+            if (asc) {
+                if (array.get(i) > array.get(i + 1)) return false;
+            } else {
+                if (array.get(i) < array.get(i + 1)) return false;
+            }
+        }
+        return true;
+    }
+
+    String detectComplexityCase(String algo, ArrayList<Integer> array, boolean asc) {
+        if (array.size() <= 1) {
+            return "O(1) (Single Element)";
+        }
+
+        boolean sortedSameDir = isSortedOrder(array, asc);
+        boolean sortedOppositeDir = isSortedOrder(array, !asc);
+
+        switch (algo) {
+            case "Bubble Sort":
+            case "Insertion Sort":
+                if (sortedSameDir) return "O(n) \u2014 Best Case (Already Sorted)";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case (Reverse Sorted)";
+                return "O(n\u00B2) \u2014 Average Case (Random Order)";
+
+            case "Selection Sort":
+                // Selection Sort hamesha poora remaining array scan karta hai
+                // chahay input kaisa bhi ho, isliye best/worst mein farq nahi.
+                return "O(n\u00B2) \u2014 Fixed (No Best/Worst Difference)";
+
+            case "Quick Sort":
+                // Ye implementation last element ko pivot banati hai,
+                // isliye already sorted ya reverse sorted array worst case deta hai.
+                if (sortedSameDir || sortedOppositeDir) {
+                    return "O(n\u00B2) \u2014 Worst Case (Sorted/Reverse Input, Last-Element Pivot)";
+                }
+                return "O(n log n) \u2014 Average/Best Case (Balanced Partitions)";
+
+            case "Merge Sort":
+            case "Heap Sort":
+                // Ye hamesha input order se independent hi split/heapify karte hain.
+                return "O(n log n) \u2014 Fixed (No Best/Worst Difference)";
+
+            case "Shell Sort":
+                if (sortedSameDir) return "O(n log n) \u2014 Best Case (Already Sorted)";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case (Reverse Sorted)";
+                return "O(n^1.3) approx \u2014 Average Case (Random Order)";
+
+            default:
+                return "O(n\u00B2)";
+        }
+    }
+
+    void updateComplexityLabel() {
+        txtComplexity.setText(currentComplexityCase + " | Comparisons: " + comparisons);
+    }
+
     void appendExplanationLog(String text) {
         txtExplanation.append("\n" + text);
         txtExplanation.post(() -> {
@@ -391,7 +450,7 @@ public class VisualizationActivity extends AppCompatActivity {
                         .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                 if (wrongOrder(a[j], a[j + 1])) {
                     steps.add(new Step("swap", j, j + 1, 0,
-                            "Items " + a[j] + " and " + a[j + 1] + " because they are out of order. Swapping them.")
+                            "Items " + a[j] + " and " + a[j + 1] + "are in the wrong order, so we swap them.")
                             .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                     swap(a, j, j + 1);
                 }
