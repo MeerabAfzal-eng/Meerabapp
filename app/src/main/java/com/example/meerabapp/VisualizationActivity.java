@@ -463,7 +463,7 @@ public class VisualizationActivity extends AppCompatActivity {
                         .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                 if (wrongOrder(a[j], a[j + 1])) {
                     steps.add(new Step("swap", j, j + 1, 0,
-                            "Items " + a[j] + " and " + a[j + 1] + "are in the wrong order, so we swap them.")
+                            "Items " + a[j] + " and " + a[j + 1] +" are in the wrong order, so we swap them.")
                             .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                     swap(a, j, j + 1);
                     swapped = true;
@@ -885,6 +885,7 @@ public class VisualizationActivity extends AppCompatActivity {
         void animateShift(int fromIndex, int toIndex, Runnable action) {
             shiftFrom = fromIndex;
             shiftTo = toIndex;
+            swapProgress = 0f;
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
             animator.setDuration(850);
             animator.addUpdateListener(a -> {
