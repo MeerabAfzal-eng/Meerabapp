@@ -293,7 +293,7 @@ public class VisualizationActivity extends AppCompatActivity {
             });
 
         } else if (step.type.equals("shift")) {
-            barsView.animateShift(step.i, step.j, () -> {
+            barsView.animateShift(step.i, step.j, step.value, () -> { // NEW: pass step.value so destination bar shows correct value immediately (fixes duplicate-number visual bug)
                 int val = arr.get(step.i);
                 arr.set(step.j, val);
                 swaps++;
@@ -882,10 +882,17 @@ public class VisualizationActivity extends AppCompatActivity {
         int shiftFrom = -1;
         int shiftTo = -1;
 
-        void animateShift(int fromIndex, int toIndex, Runnable action) {
+        void animateShift(int fromIndex, int toIndex, int value, Runnable action) { // NEW: added 'value' param
             shiftFrom = fromIndex;
             shiftTo = toIndex;
             swapProgress = 0f;
+            // ===== NEW: show the correct incoming value at the destination bar
+            // right away, instead of letting it keep drawing its old stale
+            // value until the animation ends — this was the cause of the
+            // "number appears twice" visual glitch during shifts.
+            writeIndex = toIndex;
+            writeValue = value;
+            // ===== END NEW =====
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
             animator.setDuration(850);
             animator.addUpdateListener(a -> {
@@ -898,6 +905,8 @@ public class VisualizationActivity extends AppCompatActivity {
                     shiftFrom = -1;
                     shiftTo = -1;
                     swapProgress = 0f;
+                    writeIndex = -1; // NEW
+                    writeValue = -1; // NEW
                     action.run();
                 }
             });
