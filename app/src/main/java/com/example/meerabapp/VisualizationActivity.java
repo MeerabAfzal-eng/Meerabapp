@@ -145,6 +145,18 @@ public class VisualizationActivity extends AppCompatActivity {
         originalArr.add(50);
     }
 
+    // Har algorithm ka core operation alag hota hai, isliye counter ka
+    // naam bhi uske real mechanism ke mutabiq hona chahiye.
+    String getCounterLabel() {
+        if (algorithm.equals("Merge Sort")) {
+            return "Merges";
+        } else if (algorithm.equals("Insertion Sort") || algorithm.equals("Shell Sort")) {
+            return "Shifts";
+        } else {
+            return "Swaps";
+        }
+    }
+
     void resetArray() {
         arr.clear();
         arr.addAll(originalArr);
@@ -153,7 +165,7 @@ public class VisualizationActivity extends AppCompatActivity {
         swaps = 0;
         comparisons = 0;
 
-        txtSwapCounter.setText(algorithm.equals("Merge Sort") ? "Merges: 0" : "Swaps: 0");
+        txtSwapCounter.setText(getCounterLabel() + ": 0");
         txtTimer.setText("00:00");
         txtExplanation.setText("Sorting steps will appear here...");
 
@@ -205,11 +217,11 @@ public class VisualizationActivity extends AppCompatActivity {
         swaps = 0;
         comparisons = 0;
         currentComplexityCase = detectComplexityCase(algorithm, originalArr, ascending);
-        txtComplexity.setText(currentComplexityCase + " | Comparisons: 0");
+        txtComplexity.setText(currentComplexityCase);
 
         txtExplanation.setText(getExplanation(algorithm) + "\n\n--- Sorting Steps ---");
         startTime = System.currentTimeMillis();
-        txtSwapCounter.setText(algorithm.equals("Merge Sort") ? "Merges: 0" : "Swaps: 0");
+        txtSwapCounter.setText(getCounterLabel() + ": 0");
         txtTimer.setText("00:00");
 
         barsView.setData(arr);
@@ -235,7 +247,6 @@ public class VisualizationActivity extends AppCompatActivity {
             barsView.setPointers(null, null);
             barsView.showSorted();
             playSuccessChime();
-            updateComplexityLabel();
             appendExplanationLog("Sorting completed.");
             return;
         }
@@ -249,7 +260,6 @@ public class VisualizationActivity extends AppCompatActivity {
 
         if (step.type.equals("compare")) {
             comparisons++;
-            updateComplexityLabel();
             barsView.animateCompare(step.i, step.j, () -> {
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
@@ -260,7 +270,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 arr.set(step.i, arr.get(step.j));
                 arr.set(step.j, temp);
                 swaps++;
-                txtSwapCounter.setText("Swaps: " + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
@@ -277,7 +287,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 arr.set(step.i, step.value);
                 barsView.updateData(step.i, step.value);
                 swaps++;
-                txtSwapCounter.setText("Merges: " + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
@@ -287,7 +297,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 int val = arr.get(step.i);
                 arr.set(step.j, val);
                 swaps++;
-                txtSwapCounter.setText("Swaps:" + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
 
                 if (barsView.sortedStatus != null) {
                     boolean tempStatus = barsView.sortedStatus[step.i];
@@ -378,41 +388,43 @@ public class VisualizationActivity extends AppCompatActivity {
 
         switch (algo) {
             case "Bubble Sort":
+                // Ab is implementation mein early-exit (swapped flag) hai,
+                // isliye already-sorted array par sach mein O(n) chalega.
+                if (sortedSameDir) return "O(n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n\u00B2) \u2014 Average Case";
+
             case "Insertion Sort":
-                if (sortedSameDir) return "O(n) \u2014 Best Case (Already Sorted)";
-                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case (Reverse Sorted)";
-                return "O(n\u00B2) \u2014 Average Case (Random Order)";
+                if (sortedSameDir) return "O(n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n\u00B2) \u2014 Average Case";
 
             case "Selection Sort":
                 // Selection Sort hamesha poora remaining array scan karta hai
                 // chahay input kaisa bhi ho, isliye best/worst mein farq nahi.
-                return "O(n\u00B2) \u2014 Fixed (No Best/Worst Difference)";
+                return "O(n\u00B2) \u2014 Fixed";
 
             case "Quick Sort":
                 // Ye implementation last element ko pivot banati hai,
                 // isliye already sorted ya reverse sorted array worst case deta hai.
                 if (sortedSameDir || sortedOppositeDir) {
-                    return "O(n\u00B2) \u2014 Worst Case (Sorted/Reverse Input, Last-Element Pivot)";
+                    return "O(n\u00B2) \u2014 Worst Case";
                 }
-                return "O(n log n) \u2014 Average/Best Case (Balanced Partitions)";
+                return "O(n log n) \u2014 Average Case";
 
             case "Merge Sort":
             case "Heap Sort":
                 // Ye hamesha input order se independent hi split/heapify karte hain.
-                return "O(n log n) \u2014 Fixed (No Best/Worst Difference)";
+                return "O(n log n) \u2014 Fixed";
 
             case "Shell Sort":
-                if (sortedSameDir) return "O(n log n) \u2014 Best Case (Already Sorted)";
-                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case (Reverse Sorted)";
-                return "O(n^1.3) approx \u2014 Average Case (Random Order)";
+                if (sortedSameDir) return "O(n log n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n^1.3) approx \u2014 Average Case";
 
             default:
                 return "O(n\u00B2)";
         }
-    }
-
-    void updateComplexityLabel() {
-        txtComplexity.setText(currentComplexityCase + " | Comparisons: " + comparisons);
     }
 
     void appendExplanationLog(String text) {
@@ -444,6 +456,7 @@ public class VisualizationActivity extends AppCompatActivity {
 
     void bubbleSort(int[] a) {
         for (int i = 0; i < a.length - 1; i++) {
+            boolean swapped = false;
             for (int j = 0; j < a.length - i - 1; j++) {
                 steps.add(new Step("compare", j, j + 1, 0,
                         "comparing " + a[j] + " and " + a[j + 1] + ".")
@@ -453,9 +466,17 @@ public class VisualizationActivity extends AppCompatActivity {
                             "Items " + a[j] + " and " + a[j + 1] + "are in the wrong order, so we swap them.")
                             .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                     swap(a, j, j + 1);
+                    swapped = true;
                 }
             }
             steps.add(new Step("mark", a.length - 1 - i, -1, 0, "Fixed position"));
+            if (!swapped) {
+                // Array already sorted hai, baqi passes ki zaroorat nahi.
+                for (int k = 0; k < a.length - 1 - i; k++) {
+                    steps.add(new Step("mark", k, -1, 0, "Fixed position"));
+                }
+                break;
+            }
         }
         steps.add(new Step("mark", 0, -1, 0, " Array Sorted!"));
 
