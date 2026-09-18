@@ -195,11 +195,25 @@ public class VisualizationActivity extends AppCompatActivity {
             case "Insertion Sort":
                 return "Insertion Sort:Insertion Sort takes one number at a time and places it in its correct spot among the numbers already sorted.";
             case "Selection Sort":
-                return "Selection Sort:Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                // Ab direction (ascending/descending) ke mutabiq sahi lafظ istemal ho raha hai,
+                // taky descending mein "smallest" ka ghalat message na dikhe.
+                if (ascending) {
+                    return "Selection Sort: Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                } else {
+                    return "Selection Sort: Selection Sort finds the largest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                }
             case "Quick Sort":
-                return "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides.";
+                // NEW: wording ab ascending/descending ke mutabiq badalta hai,
+                // kyunke descending mein bigger numbers left aur smaller right jate hain.
+                return ascending
+                        ? "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides."
+                        : "Quick Sort:Quick Sort picks one number as a pivot. All bigger numbers go to its left, all smaller numbers go to its right. This repeats for both sides.";
             case "Heap Sort":
-                return "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list.";
+                // NEW: descending mein root par sabse chota number hota hai (min-heap),
+                // isliye wording bhi ascending/descending ke mutabiq badalni chahiye.
+                return ascending
+                        ? "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list."
+                        : "Heap Sort: Heap Sort arranges numbers into a tree shape where the smallest number is always on top, then removes it one by one to build the sorted list.";
             case "Shell Sort":
                 return "Shell Sort:Shell Sort compares numbers that are far apart first, then slowly brings them closer. It is a faster version of Insertion Sort.";
             default:
@@ -506,16 +520,22 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void selectionSort(int[] a) {
+        // Message/label ab ascending vs descending ke asal mechanism ke mutabiq hain:
+        // ascending mein selection sort "minimum" dhoondta hai, descending mein "maximum".
+        String targetWord = ascending ? "minimum" : "maximum";
+        String pickedWord = ascending ? "smallest" : "largest";
+        String pointerLabel = ascending ? "min" : "max";
+
         for (int i = 0; i < a.length - 1; i++) {
             int selected = i;
             for (int j = i + 1; j < a.length; j++) {
-                steps.add(new Step("compare", selected, j, 0, "Searching for the  minimum :comparing")
-                        .withPointers(new String[]{"i", "min", "j"}, new int[]{i, selected, j}));
+                steps.add(new Step("compare", selected, j, 0, "Searching for the " + targetWord + " :comparing")
+                        .withPointers(new String[]{"i", pointerLabel, "j"}, new int[]{i, selected, j}));
                 if (wrongOrder(a[selected], a[j])) selected = j;
             }
             if (selected != i) {
-                steps.add(new Step("swap", i, selected, 0, "Swaping" + " with the smallest element " + a[selected])
-                        .withPointers(new String[]{"i", "min"}, new int[]{i, selected}));
+                steps.add(new Step("swap", i, selected, 0, "Swaping" + " with the " + pickedWord + " element " + a[selected])
+                        .withPointers(new String[]{"i", pointerLabel}, new int[]{i, selected}));
                 swap(a, i, selected);
             }
             steps.add(new Step("mark", i, -1, 0, "Fixed position"));
@@ -537,6 +557,10 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     int partition(int[] a, int low, int high) {
+        // NEW: descending mein pivot ke left woh elements jate hain jo "bigger" hain,
+        // isliye message bhi usi mutabiq honi chahiye, hardcoded "smaller" nahi.
+        String movedAdj = ascending ? "smaller" : "bigger";
+
         int pivotValue = a[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {
@@ -545,7 +569,7 @@ public class VisualizationActivity extends AppCompatActivity {
             boolean move = ascending ? a[j] < pivotValue : a[j] > pivotValue;
             if (move) {
                 i++;
-                steps.add(new Step("swap", i, j, 0, "Moving smaller element " + a[j] + " to the left side of the pivot.")
+                steps.add(new Step("swap", i, j, 0, "Moving " + movedAdj + " element " + a[j] + " to the left side of the pivot.")
                         .withPointers(new String[]{"low", "pivot", "i", "j"}, new int[]{low, high, i, j}));
                 swap(a, i, j);
             }
@@ -617,26 +641,36 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void heapSort(int[] a) {
+        // NEW: "max" pointer label ko bhi direction ke mutabiq "min" kar diya
+        // taky descending mein root ka asal role (smallest) sahi reflect ho.
+        String rootPointerLabel = ascending ? "max" : "min";
+
         int n = a.length;
         for (int i = n / 2 - 1; i >= 0; i--) heapify(a, n, i, "root");
         for (int i = n - 1; i > 0; i--) {
             steps.add(new Step("swap", 0, i, 0, "Swap root")
-                    .withPointers(new String[]{"max", "i"}, new int[]{0, i}));
+                    .withPointers(new String[]{rootPointerLabel, "i"}, new int[]{0, i}));
             swap(a, 0, i);
             steps.add(new Step("mark", i, -1, 0, "Fixed position"));
-            heapify(a, i, 0, "max");
+            heapify(a, i, 0, rootPointerLabel);
         }
         steps.add(new Step("mark", 0, -1, 0, "Sorted!"));
     }
 
     void heapify(int[] a, int n, int root, String rootLabel) {
+        // NEW: descending mein hum min-heap bana rahe hote hain (root = sabse chota),
+        // isliye pointer label aur message bhi "smallest"/"min_heap" honi chahiye,
+        // hardcoded "largest"/"max_heap" nahi.
+        String extremeLabel = ascending ? "largest" : "smallest";
+        String heapType = ascending ? "max_heap" : "min_heap";
+
         int best = root;
         int left = 2 * root + 1;
         int right = 2 * root + 2;
         if (left < n) {
             steps.add(new Step("compare", left, best, 0,
                     "Compare left child with root")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             boolean shouldSwap = ascending ? (a[left] > a[best]) : (a[left] < a[best]);
             if (shouldSwap) {
                 best = left;
@@ -645,7 +679,7 @@ public class VisualizationActivity extends AppCompatActivity {
         if (right < n) {
             steps.add(new Step("compare", right, best, 0,
                     "Compare right child with parent to maintain heap property. ")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             boolean shouldSwap = ascending ? (a[right] > a[best]) : (a[right] < a[best]);
             if (shouldSwap) {
                 best = right;
@@ -653,8 +687,8 @@ public class VisualizationActivity extends AppCompatActivity {
         }
         if (best != root) {
             steps.add(new Step("swap", root, best, 0,
-                    "Swapping to maintain max_heap sructure.")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    "Swapping to maintain " + heapType + " sructure.")
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             swap(a, root, best);
             heapify(a, n, best, rootLabel);
         }
@@ -665,9 +699,16 @@ public class VisualizationActivity extends AppCompatActivity {
             for (int i = gap; i < a.length; i++) {
                 int temp = a[i];
                 int j = i;
-                while (j >= gap && (ascending ? a[j - gap] > temp : a[j - gap] < temp)) {
-                    steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of" + gap)
+                // FIX: pehle har comparison unconditionally log hoti hai (chahe
+                // shift ho ya na ho) — pehle sirf successful (shift-causing)
+                // comparisons hi log hoti thin, jisse "already sahi jagah" wale
+                // elements bina compare step dikhaye seedhe apni jagah chale jate thay.
+                while (j >= gap) {
+                    steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of " + gap)
                             .withPointers(new String[]{"i", "j", "j-gap"}, new int[]{i, j, j - gap}));
+
+                    boolean shouldShift = ascending ? a[j - gap] > temp : a[j - gap] < temp;
+                    if (!shouldShift) break;
 
                     steps.add(new Step("shift", j - gap, j, a[j - gap], "Shifting element " + a[j - gap] + " to fill the gap.")
                             .withPointers(new String[]{"i", "j", "j-gap"}, new int[]{i, j, j - gap}));
