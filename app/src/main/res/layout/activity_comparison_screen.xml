@@ -40,13 +40,16 @@
                 android:text="Select Algorithm A:"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#475569"
+                android:textColor="#001F3F"
                 tools:ignore="HardcodedText" />
             <Spinner
                 android:id="@+id/spinnerAlgoA"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@android:drawable/btn_dropdown"
+                android:backgroundTint="#FFFFFF"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:popupBackground="@android:color/white"
                 android:contentDescription="Algorithm A" />
         </LinearLayout>
 
@@ -62,13 +65,16 @@
                 android:text="Select Algorithm B:"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#475569"
+                android:textColor="#001F3F"
                 tools:ignore="HardcodedText" />
             <Spinner
                 android:id="@+id/spinnerAlgoB"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@android:drawable/btn_dropdown"
+                android:backgroundTint="#FFFFFF"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:popupBackground="@android:color/white"
                 android:contentDescription="Algorithm B" />
         </LinearLayout>
     </LinearLayout>
