@@ -85,10 +85,6 @@ public class ComparisonScreen extends AppCompatActivity {
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
-    // Har panel ka apna current algorithm yaad rakhte hain, taake counter
-    // ka label (Swaps/Shifts/Merges) us algorithm ke real mechanism ke
-    // mutabiq dikhaya ja sake - chahe Panel A aur Panel B mein alag
-    // algorithms select ho.
     private String currentAlgoA = null;
     private String currentAlgoB = null;
 
@@ -172,10 +168,6 @@ public class ComparisonScreen extends AppCompatActivity {
         return spinner.getSelectedItemPosition() == 0;
     }
 
-    // Algorithm ke naam se decide karta hai konsa counter label sahi/honest
-    // hai: Insertion aur Shell Sort mein numbers "shift" hotay hain, swap
-    // nahi; Merge Sort mein naye array mein "merge" hota hai; baqi sab mein
-    // asal mein do elements ki jagah "swap" hoti hai.
     private String getCounterLabel(String algo) {
         if (algo == null) return "Swaps";
         if (algo.equalsIgnoreCase("Merge Sort")) return "Merges";
@@ -276,11 +268,6 @@ public class ComparisonScreen extends AppCompatActivity {
 
             long tickerStart = SystemClock.elapsedRealtime();
 
-            // Sound sirf tab bajta hai jab koi value VAQAI teal (sorted/fixed) hoti hai -
-            // ek chhota "ping" jab sirf ek/kuch values teal hon, aur ek alag/distinct
-            // "success" tone jab us panel ki POORI array teal ho jati hai. Purane code
-            // mein har purple/compare/swap step par sound bajta tha, jo bohat frequent
-            // aur annoying tha - ab wo hata diya gaya hai.
             int prevSortedCountA = 0;
             int prevSortedCountB = 0;
             int totalN = initialNumbers.size();
@@ -357,10 +344,6 @@ public class ComparisonScreen extends AppCompatActivity {
 
         raceThread.start();
     }
-
-    // Ek chhota "ping" bajata hai jab sirf ek (ya kuch) value(s) teal hoti hain, aur ek
-    // alag/lambi "success" tone jab us panel ki POORI array teal (mukammal sorted) ho
-    // jati hai. isFullArraySorted decide karta hai konsi tone chalani hai.
     private void playTealSound(boolean isFullArraySorted) {
         if (isFullArraySorted) {
             if (successToneGenerator != null) {
