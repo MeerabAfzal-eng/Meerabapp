@@ -85,6 +85,13 @@ public class ComparisonScreen extends AppCompatActivity {
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
+    // Har panel ka apna current algorithm yaad rakhte hain, taake counter
+    // ka label (Swaps/Shifts/Merges) us algorithm ke real mechanism ke
+    // mutabiq dikhaya ja sake - chahe Panel A aur Panel B mein alag
+    // algorithms select ho.
+    private String currentAlgoA = null;
+    private String currentAlgoB = null;
+
     private AnimatedBarsView barsViewA, barsViewB;
 
     @Override
@@ -165,13 +172,27 @@ public class ComparisonScreen extends AppCompatActivity {
         return spinner.getSelectedItemPosition() == 0;
     }
 
+    // Algorithm ke naam se decide karta hai konsa counter label sahi/honest
+    // hai: Insertion aur Shell Sort mein numbers "shift" hotay hain, swap
+    // nahi; Merge Sort mein naye array mein "merge" hota hai; baqi sab mein
+    // asal mein do elements ki jagah "swap" hoti hai.
+    private String getCounterLabel(String algo) {
+        if (algo == null) return "Swaps";
+        if (algo.equalsIgnoreCase("Merge Sort")) return "Merges";
+        if (algo.equalsIgnoreCase("Insertion Sort") || algo.equalsIgnoreCase("Shell Sort")) return "Shifts";
+        return "Swaps";
+    }
+
     private void resetComparisonUI() {
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
 
-        lblAlgoA.setText(isPlaceholderSelected(spinnerAlgoA) ? "Algorithm A" : spinnerAlgoA.getSelectedItem().toString());
-        lblAlgoB.setText(isPlaceholderSelected(spinnerAlgoB) ? "Algorithm B" : spinnerAlgoB.getSelectedItem().toString());
-        txtSwapsA.setText("Swaps: 0   Comparisons: 0");
-        txtSwapsB.setText("Swaps: 0   Comparisons: 0");
+        currentAlgoA = isPlaceholderSelected(spinnerAlgoA) ? null : spinnerAlgoA.getSelectedItem().toString();
+        currentAlgoB = isPlaceholderSelected(spinnerAlgoB) ? null : spinnerAlgoB.getSelectedItem().toString();
+
+        lblAlgoA.setText(currentAlgoA == null ? "Algorithm A" : currentAlgoA);
+        lblAlgoB.setText(currentAlgoB == null ? "Algorithm B" : currentAlgoB);
+        txtSwapsA.setText(getCounterLabel(currentAlgoA) + ": 0   Comparisons: 0");
+        txtSwapsB.setText(getCounterLabel(currentAlgoB) + ": 0   Comparisons: 0");
         txtTimerA.setText("0.00s");
         txtTimerB.setText("0.00s");
 
@@ -200,6 +221,9 @@ public class ComparisonScreen extends AppCompatActivity {
 
         String selectedA = spinnerAlgoA.getSelectedItem().toString();
         String selectedB = spinnerAlgoB.getSelectedItem().toString();
+
+        currentAlgoA = selectedA;
+        currentAlgoB = selectedB;
 
         lblAlgoA.setText(selectedA);
         lblAlgoB.setText(selectedB);
@@ -299,7 +323,8 @@ public class ComparisonScreen extends AppCompatActivity {
                 long totalOpsB = (long) finalTotalSwapsB + finalTotalComparisonsB;
 
                 String statsLine = "\nComparisons: " + finalTotalComparisonsA + " vs " + finalTotalComparisonsB +
-                        "\nSwaps: " + finalTotalSwapsA + " vs " + finalTotalSwapsB +
+                        "\n" + getCounterLabel(selectedA) + " (A): " + finalTotalSwapsA +
+                        "   " + getCounterLabel(selectedB) + " (B): " + finalTotalSwapsB +
                         "\nTime: " + String.format("%.2f", finalDurationA / 1000.0) + "s vs " +
                         String.format("%.2f", finalDurationB / 1000.0) + "s";
 
@@ -604,8 +629,8 @@ public class ComparisonScreen extends AppCompatActivity {
             txtTimerB.setText(String.format("%.2f s", finalDurationB / 1000.0));
         }
 
-        txtSwapsA.setText("Swaps: " + frame.swapsA + "   Comparisons: " + frame.comparisonsA);
-        txtSwapsB.setText("Swaps: " + frame.swapsB + "   Comparisons: " + frame.comparisonsB);
+        txtSwapsA.setText(getCounterLabel(currentAlgoA) + ": " + frame.swapsA + "   Comparisons: " + frame.comparisonsA);
+        txtSwapsB.setText(getCounterLabel(currentAlgoB) + ": " + frame.swapsB + "   Comparisons: " + frame.comparisonsB);
 
         barsViewA.updateFrame(frame.stateA, frame.activeA1, frame.activeA2, frame.sortedA, frame.labelsA);
         barsViewB.updateFrame(frame.stateB, frame.activeB1, frame.activeB2, frame.sortedB, frame.labelsB);

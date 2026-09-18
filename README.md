@@ -4,7 +4,7 @@ An Android-based mobile application that makes learning sorting algorithms simpl
 
 ## 📱 About the Project
 
-Sorting algorithms are a fundamental concept in computer science, but many students find them difficult to understand through traditional methods such as textbooks, code, and static diagrams. Sorting Scope solves this by using real-time animations, color coding, and audio cues to help students visually understand how sorting algorithms work.
+Sorting algorithms are a fundamental concept in computer science or IT, but many students find them difficult to understand through traditional methods such as textbooks, code, and static diagrams. Sorting Scope solves this by using real-time animations, color coding, and audio cues to help students visually understand how sorting algorithms work.
 
 
 ## ✨ Features

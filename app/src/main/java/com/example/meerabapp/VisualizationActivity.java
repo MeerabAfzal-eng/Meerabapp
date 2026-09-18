@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +32,8 @@ public class VisualizationActivity extends AppCompatActivity {
     ToneGenerator toneGen;
     int stepIndex = 0;
     int swaps = 0;
+    int comparisons = 0;
+    String currentComplexityCase = "";
     boolean ascending = true;
     long startTime;
     String algorithm = "Bubble Sort";
@@ -144,14 +145,27 @@ public class VisualizationActivity extends AppCompatActivity {
         originalArr.add(50);
     }
 
+    // Har algorithm ka core operation alag hota hai, isliye counter ka
+    // naam bhi uske real mechanism ke mutabiq hona chahiye.
+    String getCounterLabel() {
+        if (algorithm.equals("Merge Sort")) {
+            return "Merges";
+        } else if (algorithm.equals("Insertion Sort") || algorithm.equals("Shell Sort")) {
+            return "Shifts";
+        } else {
+            return "Swaps";
+        }
+    }
+
     void resetArray() {
         arr.clear();
         arr.addAll(originalArr);
         steps.clear();
         stepIndex = 0;
         swaps = 0;
+        comparisons = 0;
 
-        txtSwapCounter.setText(algorithm.equals("Merge Sort") ? "Merges: 0" : "Swaps: 0");
+        txtSwapCounter.setText(getCounterLabel() + ": 0");
         txtTimer.setText("00:00");
         txtExplanation.setText("Sorting steps will appear here...");
 
@@ -168,15 +182,8 @@ public class VisualizationActivity extends AppCompatActivity {
     void updateHeader() {
         txtAlgoName.setText("Algorithm: " + algorithm);
         txtExplanation.setText(getExplanation(algorithm));
-
-        if (algorithm.equals("Quick Sort")) {
-            txtComplexity.setText("Avg O(n log n)");
-
-        } else if (algorithm.equals("Merge Sort") || algorithm.equals("Heap Sort") || algorithm.equals("Shell Sort")) {
-            txtComplexity.setText("O(n log n)");
-        } else {
-            txtComplexity.setText("O(n²)");
-        }
+        currentComplexityCase = detectComplexityCase(algorithm, originalArr, ascending);
+        txtComplexity.setText(currentComplexityCase);
     }
 
     String getExplanation(String algo) {
@@ -188,11 +195,25 @@ public class VisualizationActivity extends AppCompatActivity {
             case "Insertion Sort":
                 return "Insertion Sort:Insertion Sort takes one number at a time and places it in its correct spot among the numbers already sorted.";
             case "Selection Sort":
-                return "Selection Sort:Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                // Ab direction (ascending/descending) ke mutabiq sahi lafظ istemal ho raha hai,
+                // taky descending mein "smallest" ka ghalat message na dikhe.
+                if (ascending) {
+                    return "Selection Sort: Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                } else {
+                    return "Selection Sort: Selection Sort finds the largest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
+                }
             case "Quick Sort":
-                return "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides.";
+                // NEW: wording ab ascending/descending ke mutabiq badalta hai,
+                // kyunke descending mein bigger numbers left aur smaller right jate hain.
+                return ascending
+                        ? "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides."
+                        : "Quick Sort:Quick Sort picks one number as a pivot. All bigger numbers go to its left, all smaller numbers go to its right. This repeats for both sides.";
             case "Heap Sort":
-                return "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list.";
+                // NEW: descending mein root par sabse chota number hota hai (min-heap),
+                // isliye wording bhi ascending/descending ke mutabiq badalni chahiye.
+                return ascending
+                        ? "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list."
+                        : "Heap Sort: Heap Sort arranges numbers into a tree shape where the smallest number is always on top, then removes it one by one to build the sorted list.";
             case "Shell Sort":
                 return "Shell Sort:Shell Sort compares numbers that are far apart first, then slowly brings them closer. It is a faster version of Insertion Sort.";
             default:
@@ -208,10 +229,13 @@ public class VisualizationActivity extends AppCompatActivity {
         steps.clear();
         stepIndex = 0;
         swaps = 0;
+        comparisons = 0;
+        currentComplexityCase = detectComplexityCase(algorithm, originalArr, ascending);
+        txtComplexity.setText(currentComplexityCase);
 
         txtExplanation.setText(getExplanation(algorithm) + "\n\n--- Sorting Steps ---");
         startTime = System.currentTimeMillis();
-        txtSwapCounter.setText(algorithm.equals("Merge Sort") ? "Merges: 0" : "Swaps: 0");
+        txtSwapCounter.setText(getCounterLabel() + ": 0");
         txtTimer.setText("00:00");
 
         barsView.setData(arr);
@@ -249,6 +273,7 @@ public class VisualizationActivity extends AppCompatActivity {
         }
 
         if (step.type.equals("compare")) {
+            comparisons++;
             barsView.animateCompare(step.i, step.j, () -> {
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
@@ -259,7 +284,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 arr.set(step.i, arr.get(step.j));
                 arr.set(step.j, temp);
                 swaps++;
-                txtSwapCounter.setText("Swaps: " + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
@@ -276,17 +301,17 @@ public class VisualizationActivity extends AppCompatActivity {
                 arr.set(step.i, step.value);
                 barsView.updateData(step.i, step.value);
                 swaps++;
-                txtSwapCounter.setText("Merges: " + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
                 appendExplanationLog(step.message);
                 handler.postDelayed(this::playStep, STEP_DELAY);
             });
 
         } else if (step.type.equals("shift")) {
-            barsView.animateShift(step.i, step.j, () -> {
+            barsView.animateShift(step.i, step.j, step.value, () -> { // NEW: pass step.value so destination bar shows correct value immediately (fixes duplicate-number visual bug)
                 int val = arr.get(step.i);
                 arr.set(step.j, val);
                 swaps++;
-                txtSwapCounter.setText("Swaps:" + swaps);
+                txtSwapCounter.setText(getCounterLabel() + ": " + swaps);
 
                 if (barsView.sortedStatus != null) {
                     boolean tempStatus = barsView.sortedStatus[step.i];
@@ -356,6 +381,66 @@ public class VisualizationActivity extends AppCompatActivity {
         txtTimer.setText(String.format(Locale.US, "%02d:%02d", seconds / 60, seconds % 60));
     }
 
+    boolean isSortedOrder(ArrayList<Integer> array, boolean asc) {
+        for (int i = 0; i < array.size() - 1; i++) {
+            if (asc) {
+                if (array.get(i) > array.get(i + 1)) return false;
+            } else {
+                if (array.get(i) < array.get(i + 1)) return false;
+            }
+        }
+        return true;
+    }
+
+    String detectComplexityCase(String algo, ArrayList<Integer> array, boolean asc) {
+        if (array.size() <= 1) {
+            return "O(1) (Single Element)";
+        }
+
+        boolean sortedSameDir = isSortedOrder(array, asc);
+        boolean sortedOppositeDir = isSortedOrder(array, !asc);
+
+        switch (algo) {
+            case "Bubble Sort":
+                // Ab is implementation mein early-exit (swapped flag) hai,
+                // isliye already-sorted array par sach mein O(n) chalega.
+                if (sortedSameDir) return "O(n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n\u00B2) \u2014 Average Case";
+
+            case "Insertion Sort":
+                if (sortedSameDir) return "O(n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n\u00B2) \u2014 Average Case";
+
+            case "Selection Sort":
+                // Selection Sort hamesha poora remaining array scan karta hai
+                // chahay input kaisa bhi ho, isliye best/worst mein farq nahi.
+                return "O(n\u00B2) \u2014 Fixed";
+
+            case "Quick Sort":
+                // Ye implementation last element ko pivot banati hai,
+                // isliye already sorted ya reverse sorted array worst case deta hai.
+                if (sortedSameDir || sortedOppositeDir) {
+                    return "O(n\u00B2) \u2014 Worst Case";
+                }
+                return "O(n log n) \u2014 Average Case";
+
+            case "Merge Sort":
+            case "Heap Sort":
+                // Ye hamesha input order se independent hi split/heapify karte hain.
+                return "O(n log n) \u2014 Fixed";
+
+            case "Shell Sort":
+                if (sortedSameDir) return "O(n log n) \u2014 Best Case";
+                if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
+                return "O(n^1.3) approx \u2014 Average Case";
+
+            default:
+                return "O(n\u00B2)";
+        }
+    }
+
     void appendExplanationLog(String text) {
         txtExplanation.append("\n" + text);
         txtExplanation.post(() -> {
@@ -385,18 +470,27 @@ public class VisualizationActivity extends AppCompatActivity {
 
     void bubbleSort(int[] a) {
         for (int i = 0; i < a.length - 1; i++) {
+            boolean swapped = false;
             for (int j = 0; j < a.length - i - 1; j++) {
                 steps.add(new Step("compare", j, j + 1, 0,
                         "comparing " + a[j] + " and " + a[j + 1] + ".")
                         .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                 if (wrongOrder(a[j], a[j + 1])) {
                     steps.add(new Step("swap", j, j + 1, 0,
-                            "Items " + a[j] + " and " + a[j + 1] + " because they are out of order. Swapping them.")
+                            "Items " + a[j] + " and " + a[j + 1] +" are in the wrong order, so we swap them.")
                             .withPointers(new String[]{"i", "j", "j+1"}, new int[]{i, j, j + 1}));
                     swap(a, j, j + 1);
+                    swapped = true;
                 }
             }
             steps.add(new Step("mark", a.length - 1 - i, -1, 0, "Fixed position"));
+            if (!swapped) {
+                // Array already sorted hai, baqi passes ki zaroorat nahi.
+                for (int k = 0; k < a.length - 1 - i; k++) {
+                    steps.add(new Step("mark", k, -1, 0, "Fixed position"));
+                }
+                break;
+            }
         }
         steps.add(new Step("mark", 0, -1, 0, " Array Sorted!"));
 
@@ -426,16 +520,22 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void selectionSort(int[] a) {
+        // Message/label ab ascending vs descending ke asal mechanism ke mutabiq hain:
+        // ascending mein selection sort "minimum" dhoondta hai, descending mein "maximum".
+        String targetWord = ascending ? "minimum" : "maximum";
+        String pickedWord = ascending ? "smallest" : "largest";
+        String pointerLabel = ascending ? "min" : "max";
+
         for (int i = 0; i < a.length - 1; i++) {
             int selected = i;
             for (int j = i + 1; j < a.length; j++) {
-                steps.add(new Step("compare", selected, j, 0, "Searching for the  minimum :comparing")
-                        .withPointers(new String[]{"i", "min", "j"}, new int[]{i, selected, j}));
+                steps.add(new Step("compare", selected, j, 0, "Searching for the " + targetWord + " :comparing")
+                        .withPointers(new String[]{"i", pointerLabel, "j"}, new int[]{i, selected, j}));
                 if (wrongOrder(a[selected], a[j])) selected = j;
             }
             if (selected != i) {
-                steps.add(new Step("swap", i, selected, 0, "Swaping" + " with the smallest element " + a[selected])
-                        .withPointers(new String[]{"i", "min"}, new int[]{i, selected}));
+                steps.add(new Step("swap", i, selected, 0, "Swaping" + " with the " + pickedWord + " element " + a[selected])
+                        .withPointers(new String[]{"i", pointerLabel}, new int[]{i, selected}));
                 swap(a, i, selected);
             }
             steps.add(new Step("mark", i, -1, 0, "Fixed position"));
@@ -457,6 +557,10 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     int partition(int[] a, int low, int high) {
+        // NEW: descending mein pivot ke left woh elements jate hain jo "bigger" hain,
+        // isliye message bhi usi mutabiq honi chahiye, hardcoded "smaller" nahi.
+        String movedAdj = ascending ? "smaller" : "bigger";
+
         int pivotValue = a[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {
@@ -465,7 +569,7 @@ public class VisualizationActivity extends AppCompatActivity {
             boolean move = ascending ? a[j] < pivotValue : a[j] > pivotValue;
             if (move) {
                 i++;
-                steps.add(new Step("swap", i, j, 0, "Moving smaller element " + a[j] + " to the left side of the pivot.")
+                steps.add(new Step("swap", i, j, 0, "Moving " + movedAdj + " element " + a[j] + " to the left side of the pivot.")
                         .withPointers(new String[]{"low", "pivot", "i", "j"}, new int[]{low, high, i, j}));
                 swap(a, i, j);
             }
@@ -537,26 +641,36 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void heapSort(int[] a) {
+        // NEW: "max" pointer label ko bhi direction ke mutabiq "min" kar diya
+        // taky descending mein root ka asal role (smallest) sahi reflect ho.
+        String rootPointerLabel = ascending ? "max" : "min";
+
         int n = a.length;
         for (int i = n / 2 - 1; i >= 0; i--) heapify(a, n, i, "root");
         for (int i = n - 1; i > 0; i--) {
             steps.add(new Step("swap", 0, i, 0, "Swap root")
-                    .withPointers(new String[]{"max", "i"}, new int[]{0, i}));
+                    .withPointers(new String[]{rootPointerLabel, "i"}, new int[]{0, i}));
             swap(a, 0, i);
             steps.add(new Step("mark", i, -1, 0, "Fixed position"));
-            heapify(a, i, 0, "max");
+            heapify(a, i, 0, rootPointerLabel);
         }
         steps.add(new Step("mark", 0, -1, 0, "Sorted!"));
     }
 
     void heapify(int[] a, int n, int root, String rootLabel) {
+        // NEW: descending mein hum min-heap bana rahe hote hain (root = sabse chota),
+        // isliye pointer label aur message bhi "smallest"/"min_heap" honi chahiye,
+        // hardcoded "largest"/"max_heap" nahi.
+        String extremeLabel = ascending ? "largest" : "smallest";
+        String heapType = ascending ? "max_heap" : "min_heap";
+
         int best = root;
         int left = 2 * root + 1;
         int right = 2 * root + 2;
         if (left < n) {
             steps.add(new Step("compare", left, best, 0,
                     "Compare left child with root")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             boolean shouldSwap = ascending ? (a[left] > a[best]) : (a[left] < a[best]);
             if (shouldSwap) {
                 best = left;
@@ -565,7 +679,7 @@ public class VisualizationActivity extends AppCompatActivity {
         if (right < n) {
             steps.add(new Step("compare", right, best, 0,
                     "Compare right child with parent to maintain heap property. ")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             boolean shouldSwap = ascending ? (a[right] > a[best]) : (a[right] < a[best]);
             if (shouldSwap) {
                 best = right;
@@ -573,8 +687,8 @@ public class VisualizationActivity extends AppCompatActivity {
         }
         if (best != root) {
             steps.add(new Step("swap", root, best, 0,
-                    "Swapping to maintain max_heap sructure.")
-                    .withPointers(new String[]{rootLabel, "largest"}, new int[]{root, best}));
+                    "Swapping to maintain " + heapType + " sructure.")
+                    .withPointers(new String[]{rootLabel, extremeLabel}, new int[]{root, best}));
             swap(a, root, best);
             heapify(a, n, best, rootLabel);
         }
@@ -585,9 +699,16 @@ public class VisualizationActivity extends AppCompatActivity {
             for (int i = gap; i < a.length; i++) {
                 int temp = a[i];
                 int j = i;
-                while (j >= gap && (ascending ? a[j - gap] > temp : a[j - gap] < temp)) {
-                    steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of" + gap)
+                // FIX: pehle har comparison unconditionally log hoti hai (chahe
+                // shift ho ya na ho) — pehle sirf successful (shift-causing)
+                // comparisons hi log hoti thin, jisse "already sahi jagah" wale
+                // elements bina compare step dikhaye seedhe apni jagah chale jate thay.
+                while (j >= gap) {
+                    steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of " + gap)
                             .withPointers(new String[]{"i", "j", "j-gap"}, new int[]{i, j, j - gap}));
+
+                    boolean shouldShift = ascending ? a[j - gap] > temp : a[j - gap] < temp;
+                    if (!shouldShift) break;
 
                     steps.add(new Step("shift", j - gap, j, a[j - gap], "Shifting element " + a[j - gap] + " to fill the gap.")
                             .withPointers(new String[]{"i", "j", "j-gap"}, new int[]{i, j, j - gap}));
@@ -802,9 +923,17 @@ public class VisualizationActivity extends AppCompatActivity {
         int shiftFrom = -1;
         int shiftTo = -1;
 
-        void animateShift(int fromIndex, int toIndex, Runnable action) {
+        void animateShift(int fromIndex, int toIndex, int value, Runnable action) { // NEW: added 'value' param
             shiftFrom = fromIndex;
             shiftTo = toIndex;
+            swapProgress = 0f;
+            // ===== NEW: show the correct incoming value at the destination bar
+            // right away, instead of letting it keep drawing its old stale
+            // value until the animation ends — this was the cause of the
+            // "number appears twice" visual glitch during shifts.
+            writeIndex = toIndex;
+            writeValue = value;
+            // ===== END NEW =====
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
             animator.setDuration(850);
             animator.addUpdateListener(a -> {
@@ -817,6 +946,8 @@ public class VisualizationActivity extends AppCompatActivity {
                     shiftFrom = -1;
                     shiftTo = -1;
                     swapProgress = 0f;
+                    writeIndex = -1; // NEW
+                    writeValue = -1; // NEW
                     action.run();
                 }
             });
