@@ -859,11 +859,15 @@ public class ComparisonScreen extends AppCompatActivity {
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
-                    // NEW: also skip animFromIdx (source), not just animToIdx (destination) —
-                    // the source bar is already drawn by the animated overlay below, so
-                    // drawing it again here caused the source position's text to render
-                    // twice on top of itself during the animation.
-                    if (animMode == ANIM_SHIFT && (i == animToIdx || i == animFromIdx)) continue;
+                    // FIX: only skip the destination index during a shift. The
+                    // source index's own value does NOT change as part of this
+                    // step (a[j] stays put until a later step overwrites it), so
+                    // it should keep being drawn normally like any other bar.
+                    // Previously BOTH source and destination were skipped here
+                    // while only ONE overlay bar was drawn below to replace them,
+                    // which left the array one bar short (a visible blank gap)
+                    // for the whole ~280ms of every shift animation.
+                    if (animMode == ANIM_SHIFT && i == animToIdx) continue;
                 }
                 drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
             }
