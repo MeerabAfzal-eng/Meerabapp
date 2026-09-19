@@ -100,6 +100,10 @@ public class ComparisonScreen extends AppCompatActivity {
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
+    // Har panel ka apna current algorithm yaad rakhte hain, taake counter
+    // ka label (Swaps/Shifts/Merges) us algorithm ke real mechanism ke
+    // mutabiq dikhaya ja sake - chahe Panel A aur Panel B mein alag
+    // algorithms select ho.
     private String currentAlgoA = null;
     private String currentAlgoB = null;
 
@@ -183,6 +187,10 @@ public class ComparisonScreen extends AppCompatActivity {
         return spinner.getSelectedItemPosition() == 0;
     }
 
+    // Algorithm ke naam se decide karta hai konsa counter label sahi/honest
+    // hai: Insertion aur Shell Sort mein numbers "shift" hotay hain, swap
+    // nahi; Merge Sort mein naye array mein "merge" hota hai; baqi sab mein
+    // asal mein do elements ki jagah "swap" hoti hai.
     private String getCounterLabel(String algo) {
         if (algo == null) return "Swaps";
         if (algo.equalsIgnoreCase("Merge Sort")) return "Merges";
@@ -295,6 +303,11 @@ public class ComparisonScreen extends AppCompatActivity {
 
             long tickerStart = SystemClock.elapsedRealtime();
 
+            // Sound sirf tab bajta hai jab koi value VAQAI teal (sorted/fixed) hoti hai -
+            // ek chhota "ping" jab sirf ek/kuch values teal hon, aur ek alag/distinct
+            // "success" tone jab us panel ki POORI array teal ho jati hai. Purane code
+            // mein har purple/compare/swap step par sound bajta tha, jo bohat frequent
+            // aur annoying tha - ab wo hata diya gaya hai.
             int prevSortedCountA = 0;
             int prevSortedCountB = 0;
             int totalN = initialNumbers.size();
@@ -378,6 +391,10 @@ public class ComparisonScreen extends AppCompatActivity {
 
         raceThread.start();
     }
+
+    // Ek chhota "ping" bajata hai jab sirf ek (ya kuch) value(s) teal hoti hain, aur ek
+    // alag/lambi "success" tone jab us panel ki POORI array teal (mukammal sorted) ho
+    // jati hai. isFullArraySorted decide karta hai konsi tone chalani hai.
     private void playTealSound(boolean isFullArraySorted) {
         if (isFullArraySorted) {
             if (successToneGenerator != null) {
@@ -859,15 +876,18 @@ public class ComparisonScreen extends AppCompatActivity {
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
-                    // FIX: only skip the destination index during a shift. The
-                    // source index's own value does NOT change as part of this
-                    // step (a[j] stays put until a later step overwrites it), so
-                    // it should keep being drawn normally like any other bar.
-                    // Previously BOTH source and destination were skipped here
-                    // while only ONE overlay bar was drawn below to replace them,
-                    // which left the array one bar short (a visible blank gap)
-                    // for the whole ~280ms of every shift animation.
-                    if (animMode == ANIM_SHIFT && i == animToIdx) continue;
+                    // NOTE: SHIFT intentionally does NOT skip animFromIdx or animToIdx
+                    // here. Unlike SWAP (which draws two overlay bars covering both
+                    // ends for the whole animation), SHIFT only draws ONE overlay bar
+                    // that starts at the source and ends at the destination — so for
+                    // most of the animation it is still in transit and hasn't visually
+                    // reached the destination yet. Skipping the destination's normal
+                    // draw (with or without also skipping the source) left that slot
+                    // blank — a visible gap — until the overlay finally arrived near
+                    // the end. Both positions already show their correct current
+                    // values and correct (purple/active) color via colorForIndex, so
+                    // leaving them drawn normally just means a brief harmless overlap
+                    // with the sliding overlay near the destination — never an empty gap.
                 }
                 drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
             }
