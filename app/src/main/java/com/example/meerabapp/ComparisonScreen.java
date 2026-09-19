@@ -74,6 +74,21 @@ public class ComparisonScreen extends AppCompatActivity {
     private TextView lblAlgoA, lblAlgoB, txtSwapsA, txtSwapsB, txtTimerA, txtTimerB;
     private Thread raceThread;
 
+    // ===== NEW: race-run identifier =====
+    // Every time a race starts (or is reset), we stamp a new id. Any UI
+    // update Runnable that was already queued by an OLDER race (posted via
+    // runOnUiThread before that race's thread was interrupted) checks this
+    // id before applying itself, and simply no-ops if a newer race has
+    // since started. This is what was missing before: raceThread.interrupt()
+    // only stops the background loop from continuing — it does NOT remove
+    // Runnables that were already posted to the main thread's queue, so a
+    // stale frame from a previous (possibly different-array) run could
+    // still render on top of / interleaved with the new run, which is what
+    // caused the garbled/mismatched numbers seen when re-running compares
+    // back-to-back without waiting for the previous one to fully finish.
+    private final java.util.concurrent.atomic.AtomicInteger raceRunId = new java.util.concurrent.atomic.AtomicInteger(0);
+    // ===== END NEW =====
+
     private ToneGenerator processToneGenerator;
     private ToneGenerator successToneGenerator;
 
@@ -184,6 +199,10 @@ public class ComparisonScreen extends AppCompatActivity {
     }
 
     private void resetComparisonUI() {
+        // NEW: bump the run id so any UI callbacks still queued from a
+        // race that was mid-flight when Reset was pressed become no-ops.
+        raceRunId.incrementAndGet();
+
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
 
         currentAlgoA = isPlaceholderSelected(spinnerAlgoA) ? null : spinnerAlgoA.getSelectedItem().toString();
@@ -216,6 +235,14 @@ public class ComparisonScreen extends AppCompatActivity {
             Toast.makeText(this, "Please select an algorithm for both A and B first.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // NEW: bump the run id first and capture it locally. Every deferred
+        // UI update this race posts will check "is my id still current?"
+        // right before touching the views, so a previous race's leftover
+        // callbacks (already sitting in the main thread's queue) are
+        // guaranteed to be ignored instead of drawing stale data over the
+        // new run.
+        final int myRunId = raceRunId.incrementAndGet();
 
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
 
@@ -287,6 +314,7 @@ public class ComparisonScreen extends AppCompatActivity {
 
             for (int t = 0; t < timelineSteps.size(); t++) {
                 if (Thread.interrupted()) return;
+                if (raceRunId.get() != myRunId) return; // NEW: a newer race has started, stop producing more updates
                 CompareStep activeFrame = timelineSteps.get(t);
                 long currentDuration = SystemClock.elapsedRealtime() - tickerStart;
 
@@ -302,12 +330,17 @@ public class ComparisonScreen extends AppCompatActivity {
                 }
                 prevSortedCountB = newSortedCountB;
 
-                runOnUiThread(() -> refreshDynamicDisplay(activeFrame, currentDuration));
+                runOnUiThread(() -> {
+                    if (raceRunId.get() != myRunId) return; // NEW: ignore if a newer race has since started
+                    refreshDynamicDisplay(activeFrame, currentDuration);
+                });
 
                 try {
                     Thread.sleep(350);
                 } catch (InterruptedException e) { return; }
             }
+
+            if (raceRunId.get() != myRunId) return; // NEW: don't play the finish tone/dialog for a superseded race
 
             if (successToneGenerator != null) {
                 try {
@@ -319,6 +352,7 @@ public class ComparisonScreen extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
+                if (raceRunId.get() != myRunId) return; // NEW: ignore stale finish dialog
                 long totalOpsA = (long) finalTotalSwapsA + finalTotalComparisonsA;
                 long totalOpsB = (long) finalTotalSwapsB + finalTotalComparisonsB;
 
@@ -781,10 +815,24 @@ public class ComparisonScreen extends AppCompatActivity {
             canvas.drawRoundRect(rect, dp(10), dp(10), paint);
 
             paint.setColor(Color.WHITE);
-            paint.setTextSize(dp(15));
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setFakeBoldText(true);
-            canvas.drawText(String.valueOf(value), x + barWidth / 2, barTop + barHeight / 2 + dp(6), paint);
+            // ===== NEW: auto-shrink text so large numbers (e.g. 12356657) always
+            // fit inside their own bar instead of overflowing into the neighbor's
+            // space — that overflow was making big numbers visually blend into
+            // adjacent bars, looking like one garbled/wrong number.
+            String text = String.valueOf(value);
+            float maxTextWidth = barWidth - dp(6);
+            float textSize = dp(15);
+            paint.setTextSize(textSize);
+            float measured = paint.measureText(text);
+            if (measured > maxTextWidth) {
+                textSize = textSize * (maxTextWidth / measured);
+                if (textSize < dp(8)) textSize = dp(8); // floor so it stays readable
+                paint.setTextSize(textSize);
+            }
+            // ===== END NEW =====
+            canvas.drawText(text, x + barWidth / 2, barTop + barHeight / 2 + dp(6), paint);
             paint.setFakeBoldText(false);
         }
 
@@ -828,7 +876,11 @@ public class ComparisonScreen extends AppCompatActivity {
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
-                    if (animMode == ANIM_SHIFT && i == animToIdx) continue;
+                    // NEW: also skip animFromIdx (source), not just animToIdx (destination) —
+                    // the source bar is already drawn by the animated overlay below, so
+                    // drawing it again here caused the source position's text to render
+                    // twice on top of itself during the animation.
+                    if (animMode == ANIM_SHIFT && (i == animToIdx || i == animFromIdx)) continue;
                 }
                 drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
             }
