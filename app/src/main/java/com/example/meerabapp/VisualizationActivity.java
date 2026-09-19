@@ -1079,10 +1079,24 @@ public class VisualizationActivity extends AppCompatActivity {
                 canvas.drawRoundRect(rect, dp(8), dp(8), paint);
 
                 paint.setColor(Color.WHITE);
-                paint.setTextSize(dp(13));
                 paint.setTextAlign(Paint.Align.CENTER);
                 paint.setFakeBoldText(true);
-                canvas.drawText(String.valueOf(shownValue), x + barWidth / 2, top + barHeight / 2 + dp(5), paint);
+                // ===== NEW: auto-shrink text so large numbers (e.g. 12356657) always
+                // fit inside their own bar instead of overflowing into the neighbor's
+                // space — that overflow was making big numbers visually blend into
+                // adjacent bars, looking like one garbled/wrong number.
+                String barText = String.valueOf(shownValue);
+                float maxTextWidth = barWidth - dp(6);
+                float textSize = dp(13);
+                paint.setTextSize(textSize);
+                float measured = paint.measureText(barText);
+                if (measured > maxTextWidth) {
+                    textSize = textSize * (maxTextWidth / measured);
+                    if (textSize < dp(7)) textSize = dp(7); // floor so it stays readable
+                    paint.setTextSize(textSize);
+                }
+                // ===== END NEW =====
+                canvas.drawText(barText, x + barWidth / 2, top + barHeight / 2 + dp(5), paint);
                 paint.setFakeBoldText(false);
 
             }
