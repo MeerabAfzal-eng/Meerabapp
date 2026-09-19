@@ -27,18 +27,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ✅ 1. Profile check logic: Kya user pehle se registered hai?
+        // ✅ 1. Profile check logic
         SharedPreferences pref = getSharedPreferences("UserProfile", MODE_PRIVATE);
         boolean isRegistered = pref.getBoolean("is_profile_set", false);
 
         if (!isRegistered) {
-            // Agar registered nahi hai, to Profile screen par bhej dein
             startActivity(new Intent(this, ProfileActivity.class));
             finish();
             return;
         }
 
-        // Agar registered hai, to main layout load karein
         setContentView(R.layout.activity_main);
 
         // UI Mapping
