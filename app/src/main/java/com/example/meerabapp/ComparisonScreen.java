@@ -807,11 +807,28 @@ public class ComparisonScreen extends AppCompatActivity {
         }
 
         private void drawBar(Canvas canvas, float x, int value, int color) {
+            drawBar(canvas, x, value, color, 0f);
+        }
+
+        // FIX: added a vertical topOffset parameter. During a SWAP animation the
+        // two overlay bars slide toward each other's slot and, when the swapped
+        // indices are more than one apart, their horizontal paths cross around
+        // animProgress == 0.5 — at that instant both bars sit at (almost) the
+        // same x position and their numbers render on top of each other,
+        // producing an unreadable garbled overlap (and, since both are then
+        // skipped from the normal per-index loop, a matching blank gap at the
+        // slot each one has already left behind). Passing a small vertical
+        // "hop" here (one bar rises, the other dips) — exactly like the hop
+        // already used for swaps in the main VisualizationActivity screen —
+        // keeps the two bars visually separated at the moment their x
+        // positions would otherwise coincide.
+        private void drawBar(Canvas canvas, float x, int value, int color, float topOffset) {
             paint.setColor(color);
-            RectF shadowRect = new RectF(x + dp(3), barTop + dp(4), x + barWidth + dp(3), baseY + dp(4));
+            float top = barTop + topOffset;
+            RectF shadowRect = new RectF(x + dp(3), top + dp(4), x + barWidth + dp(3), baseY + dp(4));
             canvas.drawRoundRect(shadowRect, dp(10), dp(10), paint);
 
-            RectF rect = new RectF(x, barTop, x + barWidth, baseY);
+            RectF rect = new RectF(x, top, x + barWidth, baseY);
             canvas.drawRoundRect(rect, dp(10), dp(10), paint);
 
             paint.setColor(Color.WHITE);
@@ -832,7 +849,7 @@ public class ComparisonScreen extends AppCompatActivity {
                 paint.setTextSize(textSize);
             }
             // ===== END NEW =====
-            canvas.drawText(text, x + barWidth / 2, barTop + barHeight / 2 + dp(6), paint);
+            canvas.drawText(text, x + barWidth / 2, top + barHeight / 2 + dp(6), paint);
             paint.setFakeBoldText(false);
         }
 
@@ -876,28 +893,34 @@ public class ComparisonScreen extends AppCompatActivity {
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
-                    // NOTE: SHIFT intentionally does NOT skip animFromIdx or animToIdx
-                    // here. Unlike SWAP (which draws two overlay bars covering both
-                    // ends for the whole animation), SHIFT only draws ONE overlay bar
-                    // that starts at the source and ends at the destination — so for
-                    // most of the animation it is still in transit and hasn't visually
-                    // reached the destination yet. Skipping the destination's normal
-                    // draw (with or without also skipping the source) left that slot
-                    // blank — a visible gap — until the overlay finally arrived near
-                    // the end. Both positions already show their correct current
-                    // values and correct (purple/active) color via colorForIndex, so
-                    // leaving them drawn normally just means a brief harmless overlap
-                    // with the sliding overlay near the destination — never an empty gap.
+                    // SHIFT intentionally does NOT skip animFromIdx or animToIdx here.
+                    // Unlike SWAP (which draws two overlay bars covering both ends for
+                    // the whole animation), SHIFT only draws ONE overlay bar that starts
+                    // at the source and ends at the destination — so for most of the
+                    // animation it is still in transit and hasn't visually reached the
+                    // destination yet. Skipping the destination's normal draw left that
+                    // slot blank until the overlay finally arrived near the end. Both
+                    // positions already show their correct current values and correct
+                    // (purple/active) color via colorForIndex, so leaving them drawn
+                    // normally just means a brief harmless overlap with the sliding
+                    // overlay near the destination — never an empty gap.
                 }
                 drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
             }
 
             if (animating) {
                 if (animMode == ANIM_SWAP) {
+                    // FIX: vertical "hop" so the two swapping bars never fully overlap
+                    // when their horizontal paths cross mid-animation (see drawBar's
+                    // topOffset comment above). Peaks at animProgress == 0.5 (exactly
+                    // where the crossing/overlap risk is highest) and is zero at the
+                    // start and end of the animation, matching the hop used for swaps
+                    // in the main VisualizationActivity screen.
+                    float lift = (float) Math.sin(animProgress * Math.PI);
                     float xA = lerp(xAt(animIdxA), xAt(animIdxB), animProgress);
                     float xB = lerp(xAt(animIdxB), xAt(animIdxA), animProgress);
-                    drawBar(canvas, xA, animValAtA, Color.rgb(128, 0, 128));
-                    drawBar(canvas, xB, animValAtB, Color.rgb(128, 0, 128));
+                    drawBar(canvas, xA, animValAtA, Color.rgb(128, 0, 128), -dp(20) * lift);
+                    drawBar(canvas, xB, animValAtB, Color.rgb(128, 0, 128), dp(10) * lift);
                 } else if (animMode == ANIM_SHIFT) {
                     float x = lerp(xAt(animFromIdx), xAt(animToIdx), animProgress);
                     drawBar(canvas, x, animShiftValue, Color.rgb(128, 0, 128));
