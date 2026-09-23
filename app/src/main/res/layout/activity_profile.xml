@@ -52,14 +52,12 @@
         android:textAllCaps="false"
         android:layout_marginBottom="20dp" />
 
+
     <Button
-        android:id="@+id/btnSkip"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnSwitchProfile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Skip to Main   ➔"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="#64748B"
-        android:textSize="16sp"
-        android:padding="10dp" />
+        android:layout_marginTop="12dp"
+        android:text="Use Existing Profile" />
 
 </LinearLayout>

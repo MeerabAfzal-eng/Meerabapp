@@ -33,19 +33,28 @@ public class activity_progress extends AppCompatActivity {
         TextView tvTotalAttempts = findViewById(R.id.tvTotalAttempts);
 
         SharedPreferences pref = getSharedPreferences("UserProfile", MODE_PRIVATE);
-        tvUserInfo.setText(pref.getString("user_name", "User") + " | ID: " + pref.getString("user_id", "000"));
-        tvHigh.setText("Highest Score: " + pref.getInt("high_score", 0) + "/20");
-        tvRecent.setText("Last Score: " + pref.getInt("recent_score", 0) + "/20");
+
+        String userId = pref.getString("user_id", "000"); // NEW
+
+        tvUserInfo.setText(pref.getString("user_name", "User") + " | ID: " + userId);
+        tvHigh.setText("Highest Score: " + pref.getInt("high_score_" + userId, 0) + "/20");
+        tvRecent.setText("Last Score: " + pref.getInt("recent_score_" + userId, 0) + "/20");
 
         // History Logic
         ArrayList<Entry> entries = new ArrayList<>();
-        String history = pref.getString("quiz_history", "");
+        String history = pref.getString("quiz_history_" + userId, ""); // NEW: userId ke sath
         if (history != null && !history.isEmpty()) {
             String[] allScores = history.split(",");
             tvTotalAttempts.setText("Total Attempts: " + allScores.length);
             int start = Math.max(0, allScores.length - 25);
             for (int i = start; i < allScores.length; i++) {
-                entries.add(new Entry((float) (i - start), Float.parseFloat(allScores[i].trim())));
+                String raw = allScores[i].trim();
+                if (raw.isEmpty()) continue; // safety: malformed entry skip
+                try {
+                    entries.add(new Entry((float) (i - start), Float.parseFloat(raw)));
+                } catch (NumberFormatException ignored) {
+                    // skip is bad entry, poori screen crash nahi hogi
+                }
             }
         } else {
             entries.add(new Entry(0, 0));
@@ -75,18 +84,14 @@ public class activity_progress extends AppCompatActivity {
             public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
                 float markerWidth = getWidth();
                 float chartWidth = lineChart.getWidth();
-                // Left edge detect
                 if (posX < markerWidth) return new MPPointF(0, -getHeight());
-                // Right edge detect
                 if (posX > chartWidth - markerWidth)
                     return new MPPointF(-markerWidth, -getHeight());
-                // Center
                 return new MPPointF(-(markerWidth / 2), -getHeight());
             }
         };
         lineChart.setMarker(mv);
 
-        // Styling and Legend
         Legend legend = lineChart.getLegend();
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         legend.setDrawInside(false);
@@ -94,7 +99,6 @@ public class activity_progress extends AppCompatActivity {
         lineChart.getDescription().setEnabled(false);
         lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 
-        // Animation
         lineChart.animateX(1500);
         statsCard.setAlpha(0f);
         statsCard.setTranslationY(100f);

@@ -74,20 +74,7 @@ public class ComparisonScreen extends AppCompatActivity {
     private TextView lblAlgoA, lblAlgoB, txtSwapsA, txtSwapsB, txtTimerA, txtTimerB;
     private Thread raceThread;
 
-    // ===== NEW: race-run identifier =====
-    // Every time a race starts (or is reset), we stamp a new id. Any UI
-    // update Runnable that was already queued by an OLDER race (posted via
-    // runOnUiThread before that race's thread was interrupted) checks this
-    // id before applying itself, and simply no-ops if a newer race has
-    // since started. This is what was missing before: raceThread.interrupt()
-    // only stops the background loop from continuing — it does NOT remove
-    // Runnables that were already posted to the main thread's queue, so a
-    // stale frame from a previous (possibly different-array) run could
-    // still render on top of / interleaved with the new run, which is what
-    // caused the garbled/mismatched numbers seen when re-running compares
-    // back-to-back without waiting for the previous one to fully finish.
     private final java.util.concurrent.atomic.AtomicInteger raceRunId = new java.util.concurrent.atomic.AtomicInteger(0);
-    // ===== END NEW =====
 
     private ToneGenerator processToneGenerator;
     private ToneGenerator successToneGenerator;
@@ -100,10 +87,6 @@ public class ComparisonScreen extends AppCompatActivity {
     private long finalDurationA = 0;
     private long finalDurationB = 0;
 
-    // Har panel ka apna current algorithm yaad rakhte hain, taake counter
-    // ka label (Swaps/Shifts/Merges) us algorithm ke real mechanism ke
-    // mutabiq dikhaya ja sake - chahe Panel A aur Panel B mein alag
-    // algorithms select ho.
     private String currentAlgoA = null;
     private String currentAlgoB = null;
 
@@ -187,10 +170,7 @@ public class ComparisonScreen extends AppCompatActivity {
         return spinner.getSelectedItemPosition() == 0;
     }
 
-    // Algorithm ke naam se decide karta hai konsa counter label sahi/honest
-    // hai: Insertion aur Shell Sort mein numbers "shift" hotay hain, swap
-    // nahi; Merge Sort mein naye array mein "merge" hota hai; baqi sab mein
-    // asal mein do elements ki jagah "swap" hoti hai.
+
     private String getCounterLabel(String algo) {
         if (algo == null) return "Swaps";
         if (algo.equalsIgnoreCase("Merge Sort")) return "Merges";
@@ -199,8 +179,7 @@ public class ComparisonScreen extends AppCompatActivity {
     }
 
     private void resetComparisonUI() {
-        // NEW: bump the run id so any UI callbacks still queued from a
-        // race that was mid-flight when Reset was pressed become no-ops.
+
         raceRunId.incrementAndGet();
 
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
@@ -236,12 +215,6 @@ public class ComparisonScreen extends AppCompatActivity {
             return;
         }
 
-        // NEW: bump the run id first and capture it locally. Every deferred
-        // UI update this race posts will check "is my id still current?"
-        // right before touching the views, so a previous race's leftover
-        // callbacks (already sitting in the main thread's queue) are
-        // guaranteed to be ignored instead of drawing stale data over the
-        // new run.
         final int myRunId = raceRunId.incrementAndGet();
 
         if (raceThread != null && raceThread.isAlive()) raceThread.interrupt();
@@ -303,11 +276,7 @@ public class ComparisonScreen extends AppCompatActivity {
 
             long tickerStart = SystemClock.elapsedRealtime();
 
-            // Sound sirf tab bajta hai jab koi value VAQAI teal (sorted/fixed) hoti hai -
-            // ek chhota "ping" jab sirf ek/kuch values teal hon, aur ek alag/distinct
-            // "success" tone jab us panel ki POORI array teal ho jati hai. Purane code
-            // mein har purple/compare/swap step par sound bajta tha, jo bohat frequent
-            // aur annoying tha - ab wo hata diya gaya hai.
+
             int prevSortedCountA = 0;
             int prevSortedCountB = 0;
             int totalN = initialNumbers.size();
@@ -392,9 +361,7 @@ public class ComparisonScreen extends AppCompatActivity {
         raceThread.start();
     }
 
-    // Ek chhota "ping" bajata hai jab sirf ek (ya kuch) value(s) teal hoti hain, aur ek
-    // alag/lambi "success" tone jab us panel ki POORI array teal (mukammal sorted) ho
-    // jati hai. isFullArraySorted decide karta hai konsi tone chalani hai.
+
     private void playTealSound(boolean isFullArraySorted) {
         if (isFullArraySorted) {
             if (successToneGenerator != null) {
@@ -625,8 +592,7 @@ public class ComparisonScreen extends AppCompatActivity {
                 k++;
             }
         } else if (l == r) {
-            // NOTE: no sorted.add(l) here either -- this single-element "subarray" can
-            // still be relocated when merged with its sibling at a higher recursion level.
+
         }
     }
 
@@ -646,7 +612,6 @@ public class ComparisonScreen extends AppCompatActivity {
         }
     }
 
-    // ------------- Playback / rendering -------------
 
     private void refreshDynamicDisplay(CompareStep frame, long durationMs) {
         if (!frame.isFinishedA && finalDurationA == 0) {
@@ -810,18 +775,6 @@ public class ComparisonScreen extends AppCompatActivity {
             drawBar(canvas, x, value, color, 0f);
         }
 
-        // FIX: added a vertical topOffset parameter. During a SWAP animation the
-        // two overlay bars slide toward each other's slot and, when the swapped
-        // indices are more than one apart, their horizontal paths cross around
-        // animProgress == 0.5 — at that instant both bars sit at (almost) the
-        // same x position and their numbers render on top of each other,
-        // producing an unreadable garbled overlap (and, since both are then
-        // skipped from the normal per-index loop, a matching blank gap at the
-        // slot each one has already left behind). Passing a small vertical
-        // "hop" here (one bar rises, the other dips) — exactly like the hop
-        // already used for swaps in the main VisualizationActivity screen —
-        // keeps the two bars visually separated at the moment their x
-        // positions would otherwise coincide.
         private void drawBar(Canvas canvas, float x, int value, int color, float topOffset) {
             paint.setColor(color);
             float top = barTop + topOffset;
@@ -848,7 +801,7 @@ public class ComparisonScreen extends AppCompatActivity {
                 if (textSize < dp(8)) textSize = dp(8); // floor so it stays readable
                 paint.setTextSize(textSize);
             }
-            // ===== END NEW =====
+
             canvas.drawText(text, x + barWidth / 2, top + barHeight / 2 + dp(6), paint);
             paint.setFakeBoldText(false);
         }
@@ -893,29 +846,14 @@ public class ComparisonScreen extends AppCompatActivity {
             for (int i = 0; i < data.size(); i++) {
                 if (animating) {
                     if (animMode == ANIM_SWAP && (i == animIdxA || i == animIdxB)) continue;
-                    // SHIFT intentionally does NOT skip animFromIdx or animToIdx here.
-                    // Unlike SWAP (which draws two overlay bars covering both ends for
-                    // the whole animation), SHIFT only draws ONE overlay bar that starts
-                    // at the source and ends at the destination — so for most of the
-                    // animation it is still in transit and hasn't visually reached the
-                    // destination yet. Skipping the destination's normal draw left that
-                    // slot blank until the overlay finally arrived near the end. Both
-                    // positions already show their correct current values and correct
-                    // (purple/active) color via colorForIndex, so leaving them drawn
-                    // normally just means a brief harmless overlap with the sliding
-                    // overlay near the destination — never an empty gap.
+
                 }
                 drawBar(canvas, xAt(i), data.get(i), colorForIndex(i));
             }
 
             if (animating) {
                 if (animMode == ANIM_SWAP) {
-                    // FIX: vertical "hop" so the two swapping bars never fully overlap
-                    // when their horizontal paths cross mid-animation (see drawBar's
-                    // topOffset comment above). Peaks at animProgress == 0.5 (exactly
-                    // where the crossing/overlap risk is highest) and is zero at the
-                    // start and end of the animation, matching the hop used for swaps
-                    // in the main VisualizationActivity screen.
+
                     float lift = (float) Math.sin(animProgress * Math.PI);
                     float xA = lerp(xAt(animIdxA), xAt(animIdxB), animProgress);
                     float xB = lerp(xAt(animIdxB), xAt(animIdxA), animProgress);

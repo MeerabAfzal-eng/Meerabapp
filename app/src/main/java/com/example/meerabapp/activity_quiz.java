@@ -99,7 +99,7 @@ public class activity_quiz extends AppCompatActivity {
                     btnNextQuestion.setVisibility(View.GONE);
                     txtQuestionCount.setText("Finished");
 
-                    // Saving data
+                    // Saving data (active user ke naam par)
                     saveQuizResults();
                 }
             }
@@ -110,14 +110,17 @@ public class activity_quiz extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
-        int lastHighScore = pref.getInt("high_score", 0);
-        if (score > lastHighScore) editor.putInt("high_score", score);
 
-        editor.putInt("recent_score", score);
+        String userId = pref.getString("user_id", "000");
 
-        String history = pref.getString("quiz_history", "");
+        int lastHighScore = pref.getInt("high_score_" + userId, 0);
+        if (score > lastHighScore) editor.putInt("high_score_" + userId, score);
+
+        editor.putInt("recent_score_" + userId, score);
+
+        String history = pref.getString("quiz_history_" + userId, "");
         String newHistory = history.isEmpty() ? String.valueOf(score) : history + "," + score;
-        editor.putString("quiz_history", newHistory);
+        editor.putString("quiz_history_" + userId, newHistory);
 
         editor.apply();
         Toast.makeText(this, "Progress Saved!", Toast.LENGTH_SHORT).show();

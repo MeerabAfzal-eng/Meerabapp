@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ✅ 1. Profile check logic
+
         SharedPreferences pref = getSharedPreferences("UserProfile", MODE_PRIVATE);
         boolean isRegistered = pref.getBoolean("is_profile_set", false);
 
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // UI Mapping
+
+
         layoutBarsWrapper = findViewById(R.id.layoutBarsWrapper);
         btnValueAdd = findViewById(R.id.btnValueAdd);
         btnValueRemove = findViewById(R.id.btnValueRemove);
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         btnTakeQuiz = findViewById(R.id.btnTakeQuiz);
         btnViewProgress = findViewById(R.id.btnViewProgress);
 
-        // Spinner Setup
+
         String[] algorithms = {"Select Algorithm", "Bubble Sort", "Insertion Sort", "Selection Sort", "Merge Sort", "Quick Sort", "Heap Sort", "Shell Sort"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, algorithms) {
             @Override
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         };
         spinnerAlgorithm.setAdapter(adapter);
 
-        // 2. Add Value Logic
+
         btnValueAdd.setOnClickListener(v -> {
             String valStr = etInputNumber.getText().toString().trim();
             if (valStr.isEmpty() || valStr.equals("+") || valStr.equals("-")) {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 3. Remove Logic
+
         btnValueRemove.setOnClickListener(v -> {
             if (!rawInputList.isEmpty()) {
                 rawInputList.remove(rawInputList.size() - 1);
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 4. Sort Logic
+
         btnSortNow.setOnClickListener(v -> {
             if (spinnerAlgorithm.getSelectedItemPosition() == 0 || rawInputList.isEmpty()) {
                 Toast.makeText(this, "Select Algo and add numbers!", Toast.LENGTH_SHORT).show();
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 5. Compare Logic
+
         btnCompareScreen.setOnClickListener(v -> {
             if (rawInputList.size() < 2) {
                 Toast.makeText(this, "Add at least 2 numbers!", Toast.LENGTH_SHORT).show();
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 6. Navigation
+
         btnTakeQuiz.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_quiz.class)));
         btnViewProgress.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, activity_progress.class)));
     }

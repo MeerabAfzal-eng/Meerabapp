@@ -792,7 +792,7 @@
     "correct": "A Complete Binary Heap layout within the array"
   }
 ,
-{
+  {
     "question": "Which sorting algorithm checks elements in pairs and is often compared to bubbles rising in water?",
     "optionA": "Quick Sort",
     "optionB": "Bubble Sort",
@@ -1568,7 +1568,7 @@
     "optionD": "It cannot execute if data is sorted",
     "correct": "It checks every element once without shifting, completing in linear O(n) time"
   },
-{
+  {
     "question": "Which sorting algorithm is often called the slowest because it makes too many side-by-side swaps?",
     "optionA": "Merge Sort",
     "optionB": "Bubble Sort",

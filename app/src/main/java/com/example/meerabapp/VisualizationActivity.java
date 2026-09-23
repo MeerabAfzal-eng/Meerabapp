@@ -145,8 +145,6 @@ public class VisualizationActivity extends AppCompatActivity {
         originalArr.add(50);
     }
 
-    // Har algorithm ka core operation alag hota hai, isliye counter ka
-    // naam bhi uske real mechanism ke mutabiq hona chahiye.
     String getCounterLabel() {
         if (algorithm.equals("Merge Sort")) {
             return "Merges";
@@ -195,22 +193,19 @@ public class VisualizationActivity extends AppCompatActivity {
             case "Insertion Sort":
                 return "Insertion Sort:Insertion Sort takes one number at a time and places it in its correct spot among the numbers already sorted.";
             case "Selection Sort":
-                // Ab direction (ascending/descending) ke mutabiq sahi lafظ istemal ho raha hai,
-                // taky descending mein "smallest" ka ghalat message na dikhe.
+
                 if (ascending) {
                     return "Selection Sort: Selection Sort finds the smallest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
                 } else {
                     return "Selection Sort: Selection Sort finds the largest number in the list and moves it to the front. It keeps doing this for the rest of the numbers.";
                 }
             case "Quick Sort":
-                // NEW: wording ab ascending/descending ke mutabiq badalta hai,
-                // kyunke descending mein bigger numbers left aur smaller right jate hain.
+
                 return ascending
                         ? "Quick Sort:Quick Sort picks one number as a pivot. All smaller numbers go to its left, all bigger numbers go to its right. This repeats for both sides."
                         : "Quick Sort:Quick Sort picks one number as a pivot. All bigger numbers go to its left, all smaller numbers go to its right. This repeats for both sides.";
             case "Heap Sort":
-                // NEW: descending mein root par sabse chota number hota hai (min-heap),
-                // isliye wording bhi ascending/descending ke mutabiq badalni chahiye.
+
                 return ascending
                         ? "Heap Sort: Heap Sort arranges numbers into a tree shape where the biggest number is always on top, then removes it one by one to build the sorted list."
                         : "Heap Sort: Heap Sort arranges numbers into a tree shape where the smallest number is always on top, then removes it one by one to build the sorted list.";
@@ -402,8 +397,7 @@ public class VisualizationActivity extends AppCompatActivity {
 
         switch (algo) {
             case "Bubble Sort":
-                // Ab is implementation mein early-exit (swapped flag) hai,
-                // isliye already-sorted array par sach mein O(n) chalega.
+
                 if (sortedSameDir) return "O(n) \u2014 Best Case";
                 if (sortedOppositeDir) return "O(n\u00B2) \u2014 Worst Case";
                 return "O(n\u00B2) \u2014 Average Case";
@@ -414,13 +408,11 @@ public class VisualizationActivity extends AppCompatActivity {
                 return "O(n\u00B2) \u2014 Average Case";
 
             case "Selection Sort":
-                // Selection Sort hamesha poora remaining array scan karta hai
-                // chahay input kaisa bhi ho, isliye best/worst mein farq nahi.
+
                 return "O(n\u00B2) \u2014 Fixed";
 
             case "Quick Sort":
-                // Ye implementation last element ko pivot banati hai,
-                // isliye already sorted ya reverse sorted array worst case deta hai.
+
                 if (sortedSameDir || sortedOppositeDir) {
                     return "O(n\u00B2) \u2014 Worst Case";
                 }
@@ -428,7 +420,7 @@ public class VisualizationActivity extends AppCompatActivity {
 
             case "Merge Sort":
             case "Heap Sort":
-                // Ye hamesha input order se independent hi split/heapify karte hain.
+
                 return "O(n log n) \u2014 Fixed";
 
             case "Shell Sort":
@@ -520,8 +512,7 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void selectionSort(int[] a) {
-        // Message/label ab ascending vs descending ke asal mechanism ke mutabiq hain:
-        // ascending mein selection sort "minimum" dhoondta hai, descending mein "maximum".
+
         String targetWord = ascending ? "minimum" : "maximum";
         String pickedWord = ascending ? "smallest" : "largest";
         String pointerLabel = ascending ? "min" : "max";
@@ -557,8 +548,7 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     int partition(int[] a, int low, int high) {
-        // NEW: descending mein pivot ke left woh elements jate hain jo "bigger" hain,
-        // isliye message bhi usi mutabiq honi chahiye, hardcoded "smaller" nahi.
+
         String movedAdj = ascending ? "smaller" : "bigger";
 
         int pivotValue = a[high];
@@ -641,8 +631,7 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void heapSort(int[] a) {
-        // NEW: "max" pointer label ko bhi direction ke mutabiq "min" kar diya
-        // taky descending mein root ka asal role (smallest) sahi reflect ho.
+
         String rootPointerLabel = ascending ? "max" : "min";
 
         int n = a.length;
@@ -658,9 +647,7 @@ public class VisualizationActivity extends AppCompatActivity {
     }
 
     void heapify(int[] a, int n, int root, String rootLabel) {
-        // NEW: descending mein hum min-heap bana rahe hote hain (root = sabse chota),
-        // isliye pointer label aur message bhi "smallest"/"min_heap" honi chahiye,
-        // hardcoded "largest"/"max_heap" nahi.
+
         String extremeLabel = ascending ? "largest" : "smallest";
         String heapType = ascending ? "max_heap" : "min_heap";
 
@@ -699,10 +686,7 @@ public class VisualizationActivity extends AppCompatActivity {
             for (int i = gap; i < a.length; i++) {
                 int temp = a[i];
                 int j = i;
-                // FIX: pehle har comparison unconditionally log hoti hai (chahe
-                // shift ho ya na ho) — pehle sirf successful (shift-causing)
-                // comparisons hi log hoti thin, jisse "already sahi jagah" wale
-                // elements bina compare step dikhaye seedhe apni jagah chale jate thay.
+
                 while (j >= gap) {
                     steps.add(new Step("compare", j - gap, j, 0, "Comparing elements with a gap of " + gap)
                             .withPointers(new String[]{"i", "j", "j-gap"}, new int[]{i, j, j - gap}));
@@ -927,13 +911,10 @@ public class VisualizationActivity extends AppCompatActivity {
             shiftFrom = fromIndex;
             shiftTo = toIndex;
             swapProgress = 0f;
-            // ===== NEW: show the correct incoming value at the destination bar
-            // right away, instead of letting it keep drawing its old stale
-            // value until the animation ends — this was the cause of the
-            // "number appears twice" visual glitch during shifts.
+
             writeIndex = toIndex;
             writeValue = value;
-            // ===== END NEW =====
+
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
             animator.setDuration(850);
             animator.addUpdateListener(a -> {
@@ -1081,10 +1062,7 @@ public class VisualizationActivity extends AppCompatActivity {
                 paint.setColor(Color.WHITE);
                 paint.setTextAlign(Paint.Align.CENTER);
                 paint.setFakeBoldText(true);
-                // ===== NEW: auto-shrink text so large numbers (e.g. 12356657) always
-                // fit inside their own bar instead of overflowing into the neighbor's
-                // space — that overflow was making big numbers visually blend into
-                // adjacent bars, looking like one garbled/wrong number.
+
                 String barText = String.valueOf(shownValue);
                 float maxTextWidth = barWidth - dp(6);
                 float textSize = dp(13);
